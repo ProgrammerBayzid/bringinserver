@@ -7,14 +7,7 @@ const userSchema = Schema(
       type: String,
       required: true,
     },
-    firstName: {
-      type: String,
-      required: true,
-    },
-    lastName: {
-      type: String,
-      required: true,
-    },
+  
    
   },
   { timestamps: true }
@@ -25,8 +18,7 @@ userSchema.methods.generateJWT = function () {
     {
       _id: this._id,
       number: this.number,
-      lastName:this.lastName,
-      firstName:this.firstName
+     
       
       
     },

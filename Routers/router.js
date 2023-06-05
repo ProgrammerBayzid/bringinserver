@@ -95,7 +95,7 @@ router.get("/users/:id", async (req, res) => {
 });
 
 
-// # update user data 
+// # update user data  
 
 router.patch("/users/:id", async (req, res) => {
   try {
