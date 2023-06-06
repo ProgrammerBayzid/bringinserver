@@ -7,6 +7,9 @@ const userSchema = Schema(
       type: String,
       required: true,
     },
+    fastname:  String,
+    lastname: String,
+    gender: String
   
    
   },

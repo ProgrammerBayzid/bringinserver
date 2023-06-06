@@ -17,10 +17,10 @@ function getRandomInt(max) {
 
 // # post singup 
 router.post("/singup", async (req, res) => {
-  const user = await User.findOne({
-    number: req.body.number,
-  });
-  if (user) return res.status(400).send("User already registered!");
+  // const user = await User.findOne({
+  //   number: req.body.number,
+  // });
+  // if (user) return res.status(400).send("User already registered!");
   const OTP = getRandomInt(4);
 
   const number = req.body.number;
@@ -42,29 +42,42 @@ router.post("/singup", async (req, res) => {
 
 // # post verify code 
 
-router.post('/singup/verify', async (req, res)=>{
-    const otpHolder = await Otp.find({
-        number: req.body.number,
-      });
-      if (otpHolder.length === 0)
-        return res.status(400).send("You use an Expired OTP!");
-      const rightOtpFind = otpHolder[otpHolder.length - 1];
-      const validUser = await bcrypt.compare(req.body.otp, rightOtpFind.otp);
-      if (rightOtpFind.number === req.body.number && validUser) {
-        const user = new User(_.pick(req.body, ["number"]));
-        const token = user.generateJWT();
-        const result = await user.save();
-        const OTPDelete = await Otp.deleteMany({
-          number: rightOtpFind.number,
-        });
-        return res.status(200).json({
-          message: "User Registration Successfully!",
-          token: token,
-          data: result,
-        });
-      } else {
-        return res.status(400).send("Your OTP was wrong!");
-      }
+router.post('/singup/verify', async (req, res) => {
+  const otpHolder = await Otp.find({
+    number: req.body.number,
+  });
+  if (otpHolder.length === 0)
+    return res.status(400).send("You use an Expired OTP!");
+  const rightOtpFind = otpHolder[otpHolder.length - 1];
+  const validUser = await bcrypt.compare(req.body.otp, rightOtpFind.otp);
+  if (rightOtpFind.number === req.body.number && validUser) {
+    
+    var token;
+    // const user = new User(_.pick(req.body, ["number"]));
+    const user = await User.findOne({
+      number: req.body.number,
+    });
+    if (user == null) {
+      const user2 = await User({number:req.body.number, fastname: "Tanvir",lastname: "mahamud", gender: "male"});
+      token = user2.generateJWT()
+      await user2.save();
+    }else{
+      token = user.generateJWT()
+    }
+    // const user = await User({number:req.body.number, fastname: "Tanvir",lastname: "mahamud", gender: "male"});
+    // const token = user.generateJWT();
+    // const result = await user.save();
+    const OTPDelete = await Otp.deleteMany({
+      number: rightOtpFind.number,
+    });
+    return res.status(200).json({
+      message: "User Registration Successfully!",
+      token: token,
+      data: {},
+    });
+  } else {
+    return res.status(400).send("Your OTP was wrong!");
+  }
 })
 
 
