@@ -18,7 +18,7 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * 9000 + 1000);
 };
 
-const storage = multer.diskStorage({
+const Storage = multer.diskStorage({
   destination: "uploads",
   filename:(req,file,cb)=>{
 cb(null, file.originalname);
