@@ -1,7 +1,7 @@
 const express = require("express");
 const axios = require("axios");
 const { User } = require("../..//Model/userModel");
-const { Otp } = require("../../Model/userModel");
+const { Otp } = require("../../Model/otpModel");
 
 const app = express();
 
