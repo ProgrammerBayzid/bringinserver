@@ -7,6 +7,6 @@ mongoose.connect(process.env.MONGODB_URL)
 .catch((err)=>console.log('connection faild'))
 
 const port = process.env.PORT || 8000;
-app.listen(8000, () => {
+app.listen(port, () => {
     console.log(`bringin  server is running port ${port}`);
   });

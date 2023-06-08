@@ -1,12 +1,16 @@
 const express = require("express");
 const axios = require("axios");
-const { User } = require("../Model/userModel");
-const { Otp } = require("../Model/otpModel");
+const { User } = require("../..//Model/userModel");
+const { Otp } = require("../../Model/otpModel");
+const bcrypt = require("bcrypt");
+const _ = require("lodash");
 
 const app = express();
 
 
-
+function getRandomInt(max) {
+    return Math.floor(Math.random() * 9000 + 1000);
+  };
 
 app.post("/singup", async (req, res) => {
     const OTP = getRandomInt(4);
@@ -19,7 +23,7 @@ app.post("/singup", async (req, res) => {
       .then((response) => {
         console.log(response.data);
       });
-    const otp = new Otp({ number: number, otp: OTP });
+    const otp = await  Otp({ number: number, otp: OTP });
     const salt = await bcrypt.genSalt(10);
     otp.otp = await bcrypt.hash(otp.otp, salt);
     const result = await otp.save();
@@ -46,7 +50,7 @@ app.post("/singup", async (req, res) => {
         number: req.body.number,
       });
       if (user == null) {
-        const user2 = await User({number:req.body.number, fastname: "Tanvir",lastname: "mahamud", gender: "male", experiencedlevel:"fresher", startedworking:"00/00/0000", deatofbirth:"00/00/0000", email: "bringin@gmail.com", image:req.body.filename});
+        const user2 = await User({number:req.body.number, fastname: null,lastname: null, gender: null, experiencedlevel: null, startedworking:null, deatofbirth:null, email: null, image:null});
         token = user2.generateJWT()
         await user2.save();
       }else{

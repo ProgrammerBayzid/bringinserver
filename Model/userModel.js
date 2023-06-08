@@ -12,9 +12,12 @@ const userSchema = Schema(
     fastname:  String,
     lastname: String,
     gender: String,
-    experiencedlevel:String,
-    startedworking: String,
-    deatofbirth: String,
+    experiencedlevel:{
+      name: String,
+      _id: String
+    },
+    startedworking: Date,
+    deatofbirth: Date,
     email: String,
     image: String
   
@@ -28,9 +31,6 @@ userSchema.methods.generateJWT = function () {
     {
       _id: this._id,
       number: this.number,
-     
-      
-      
     },
     process.env.ACCESS_TOKEN,
     { expiresIn: "7d" }
@@ -38,4 +38,6 @@ userSchema.methods.generateJWT = function () {
   return token;
 };
 
-module.exports.User = model("User", userSchema);
+var User = model("User", userSchema);
+
+module.exports = User;
