@@ -28,9 +28,6 @@ userSchema.methods.generateJWT = function () {
     {
       _id: this._id,
       number: this.number,
-     
-      
-      
     },
     process.env.ACCESS_TOKEN,
     { expiresIn: "7d" }
