@@ -98,44 +98,44 @@ const upload = multer({
 
 // # Get user 
 
-router.get("/users", async (req, res) => {
-  try {
-    const usersData = await User.find();
-    res.send(usersData);
-  } catch (error) {
-    res.send(error);
-  }
-});
+// router.get("/users", async (req, res) => {
+//   try {
+//     const usersData = await User.find();
+//     res.send(usersData);
+//   } catch (error) {
+//     res.send(error);
+//   }
+// });
 
 
-// # get user by id 
+// // # get user by id 
 
-router.get("/users/:id", async (req, res) => {
-  try {
-    const _id = req.params.id;
-    const singalUser = await User.findById(_id);
-    console.log(singalUser);
-    res.send(singalUser);
-  } catch (error) {
-    res.send(error);
-  }
-});
+// router.get("/users/:id", async (req, res) => {
+//   try {
+//     const _id = req.params.id;
+//     const singalUser = await User.findById(_id);
+//     console.log(singalUser);
+//     res.send(singalUser);
+//   } catch (error) {
+//     res.send(error);
+//   }
+// });
 
 
-// # update user data  
+// // # update user data  
 
-router.patch("/users/:id", async (req, res) => {
-  try {
-    const _id = req.params.id;
-    const updateUser = await User.findByIdAndUpdate(_id, req.body, {
-      new: true,
-    });
-    console.log(updateUser);
-    res.send(updateUser);
-  } catch (error) {
-    res.status(404).send(error);
-  }
-});
+// router.patch("/users/:id", async (req, res) => {
+//   try {
+//     const _id = req.params.id;
+//     const updateUser = await User.findByIdAndUpdate(_id, req.body, {
+//       new: true,
+//     });
+//     console.log(updateUser);
+//     res.send(updateUser);
+//   } catch (error) {
+//     res.status(404).send(error);
+//   }
+// });
 
 
 // # post job JobIndustry
