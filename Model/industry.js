@@ -8,6 +8,18 @@ const industrySchema  =  Schema(
 );
 
 
+const addjobtypeSchema = Schema(
+    {
+        jobetype: String
+    }
+)
+const addsalarietypeSchema = Schema(
+    {
+        salarietype: String
+    }
+)
+
+
 
 const categorySchema  =  Schema(
     {
@@ -23,8 +35,24 @@ const categorySchema  =  Schema(
 
 const functionalareaSchema  =  Schema(
     {
-        industryid: String,
-        categoryid: String,
+        industryid: {
+            type: "ObjectId",
+            ref: "Industry"
+        },
+        
+        categoryid:{
+            type:"ObjectId",
+            ref:"Category"
+        },
+        jobetypeid:{
+            type:"ObjectId",
+            ref:"Addjobetype"
+        },
+        salarietypeid:{
+            type:"ObjectId",
+            ref:"Addsalarietype"
+        },
+
         functionalname: String
     },
    
@@ -36,6 +64,10 @@ var Category = model("Category", categorySchema)
 
 var Expertisearea = model("Industry", industrySchema)
 
+var Addjobtype = model ("Addjobtype", addjobtypeSchema)
+
+var Addsalarietype = model ("Addsalarietype", addsalarietypeSchema)
+
 module.exports = {
-    Expertisearea,Category,Functionarea
+    Expertisearea,Category,Functionarea,Addjobtype,Addsalarietype
 };

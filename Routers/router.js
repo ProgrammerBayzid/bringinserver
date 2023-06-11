@@ -14,20 +14,20 @@ const { Salirietype } = require("../Model/salarie");
 const multer = require("multer");
 
 
-function getRandomInt(max) {
-  return Math.floor(Math.random() * 9000 + 1000);
-};
+// function getRandomInt(max) {
+//   return Math.floor(Math.random() * 9000 + 1000);
+// };
 
-const Storage = multer.diskStorage({
-  destination: "uploads",
-  filename:(req,file,cb)=>{
-cb(null, file.originalname);
-  }
-});
+// const Storage = multer.diskStorage({
+//   destination: "uploads",
+//   filename:(req,file,cb)=>{
+// cb(null, file.originalname);
+//   }
+// });
 
-const upload = multer({
-  storage:Storage
-}).single('image')
+// const upload = multer({
+//   storage:Storage
+// }).single('image')
 
 // // # post singup 
 // router.post("/singup", async (req, res) => {

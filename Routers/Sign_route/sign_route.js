@@ -1,6 +1,6 @@
 const express = require("express");
 const axios = require("axios");
-const { User } = require("../..//Model/userModel");
+const { User } = require("../../Model/userModel");
 const { Otp } = require("../../Model/otpModel");
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
@@ -23,7 +23,7 @@ app.post("/singup", async (req, res) => {
       .then((response) => {
         console.log(response.data);
       });
-    const otp = await  Otp({ number: number, otp: OTP });
+    const otp = await  Otp({ number: number, otp: OTP,  });
     const salt = await bcrypt.genSalt(10);
     otp.otp = await bcrypt.hash(otp.otp, salt);
     const result = await otp.save();
@@ -35,7 +35,7 @@ app.post("/singup", async (req, res) => {
 
   // # post verify code 
 
-  app.post('/singup/verify', async (req, res) => {
+  app.post('/verify', async (req, res) => {
     const otpHolder = await Otp.find({
       number: req.body.number,
     });

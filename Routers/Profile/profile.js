@@ -1,7 +1,7 @@
 
 const express = require("express");
 const app = express();
-const User = require("../..//Model/userModel");
+const User = require("../../Model/userModel");
 const tokenverify = require("../../MiddleWare/tokenverify.js")
 const jwt = require('jsonwebtoken');
 const Experince = require('../../Model/experience.js')
