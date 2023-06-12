@@ -1,5 +1,7 @@
 const express = require("express");
 const app = express();
+const {Profiledeteles} = require('../../Model/profiledeteles')
+
 
 const tokenverify = require("../../MiddleWare/tokenverify.js");
 const jwt = require("jsonwebtoken");
@@ -139,6 +141,15 @@ app.delete("/functionalarea/:id", async (req, res) => {
 });
 
 
+app.post("/profiledeteles", async (req, res) => {
+  try {
+    const educationdata = new Profiledeteles(req.body);
+    const education = await educationdata.save();
+    res.status(201).send(education);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
 
 
 module.exports = app;

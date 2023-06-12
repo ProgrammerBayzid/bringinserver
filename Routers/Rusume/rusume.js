@@ -1,7 +1,11 @@
 const express = require("express");
 const app = express();
 const multer = require("multer");
+
 const { Resume } = require("../../Model/resumefile");
+
+const tokenverify = require("../../MiddleWare/tokenverify.js");
+const jwt = require("jsonwebtoken");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -44,8 +48,6 @@ app.get('/resume/:id', async (req, res) =>{
         res.send(error);
       }
 })
-
-
 
 
 
