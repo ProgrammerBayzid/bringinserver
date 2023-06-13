@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+
 const {
   Workexperience,
   Education,
@@ -7,9 +8,9 @@ const {
   Protfoliolink,
   About,
 } = require("../../Model/profiledeteles");
-
 const tokenverify = require("../../MiddleWare/tokenverify.js");
 const jwt = require("jsonwebtoken");
+
 
 // education api
 
@@ -301,5 +302,5 @@ app.patch("/protfolio", async (req, res) => {
   }
 });
 
-
 module.exports = app;
+
