@@ -18,37 +18,60 @@ const storage = multer.diskStorage({
 });
 const resume = multer({ storage: storage });
 
-app.post("/resume", resume.single("resume"), async (req, res) => {
+app.post("/resume", tokenverify, resume.single("resume"), async (req, res) => {
   try {
-    const resumedata = new Resume(req.file.path);
-    const resumefile = await resumedata.save();
-    res.status(201).send(resumefile);
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        const _id = authdata._id;
+        const resumedata = await Resume({
+          resume: req.file.path,
+          userid: _id,
+        });
+        const resumefile = await resumedata.save();
+        res.status(200).send(resumefile);
+      }
+    });
   } catch (error) {
     res.status(400).send(error);
   }
 });
 
-
-
-app.get('/resume', async (req, res) =>{
-    try {
-        const resumeData = await Resume.find();
+app.get("/resume/:_id", tokenverify, async (req, res) => {
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        const _id = authdata._id;
+        const resumeData = await Resume.find({ userid: _id });
         res.send(resumeData);
-      } catch (error) {
-        res.send(error);
       }
-})
+    });
+  } catch (error) {
+    res.send(error);
+  }
+});
 
-app.get('/resume/:id', async (req, res) =>{
-    try {
-        const id = req.params.id;
-        const resumeData = await Resume.findById(id);
-        res.send(resumeData);
-      } catch (error) {
-        res.send(error);
+app.delete("/resume/:_id", tokenverify, async (req, res) => {
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        const user = authdata._id;
+        const _id = { userid: user };
+        const deleteData = await Resume.findOneAndDelete(_id);
+        if (!_id) {
+          return res.status(400).send();
+        }
+        res.send(deleteData);
       }
-})
-
-
+    });
+  } catch (error) {
+    res.send(error);
+  }
+});
 
 module.exports = app;

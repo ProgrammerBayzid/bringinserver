@@ -4,6 +4,7 @@ const resumeSchema  =  Schema(
     {
        
         resume:String,
+        userid:String
 
     },
    

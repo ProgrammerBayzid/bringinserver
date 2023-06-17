@@ -1,15 +1,12 @@
 const express = require("express");
 const app = express();
 
-
 const tokenverify = require("../../MiddleWare/tokenverify.js");
 const jwt = require("jsonwebtoken");
 const {
   Expertisearea,
   Category,
   Functionarea,
-  Addjobtype,
-  Addsalarietype,
 } = require("../../Model/industry.js");
 
 // industry add
@@ -23,39 +20,6 @@ app.post("/industryadd", async (req, res) => {
       res.json({ message: "industry add successfull" });
     } else {
       res.json({ message: "industry already added" });
-    }
-  } catch (error) {
-    res.send(error);
-  }
-});
-
-// job type add
-app.post("/jobtypeadd", async (req, res) => {
-  try {
-    var jobtypedata = await Addjobtype.findOne({ jobtype: req.body.jobtype });
-    if (jobtypedata == null) {
-      await Addjobtype({ jobtype: req.body.jobtype }).save();
-      res.json({ message: "jobtype add successfull" });
-    } else {
-      res.json({ message: "jobtype already added" });
-    }
-  } catch (error) {
-    res.send(error);
-  }
-});
-
-// salarie type add
-
-app.post("/salarietypeadd", async (req, res) => {
-  try {
-    var salarietypedata = await Addsalarietype.findOne({
-      salarietype: req.body.salarietype,
-    });
-    if (salarietypedata == null) {
-      await Addsalarietype({ salarietype: req.body.salarietype }).save();
-      res.json({ message: "salarie add successfull" });
-    } else {
-      res.json({ message: "salarie already added" });
     }
   } catch (error) {
     res.send(error);
@@ -101,10 +65,8 @@ app.post("/functionalareaadd", async (req, res) => {
     });
     if (functionaldata == null) {
       await Functionarea({
-        categoryid: req.body.categoryid,
         industryid: req.body.industryid,
-        jobetypeid: req.body.jobetypeid,
-        salarietypeid: req.body.salarietypeid,
+        categoryid: req.body.categoryid,
         functionalname: req.body.functionalname,
       }).save();
       res.json({ message: "Functional Area add successfull" });
@@ -118,29 +80,11 @@ app.post("/functionalareaadd", async (req, res) => {
 
 app.get("/functionalarea", async (req, res) => {
   try {
-    var Functionarea = await Functionarea.find().populate("industryid");
-    res.json(Functionarea);
+    var data = await Functionarea.find().populate(["industryid","categoryid" ]);
+    res.json(data);
   } catch (error) {
     res.send(error);
   }
 });
-
-
-
-app.delete("/functionalarea/:id", async (req, res) => {
-  try {
-    const deleteData = await Functionarea.findByIdAndDelete(req.params.id);
-    if (!req.params.id) {
-      return res.status(400).send();
-    }
-    res.send(deleteData);
-  } catch (error) {
-    res.send(error);
-  }
-});
-
-
-
-
 
 module.exports = app;

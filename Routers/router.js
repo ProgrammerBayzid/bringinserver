@@ -11,7 +11,7 @@ const { Expertisearea } = require("../Model/expertisearea");
 const { AllLocation } = require("../Model/alllocation");
 const { Jobtype } = require("../Model/jobtype");
 const { Salirietype } = require("../Model/salarie");
-const multer = require("multer");
+
 
 
 // function getRandomInt(max) {
@@ -46,7 +46,7 @@ const multer = require("multer");
 //     .then((response) => {
 //       console.log(response.data);
 //     });
-//   const otp = new Otp({ number: number, otp: OTP });
+//   const otp = await Otp({ number: number, otp: OTP });
 //   const salt = await bcrypt.genSalt(10);
 //   otp.otp = await bcrypt.hash(otp.otp, salt);
 //   const result = await otp.save();
@@ -67,7 +67,7 @@ const multer = require("multer");
 //   if (rightOtpFind.number === req.body.number && validUser) {
     
 //     var token;
-//     // const user = new User(_.pick(req.body, ["number"]));
+//     // const user = await User(_.pick(req.body, ["number"]));
 //     const user = await User.findOne({
 //       number: req.body.number,
 //     });
@@ -128,7 +128,7 @@ const multer = require("multer");
 //   try {
 //     const _id = req.params.id;
 //     const updateUser = await User.findByIdAndUpdate(_id, req.body, {
-//       new: true,
+//       await: true,
 //     });
 //     console.log(updateUser);
 //     res.send(updateUser);
@@ -142,9 +142,9 @@ const multer = require("multer");
 
 router.post("/jobindustry", async (req, res) => {
   try {
-    const jobIndustryData = new JobIndustry(req.body);
+    const jobIndustryData = await JobIndustry(req.body);
     const industryData = await jobIndustryData.save()
-    res.status(201).send(industryData);
+    res.status(200).send(industryData);
   } catch (error) {
     res.status(400).send(error);
   }
@@ -169,9 +169,9 @@ router.get("/jobindustry", async (req, res) => {
 
 router.post("/jobcatagory", async (req, res) => {
   try {
-    const expertiseareaData = new Expertisearea(req.body);
+    const expertiseareaData = await Expertisearea(req.body);
     const areaData = await expertiseareaData.save()
-    res.status(201).send(areaData);
+    res.status(200).send(areaData);
   } catch (error) {
     res.status(400).send(error);
   }
@@ -193,9 +193,9 @@ router.get("/jobcatagory", async (req, res) => {
 
 router.post("/alllocation", async (req, res) => {
   try {
-    const alllocationData = new AllLocation(req.body);
+    const alllocationData = await AllLocation(req.body);
     const locationData = await alllocationData.save()
-    res.status(201).send(locationData);
+    res.status(200).send(locationData);
   } catch (error) {
     res.status(400).send(error);
   }
@@ -219,9 +219,9 @@ router.get("/alllocation", async (req, res) => {
 
 router.post("/jobtype", async (req, res) => {
   try {
-    const jobtypeData = new Jobtype(req.body);
+    const jobtypeData = await Jobtype(req.body);
     const jobData = await jobtypeData.save()
-    res.status(201).send(jobData);
+    res.status(200).send(jobData);
   } catch (error) {
     res.status(400).send(error);
   }
@@ -245,9 +245,9 @@ router.get("/jobtype", async (req, res) => {
 
 router.post("/salarietype", async (req, res) => {
   try {
-    const salirietypeData = new Salirietype(req.body);
+    const salirietypeData = await Salirietype(req.body);
     const salirieData = await salirietypeData.save()
-    res.status(201).send(salirieData);
+    res.status(200).send(salirieData);
   } catch (error) {
     res.status(400).send(error);
   }

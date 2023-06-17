@@ -23,7 +23,7 @@ const upload = multer({ storage: storage });
 
 // recruiters get
 
-app.get("/recruiters", tokenverify, async (req, res) => {
+app.get("/recruiters/:_id", tokenverify, async (req, res) => {
 
     try {
         jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
@@ -31,7 +31,7 @@ app.get("/recruiters", tokenverify, async (req, res) => {
                 res.json({ message: "invalid token" })
             } else {
                 const _id = authdata._id;
-                const singalRecruiter = await Recruiters.findById(_id);
+                const singalRecruiter = await Recruiters.findOne({userid:_id});
                 res.send(singalRecruiter);
             }
         })
@@ -44,7 +44,7 @@ app.get("/recruiters", tokenverify, async (req, res) => {
 
 //   // # update user data  
 
-app.patch("/recruiters", tokenverify, upload.single("image"), async (req, res) => {
+app.patch("/recruiters/:_id", tokenverify, upload.single("image"), async (req, res) => {
     try {
         jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
             if (err) {
@@ -56,7 +56,7 @@ app.patch("/recruiters", tokenverify, upload.single("image"), async (req, res) =
                        $set: {image: req.file.path}
                    });
                }
-                const updateRecruiter = await Recruiters.findByIdAndUpdate(_id, {
+                const updateRecruiter = await Recruiters.findByIdAndUpdate({userid:_id}, {
                     $set: {
                         fastname: req.body.fastname,
                         lastname: req.body.lastname,
