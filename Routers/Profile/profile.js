@@ -26,7 +26,7 @@ app.get("/users", tokenverify, async (req, res) => {
         res.json({ message: "invalid token" });
       } else {
         const _id = authdata._id;
-        const singalUser = await User.findById(_id);
+        const singalUser = await User.findById(_id).populate("experiencedlevel");
         res.send(singalUser);
       }
     });
@@ -37,16 +37,15 @@ app.get("/users", tokenverify, async (req, res) => {
 
 //   // # update user data
 
-app.patch("/users", tokenverify, upload.single("image"), async (req, res) => {
+app.post("/users", tokenverify, upload.single("image"), async (req, res) => {
+  
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
       if (err) {
         res.json({ message: "invalid token" });
       } else {
         const _id = authdata._id;
-        var experidata = await Experince.findById({
-          _id: req.body.experiencedlevel,
-        });
+    
         if (req.file) {
           await User.findByIdAndUpdate(_id, {
             $set: { image: req.file.path },
@@ -59,7 +58,7 @@ app.patch("/users", tokenverify, upload.single("image"), async (req, res) => {
               fastname: req.body.fastname,
               lastname: req.body.lastname,
               gender: req.body.gender,
-              experiencedlevel: experidata,
+              experiencedlevel: req.body.experiencedlevel,
               startedworking: req.body.startedworking,
               deatofbirth: req.body.deatofbirth,
               email: req.body.email,
@@ -70,7 +69,7 @@ app.patch("/users", tokenverify, upload.single("image"), async (req, res) => {
           }
         );
 
-        res.send(updateUser);
+        res.status(200).json({message: "update successull"});
       }
     });
   } catch (error) {

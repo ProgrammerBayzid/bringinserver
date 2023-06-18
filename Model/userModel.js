@@ -13,8 +13,8 @@ const userSchema = Schema(
     lastname: String,
     gender: String,
     experiencedlevel:{
-      name: String,
-      _id: String
+      type: "ObjectId",
+      ref: "Experience"
     },
     startedworking: Date,
     deatofbirth: Date,
