@@ -32,6 +32,20 @@ const educationleveldegreeSchema  =  Schema({
 });
 
 
+const seekercompanyaddSchema = Schema({
+    companyname: String,
+  });
+  
+  const imageSchema = Schema({
+    image: String,
+  });
+
+
+  const cvSchema = Schema({
+    cv: String,
+  });
+
+
 var Designation = model("Designation", designationSchema)
 
 var Department = model("Department", departmentSchema)
@@ -42,7 +56,12 @@ var MajorinSubject = model ("MajorinSubject", majorinSubjectSchema)
 
 var Educationleveldegree = model ("Educationleveldegree", educationleveldegreeSchema)
 
+var SeekeraddCompany = model("SeekerCompany", seekercompanyaddSchema);
+
+var Image = model("Image", imageSchema);
+
+var Cv = model("Cv", cvSchema);
 
 module.exports = {
-    Designation,Department,Institutename,MajorinSubject,Educationleveldegree
+    Designation,Department,Institutename,MajorinSubject,Educationleveldegree, SeekeraddCompany, Image, Cv
 };

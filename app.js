@@ -12,6 +12,7 @@ const registeryourcompany = require('./Routers/Registeryourcompany/registeryourc
 const recruiter_profile = require('./Routers/Recruiter/recruitersprofile.js')
 const company = require('./Routers/Recruiter/company_registation.js')
 const verify = require('./Routers/Recruiter/verify.js')
+const cv = require('./Routers/Cv/cv.js')
 
 app.use(express.json());
 app.use(bringinRouter)
@@ -25,6 +26,7 @@ app.use(registeryourcompany)
 app.use(recruiter_profile)
 app.use(company)
 app.use(verify)
+app.use(cv)
 
 
 
