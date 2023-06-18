@@ -1,11 +1,8 @@
 const express = require("express");
 const app = express();
-const Recruiters = require("../../Model/recruiters");
+const Recruiters = require("../../Model/Recruiter/recruiters");
 const tokenverify = require("../../MiddleWare/tokenverify.js")
 const jwt = require('jsonwebtoken');
-
-
-
 
 const multer = require("multer");
 const storage = multer.diskStorage({
@@ -23,20 +20,22 @@ const upload = multer({ storage: storage });
 
 // recruiters get
 
-app.get("/recruiters/:_id", tokenverify, async (req, res) => {
+app.get("/recruiters_profile", tokenverify, async (req, res) => {
 
     try {
         jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+            
+            console.log(authdata)
             if (err) {
                 res.json({ message: "invalid token" })
             } else {
                 const _id = authdata._id;
-                const singalRecruiter = await Recruiters.findOne({userid:_id});
-                res.send(singalRecruiter);
+                const singalRecruiter = await Recruiters.findOne({_id:_id});
+                res.status(200).send(singalRecruiter);
             }
         })
     } catch (error) {
-        res.send(error);
+        res.status(400).send(error);
     }
 });
 
@@ -44,7 +43,8 @@ app.get("/recruiters/:_id", tokenverify, async (req, res) => {
 
 //   // # update user data  
 
-app.patch("/recruiters/:_id", tokenverify, upload.single("image"), async (req, res) => {
+app.post("/recruiters_update",  tokenverify, upload.single("image"), async (req, res) => {
+    
     try {
         jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
             if (err) {
@@ -52,13 +52,14 @@ app.patch("/recruiters/:_id", tokenverify, upload.single("image"), async (req, r
             } else {
                 const _id = authdata._id;
                 if (req.file) {
+                    console.log(req.file.path)
                     await Recruiters.findByIdAndUpdate(_id, {
                        $set: {image: req.file.path}
                    });
                }
-                const updateRecruiter = await Recruiters.findByIdAndUpdate({userid:_id}, {
+                const updateRecruiter = await Recruiters.findByIdAndUpdate({_id:_id}, {
                     $set: {
-                        fastname: req.body.fastname,
+                        firstname: req.body.firstname,
                         lastname: req.body.lastname,
                         companyname:req.body.companyname,
                         designation:req.body.designation,
@@ -77,12 +78,6 @@ app.patch("/recruiters/:_id", tokenverify, upload.single("image"), async (req, r
         res.status(404).send(error);
     }
 });
-
-
-
-
-
-
 
 
 

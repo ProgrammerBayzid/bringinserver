@@ -45,7 +45,7 @@ var Functionarea = model("FunctionalArea", functionalareaSchema)
 
 var Category = model("Category", categorySchema)
 
-var Expertisearea = model("Industry", industrySchema)
+var Expertisearea = model("industries", industrySchema)
 
 
 

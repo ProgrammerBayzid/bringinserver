@@ -9,6 +9,9 @@ const profiledeteles = require('./Routers/Profiledetails/profiledetails')
 const rusume = require('./Routers/Rusume/rusume')
 const adminprofiledetails = require('./Routers/Adminprofiledetails/adminprofiledetails')
 const registeryourcompany = require('./Routers/Registeryourcompany/registeryourcompany')
+const recruiter_profile = require('./Routers/Recruiter/recruitersprofile.js')
+const company = require('./Routers/Recruiter/company_registation.js')
+
 app.use(express.json());
 app.use(bringinRouter)
 app.use(signroute)
@@ -18,6 +21,8 @@ app.use(profiledeteles)
 app.use(rusume)
 app.use(adminprofiledetails)
 app.use(registeryourcompany)
+app.use(recruiter_profile)
+app.use(company)
 
 
 
