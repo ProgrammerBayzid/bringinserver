@@ -14,6 +14,7 @@ const company = require('./Routers/Recruiter/company_registation.js')
 const verify = require('./Routers/Recruiter/verify.js')
 
 app.use(express.json());
+app.use('/uploads', express.static('uploads'))
 app.use(bringinRouter)
 app.use(signroute)
 app.use(profile)
