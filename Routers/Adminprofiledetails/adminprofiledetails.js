@@ -175,7 +175,7 @@ app.get("/seekercompany", async (req, res) => {
 
 // image post api 
 
-app.post("/image", tokenverify, resume.single("image"), async (req, res) => {
+app.post("/image", tokenverify, image.single("image"), async (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
       if (err) {

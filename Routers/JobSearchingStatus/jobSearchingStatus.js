@@ -1,42 +1,31 @@
 const express = require("express");
 const app = express();
-const multer = require("multer");
+
 
 const {
- Cv
-} = require("../../Model/adminprofiledetails");
+    JobSearchingStatus
+} = require("../../Model/jobSearchingStatus");
 
 const tokenverify = require("../../MiddleWare/tokenverify.js");
 const jwt = require("jsonwebtoken");
 
 
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "cvs");
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, file.originalname);
-  },
-});
-const cv = multer({ storage: storage });
-
-// cv post api 
-
-app.post("/cv", tokenverify, cv.single("cv"), async (req, res) => {
+app.post("/jobSearchingStatus", tokenverify, async (req, res) => {
     try {
       jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
         if (err) {
           res.json({ message: "invalid token" });
         } else {
           const _id = authdata._id;
-          const cvdata = await Cv({
-            cv: req.file.path,
+          const data = await JobSearchingStatus({
+            jobhuntingstatus: req.body.jobhuntingstatus,
+            morestatus: req.body.morestatus,
+            lookingforanyjob: req.body.lookingforanyjob,
             userid: _id,
           });
-          const cvfile = await cvdata.save();
-          res.status(200).send(cvfile);
+          const protfolio = await data.save();
+          res.status(200).send(protfolio);
         }
       });
     } catch (error) {
@@ -44,17 +33,14 @@ app.post("/cv", tokenverify, cv.single("cv"), async (req, res) => {
     }
   });
   
-  // cv get api
-  
-  
-  app.get("/cv/:_id", tokenverify, async (req, res) => {
+  app.get("/jobSearchingStatus/:_id", tokenverify, async (req, res) => {
     try {
       jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
         if (err) {
           res.json({ message: "invalid token" });
         } else {
           const _id = authdata._id;
-          const data = await Cv.findOne({ userid: _id });
+          const data = await JobSearchingStatus.find({ userid: _id });
           res.send(data);
         }
       });

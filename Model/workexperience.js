@@ -10,6 +10,14 @@ const workexperienceSchema  =  Schema(
         department:String,
         dutiesandresponsibilities:String,
         careermilestones:String,
+        intern:{
+            type: Boolean,
+            default: false
+        },
+        hideprofessionaldetails:{
+            type: Boolean,
+            default: false
+        },
 
     },
    
