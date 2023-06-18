@@ -26,6 +26,29 @@ app.post("/industryadd", async (req, res) => {
   }
 });
 
+
+// industry list
+
+app.get("/industry", tokenverify, async (req, res)=> {
+  
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+        if (err) {
+            res.json({ message: "invalid token" })
+        } else {
+          console.log(authdata)
+            const _id = authdata._id;
+            var industrydata = await Expertisearea.find()
+            res.status(200).json(industrydata)
+        }
+    })
+} catch (error) {
+    res.status(400).send(error);
+}
+})
+
+
+
 //category add
 
 app.post("/categoryadd", async (req, res) => {

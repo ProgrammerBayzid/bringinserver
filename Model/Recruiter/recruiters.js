@@ -9,10 +9,18 @@ const recruitersSchema = Schema(
           },
         firstname: String,
         lastname: String,
-        companyname: String,
+        companyname: {
+            type: "ObjectId",
+            ref: "Company"
+        },
         designation: String,
         email: String,
-        image: String
+        image: String,
+        company_verify: Boolean,
+        profile_verify: Boolean,
+        company_docupload: Boolean,
+        profile_docupload: Boolean
+
 
     },
 

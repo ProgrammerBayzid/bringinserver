@@ -58,7 +58,7 @@ app.post('/verify', async (req, res) => {
       } else {
         token = user.generateJWT()
       }
-      
+
     } else {
       const recruiter = await Recruiterprofile.findOne({
         number: req.body.number,
@@ -71,14 +71,18 @@ app.post('/verify', async (req, res) => {
           companyname: null,
           designation: null,
           email: null,
-          image: null
+          image: null,
+          company_verify: false,
+          profile_verify: false,
+          company_docupload: false,
+          profile_docupload: false
         });
         token = recruiter2.generateJWT()
         await recruiter2.save();
       } else {
         token = recruiter.generateJWT()
       }
-      
+
     }
     // const user = await User({number:req.body.number, fastname: "Tanvir",lastname: "mahamud", gender: "male"});
     // const token = user.generateJWT();

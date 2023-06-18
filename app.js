@@ -11,6 +11,7 @@ const adminprofiledetails = require('./Routers/Adminprofiledetails/adminprofiled
 const registeryourcompany = require('./Routers/Registeryourcompany/registeryourcompany')
 const recruiter_profile = require('./Routers/Recruiter/recruitersprofile.js')
 const company = require('./Routers/Recruiter/company_registation.js')
+const verify = require('./Routers/Recruiter/verify.js')
 
 app.use(express.json());
 app.use(bringinRouter)
@@ -23,6 +24,7 @@ app.use(adminprofiledetails)
 app.use(registeryourcompany)
 app.use(recruiter_profile)
 app.use(company)
+app.use(verify)
 
 
 

@@ -9,8 +9,16 @@ const companySchema = Schema(
             type: "ObjectId",
             ref: "industries"
         },
-        c_size: String,
-        c_location: String,
+        c_size: {
+            type: "ObjectId",
+            ref: "Company_Size"
+        },
+        c_location: {
+            lat: Number,
+            lon: Number,
+            formet_address: String,
+            city: String
+        },
         c_website: String,
     },
 

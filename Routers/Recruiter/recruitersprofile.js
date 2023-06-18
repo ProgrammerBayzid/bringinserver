@@ -24,13 +24,19 @@ app.get("/recruiters_profile", tokenverify, async (req, res) => {
 
     try {
         jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
-            
-            console.log(authdata)
+
             if (err) {
                 res.json({ message: "invalid token" })
             } else {
+                
                 const _id = authdata._id;
-                const singalRecruiter = await Recruiters.findOne({_id:_id});
+                const singalRecruiter = await Recruiters.findOne({ _id: _id }).populate({
+                    path: 'companyname',
+                    populate: {
+                        path: 'industry',
+                        model: 'industries' 
+                    }
+                });
                 res.status(200).send(singalRecruiter);
             }
         })
@@ -43,8 +49,8 @@ app.get("/recruiters_profile", tokenverify, async (req, res) => {
 
 //   // # update user data  
 
-app.post("/recruiters_update",  tokenverify, upload.single("image"), async (req, res) => {
-    
+app.post("/recruiters_update", tokenverify, upload.single("image"), async (req, res) => {
+
     try {
         jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
             if (err) {
@@ -53,23 +59,22 @@ app.post("/recruiters_update",  tokenverify, upload.single("image"), async (req,
                 const _id = authdata._id;
                 if (req.file) {
                     console.log(req.file.path)
-                    await Recruiters.findByIdAndUpdate(_id, {
-                       $set: {image: req.file.path}
-                   });
-               }
-                const updateRecruiter = await Recruiters.findByIdAndUpdate({_id:_id}, {
+                    await Recruiters.findOneAndUpdate({ _id: _id }, {
+                        $set: { image: req.file.path }
+                    });
+                }
+                const updateRecruiter = await Recruiters.findOneAndUpdate({ _id: _id }, {
                     $set: {
                         firstname: req.body.firstname,
                         lastname: req.body.lastname,
-                        companyname:req.body.companyname,
-                        designation:req.body.designation,
+                        designation: req.body.designation,
                         email: req.body.email,
                     }
                 }, {
                     new: true,
                 });
-                
-                res.send(updateRecruiter);
+
+                res.status(200).send("profile update successfull");
 
             }
         })
