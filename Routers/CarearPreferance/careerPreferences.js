@@ -57,10 +57,12 @@ app.post("/categoryadd", async (req, res) => {
       categoryname: req.body.categoryname,
     });
     if (categorydata == null) {
-      await Category({
+      var catdata = await Category({
         categoryname: req.body.categoryname,
         industryid: req.body.industryid,
-      }).save();
+      });
+      catdata.save();
+      await Expertisearea.findByIdAndUpdate(req.body.industryid, {$push: {category: catdata._id}})
       res.json({ message: "Categor add successfull" });
     } else {
       res.json({ message: "Category already added" });
@@ -109,5 +111,35 @@ app.get("/functionalarea", async (req, res) => {
     res.send(error);
   }
 });
+
+
+
+
+
+// industry list
+
+app.get("/industrylist", tokenverify, async (req, res)=>{
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        const _id = authdata._id;
+        var categorydata = await Category.find();
+        var industry = await Expertisearea.find().populate("category");
+        res.status(200).json({
+          "category": categorydata,
+          "industry": industry
+        })
+
+       
+      }
+    });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+
+
+})
 
 module.exports = app;
