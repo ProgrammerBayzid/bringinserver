@@ -3,6 +3,10 @@ const { Schema, model, } = require("mongoose");
 const industrySchema  =  Schema(
     {
         industryname:String, 
+        category: [{
+            type: "ObjectId",
+            ref: "Category"
+        }]
         
     },
    
@@ -13,7 +17,7 @@ const categorySchema  =  Schema(
     {
         industryid: {
             type: "ObjectId",
-            ref: "Industry"
+            ref: "industries"
         },
         categoryname: String,
         
@@ -26,7 +30,7 @@ const functionalareaSchema  =  Schema(
     {
         industryid: {
             type: "ObjectId",
-            ref: "Industry"
+            ref: "industries"
         },
         
         categoryid:{
