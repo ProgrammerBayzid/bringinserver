@@ -20,6 +20,10 @@ const categorySchema  =  Schema(
             ref: "industries"
         },
         categoryname: String,
+        functionarea: [{
+            type: "ObjectId",
+            ref: "FunctionalArea"
+        }]
         
     },
    

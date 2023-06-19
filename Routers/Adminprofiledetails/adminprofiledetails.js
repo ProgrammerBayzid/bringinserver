@@ -124,28 +124,28 @@ app.post("/majorinSubject", async (req, res) => {
     }
   });
   
- // # post Educationleveldegree data 
+//  // # post Educationleveldegree data 
  
-app.post("/educationleveldegree", async (req, res) => {
-    try {
-      const educationleveldegreeData = await Educationleveldegree(req.body);
-      const data = await educationleveldegreeData.save()
-      res.status(200).send(data);
-    } catch (error) {
-      res.status(400).send(error);
-    }
-  });
+// app.post("/educationleveldegree", async (req, res) => {
+//     try {
+//       const educationleveldegreeData = await Educationleveldegree(req.body);
+//       const data = await educationleveldegreeData.save()
+//       res.status(200).send(data);
+//     } catch (error) {
+//       res.status(400).send(error);
+//     }
+//   });
   
-  // # get Educationleveldegree data 
+//   // # get Educationleveldegree data 
   
-  app.get("/educationleveldegree", async (req, res) => {
-    try {
-      const educationleveldegreeData = await Educationleveldegree.find();
-      res.send(educationleveldegreeData);
-    } catch (error) {
-      res.send(error);
-    }
-  });
+//   app.get("/educationleveldegree", async (req, res) => {
+//     try {
+//       const educationleveldegreeData = await Educationleveldegree.find();
+//       res.send(educationleveldegreeData);
+//     } catch (error) {
+//       res.send(error);
+//     }
+//   });
 
 
   

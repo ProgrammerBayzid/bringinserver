@@ -19,9 +19,8 @@ const recruitersSchema = Schema(
         company_verify: Boolean,
         profile_verify: Boolean,
         company_docupload: Boolean,
-        profile_docupload: Boolean
-
-
+        profile_docupload: Boolean,
+        premium: Boolean
     },
 
 );

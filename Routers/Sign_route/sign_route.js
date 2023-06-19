@@ -75,7 +75,8 @@ app.post('/verify', async (req, res) => {
           company_verify: false,
           profile_verify: false,
           company_docupload: false,
-          profile_docupload: false
+          profile_docupload: false,
+          premium: false
         });
         token = recruiter2.generateJWT()
         await recruiter2.save();

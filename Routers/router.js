@@ -140,128 +140,85 @@ const { Salirietype } = require("../Model/salarie");
 
 // # post job JobIndustry
 
-router.post("/jobindustry", async (req, res) => {
-  try {
-    const jobIndustryData = await JobIndustry(req.body);
-    const industryData = await jobIndustryData.save()
-    res.status(200).send(industryData);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
+// router.post("/jobindustry", async (req, res) => {
+//   try {
+//     const jobIndustryData = await JobIndustry(req.body);
+//     const industryData = await jobIndustryData.save()
+//     res.status(200).send(industryData);
+//   } catch (error) {
+//     res.status(400).send(error);
+//   }
+// });
 
-// # get job JobIndustry
-
-
-router.get("/jobindustry", async (req, res) => {
-  try {
-    const industryData = await JobIndustry.find();
-    res.send(industryData);
-  } catch (error) {
-    res.send(error);
-  }
-});
+// // # get job JobIndustry
 
 
-
-
-// # post job JobCatagory
-
-router.post("/jobcatagory", async (req, res) => {
-  try {
-    const expertiseareaData = await Expertisearea(req.body);
-    const areaData = await expertiseareaData.save()
-    res.status(200).send(areaData);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
-
-// # get job cetagory
-
-router.get("/jobcatagory", async (req, res) => {
-  try {
-    const expertiseareaData = await Expertisearea.find();
-    res.send(expertiseareaData);
-  } catch (error) {
-    res.send(error);
-  }
-});
-
-
-// # post location data 
-
-router.post("/alllocation", async (req, res) => {
-  try {
-    const alllocationData = await AllLocation(req.body);
-    const locationData = await alllocationData.save()
-    res.status(200).send(locationData);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
-
-// # get location data 
-
-router.get("/alllocation", async (req, res) => {
-  try {
-    const locationData = await AllLocation.find();
-    res.send(locationData);
-  } catch (error) {
-    res.send(error);
-  }
-});
+// router.get("/jobindustry", async (req, res) => {
+//   try {
+//     const industryData = await JobIndustry.find();
+//     res.send(industryData);
+//   } catch (error) {
+//     res.send(error);
+//   }
+// });
 
 
 
 
-// # post jobtype data 
+// // # post job JobCatagory
 
-router.post("/jobtype", async (req, res) => {
-  try {
-    const jobtypeData = await Jobtype(req.body);
-    const jobData = await jobtypeData.save()
-    res.status(200).send(jobData);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
+// router.post("/jobcatagory", async (req, res) => {
+//   try {
+//     const expertiseareaData = await Expertisearea(req.body);
+//     const areaData = await expertiseareaData.save()
+//     res.status(200).send(areaData);
+//   } catch (error) {
+//     res.status(400).send(error);
+//   }
+// });
 
+// // # get job cetagory
 
-// # get jobtype data 
-
-router.get("/jobtype", async (req, res) => {
-  try {
-    const jobtypeData = await Jobtype.find();
-    res.send(jobtypeData);
-  } catch (error) {
-    res.send(error);
-  }
-});
-
+// router.get("/jobcatagory", async (req, res) => {
+//   try {
+//     const expertiseareaData = await Expertisearea.find();
+//     res.send(expertiseareaData);
+//   } catch (error) {
+//     res.send(error);
+//   }
+// });
 
 
-// # post salarietype
+// // # post location data 
 
-router.post("/salarietype", async (req, res) => {
-  try {
-    const salirietypeData = await Salirietype(req.body);
-    const salirieData = await salirietypeData.save()
-    res.status(200).send(salirieData);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
+// router.post("/alllocation", async (req, res) => {
+//   try {
+//     const alllocationData = await AllLocation(req.body);
+//     const locationData = await alllocationData.save()
+//     res.status(200).send(locationData);
+//   } catch (error) {
+//     res.status(400).send(error);
+//   }
+// });
 
-// # gett salarietype
-router.get("/salarietype", async (req, res) => {
-  try {
-    const salirieData = await Salirietype.find();
-    res.send(salirieData);
-  } catch (error) {
-    res.send(error);
-  }
-});
+// // # get location data 
+
+// router.get("/alllocation", async (req, res) => {
+//   try {
+//     const locationData = await AllLocation.find();
+//     res.send(locationData);
+//   } catch (error) {
+//     res.send(error);
+//   }
+// });
+
+
+
+
+
+
+
+
 
 
 
