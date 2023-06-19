@@ -7,7 +7,7 @@ const jobSearchingStatusSchema  =  Schema(
         lookingforanyjob:{
             type: Boolean,
             default: false
-        },,
+        },
     },
    
 );
