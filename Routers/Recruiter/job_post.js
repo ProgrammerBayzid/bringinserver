@@ -232,6 +232,30 @@ app.delete('/job_post_update', tokenverify, async (req, res) => {
 })
 
 
+app.get('/single_jobdetails',tokenverify, async (req, res)=> {
+    try {
+        jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+            if (err) {
+                res.json({ message: "invalid token" })
+            } else {
+                const _id = authdata._id;
+                // var carear = await Career_preferences.find({userid: _id}).populate(["functionalarea"]).select("functionalarea")
+                var company = await JobPost.findOne({_id: req.query.jobid}).populate(["userid",
+                "expertice_area",
+                "experience",
+                "education",
+                "salary",
+                {path: "company",populate: [{path: "c_size"},{path: "industry", select: "-category"}]},
+                "skill",
+                "jobtype"])
+                res.status(200).send(company);
+            }
+        })
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
+
 module.exports = app;
 
 

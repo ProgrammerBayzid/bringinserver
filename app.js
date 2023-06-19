@@ -14,6 +14,7 @@ const verify = require('./Routers/Recruiter/verify.js')
 const cv = require('./Routers/Cv/cv.js')
 const jobpost = require('./Routers/Recruiter/job_post')
 const adminapi = require('./Routers/Admin_Api/admin_api')
+const seekerjob =  require('./Routers/Seeker/joblist.js')
 
 app.use(express.json());
 app.use('/uploads', express.static('uploads'))
@@ -30,6 +31,7 @@ app.use(verify)
 app.use(cv)
 app.use(jobpost)
 app.use(adminapi)
+app.use(seekerjob)
 
 
 
