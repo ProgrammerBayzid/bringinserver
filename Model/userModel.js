@@ -20,8 +20,6 @@ const userSchema = Schema(
     deatofbirth: Date,
     email: String,
     image: String
-  
-   
   },
   { timestamps: true }
 );

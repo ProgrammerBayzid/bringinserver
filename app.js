@@ -15,6 +15,7 @@ const verify = require('./Routers/Recruiter/verify.js')
 const cv = require('./Routers/Cv/cv.js')
 
 app.use(express.json());
+app.use('/uploads', express.static('uploads'))
 app.use(bringinRouter)
 app.use(signroute)
 app.use(profile)

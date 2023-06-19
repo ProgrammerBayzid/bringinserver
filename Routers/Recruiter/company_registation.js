@@ -33,6 +33,24 @@ app.post("/companySize_add", async (req, res) => {
 
 
 
+app.get("/companySize", tokenverify, (req, res)=> {
+    try {
+        jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+            if (err) {
+                res.json({ message: "invalid token" })
+            } else {
+                const _id = authdata._id;
+               var companysize = await Companysize.find()
+               res.status(200).send(companysize);
+            }
+        })
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
+
+
+
 app.post('/company', tokenverify, (req, res) => {
     try {
         jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
