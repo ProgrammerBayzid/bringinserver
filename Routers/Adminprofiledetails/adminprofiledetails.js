@@ -1,12 +1,30 @@
 const express = require("express");
 const app = express();
+const multer = require("multer");
 
 const {
-    Designation,Department,Institutename,MajorinSubject,Educationleveldegree
+    Designation,Department,Institutename,MajorinSubject,Educationleveldegree,SeekeraddCompany, Image,Cv
 } = require("../../Model/adminprofiledetails");
 
 const tokenverify = require("../../MiddleWare/tokenverify.js");
 const jwt = require("jsonwebtoken");
+
+
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "images");
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, file.originalname);
+  },
+});
+const image = multer({ storage: storage });
+
+
+
+
 
 
  // # post designation data 
@@ -128,6 +146,73 @@ app.post("/educationleveldegree", async (req, res) => {
       res.send(error);
     }
   });
+
+
+  
+ // # post company data 
+ 
+ app.post("/seekercompany", async (req, res) => {
+  try {
+    const companyData = await SeekeraddCompany(req.body);
+    const data = await companyData.save()
+    res.status(200).send(data);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+// # get company data 
+
+app.get("/seekercompany", async (req, res) => {
+  try {
+    const data = await SeekeraddCompany.find();
+    res.send(data);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+
+// image post api 
+
+app.post("/image", tokenverify, image.single("image"), async (req, res) => {
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        const _id = authdata._id;
+        const imagedata = await Image({
+          image: req.file.path,
+          userid: _id,
+        });
+        const imagefile = await imagedata.save();
+        res.status(200).send(imagefile);
+      }
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+// image get api
+
+
+app.get("/image/:_id", tokenverify, async (req, res) => {
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        const _id = authdata._id;
+        const data = await Image.findOne({ userid: _id });
+        res.send(data);
+      }
+    });
+  } catch (error) {
+    res.send(error);
+  }
+});
 
 
 
