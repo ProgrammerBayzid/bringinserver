@@ -131,8 +131,6 @@ app.get("/industrylist", tokenverify, async (req, res)=>{
           "category": categorydata,
           "industry": industry
         })
-
-       
       }
     });
   } catch (error) {
