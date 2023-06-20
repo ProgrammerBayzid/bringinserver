@@ -216,94 +216,94 @@ app.patch("/workexperience/:_id", tokenverify, async (req, res) => {
 
 // skill api
 
-app.post("/skill", tokenverify, async (req, res) => {
-  try {
-    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
-      if (err) {
-        res.json({ message: "invalid token" });
-      } else {
-        const _id = authdata._id;
-        const skilldata = await Skill({
-          allskill: req.body.allskill,
-          userid: _id,
-        });
-        const skill = await skilldata.save();
+// app.post("/skill", tokenverify, async (req, res) => {
+//   try {
+//     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+//       if (err) {
+//         res.json({ message: "invalid token" });
+//       } else {
+//         const _id = authdata._id;
+//         const skilldata = await Skill({
+//           skillname: req.body.skillname,
+//           userid: _id,
+//         });
+//         const skill = await skilldata.save();
 
-        const skillid = Skill.findById(_id);
-        // console.log(skillid);
-        const dataid = skillid.schema.paths._id;
-        // const id = await Profiledata(dataid);
-        // const allskilldata = await id.save();
-        console.log(dataid);
-        res.status(200).send(skill);
-      }
-    });
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
+//         const skillid = Skill.findById(_id);
+//         // console.log(skillid);
+//         const dataid = skillid.schema.paths._id;
+//         // const id = await Profiledata(dataid);
+//         // const allskilldata = await id.save();
+//         console.log(dataid);
+//         res.status(200).send(skill);
+//       }
+//     });
+//   } catch (error) {
+//     res.status(400).send(error);
+//   }
+// });
 
-app.get("/skill/:_id", tokenverify, async (req, res) => {
-  try {
-    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
-      if (err) {
-        res.json({ message: "invalid token" });
-      } else {
-        const _id = authdata._id;
-        const singleskilldata = await Skill.find({ userid: _id });
-        res.send(singleskilldata);
-      }
-    });
-  } catch (error) {
-    res.send(error);
-  }
-});
+// app.get("/skill/:_id", tokenverify, async (req, res) => {
+//   try {
+//     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+//       if (err) {
+//         res.json({ message: "invalid token" });
+//       } else {
+//         const _id = authdata._id;
+//         const singleskilldata = await Skill.find({ userid: _id });
+//         res.send(singleskilldata);
+//       }
+//     });
+//   } catch (error) {
+//     res.send(error);
+//   }
+// });
 
-app.delete("/skill/:_id", tokenverify, async (req, res) => {
-  try {
-    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
-      if (err) {
-        res.json({ message: "invalid token" });
-      } else {
-        const user = authdata._id;
-        const _id = { userid: user };
-        const deleteData = await Skill.findOneAndDelete(_id);
-        if (!_id) {
-          return res.status(400).send();
-        }
-        res.send(deleteData);
-      }
-    });
-  } catch (error) {
-    res.send(error);
-  }
-});
-app.patch("/skill/:_id", tokenverify, async (req, res) => {
-  try {
-    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
-      if (err) {
-        res.json({ message: "invalid token" });
-      } else {
-        const _id = authdata._id;
-        const updateskill = await Skill.findOneAndUpdate(
-          { userid: _id },
-          {
-            $set: {
-              skillname: req.body.skillname,
-            },
-          },
-          {
-            new: true,
-          }
-        );
+// app.delete("/skill/:_id", tokenverify, async (req, res) => {
+//   try {
+//     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+//       if (err) {
+//         res.json({ message: "invalid token" });
+//       } else {
+//         const user = authdata._id;
+//         const _id = { userid: user };
+//         const deleteData = await Skill.findOneAndDelete(_id);
+//         if (!_id) {
+//           return res.status(400).send();
+//         }
+//         res.send(deleteData);
+//       }
+//     });
+//   } catch (error) {
+//     res.send(error);
+//   }
+// });
+// app.patch("/skill/:_id", tokenverify, async (req, res) => {
+//   try {
+//     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+//       if (err) {
+//         res.json({ message: "invalid token" });
+//       } else {
+//         const _id = authdata._id;
+//         const updateskill = await Skill.findOneAndUpdate(
+//           { userid: _id },
+//           {
+//             $set: {
+//               skillname: req.body.skillname,
+//             },
+//           },
+//           {
+//             new: true,
+//           }
+//         );
 
-        res.send(updateskill);
-      }
-    });
-  } catch (error) {
-    res.status(404).send(error);
-  }
-});
+//         res.send(updateskill);
+//       }
+//     });
+//   } catch (error) {
+//     res.status(404).send(error);
+//   }
+// });
 
 // protfolio api
 

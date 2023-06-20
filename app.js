@@ -8,11 +8,13 @@ const careerpreferance = require('./Routers/CarearPreferance/careerPreferences.j
 const profiledeteles = require('./Routers/Profiledetails/profiledetails')
 const rusume = require('./Routers/Rusume/rusume')
 const adminprofiledetails = require('./Routers/Adminprofiledetails/adminprofiledetails')
-const registeryourcompany = require('./Routers/Registeryourcompany/registeryourcompany')
 const recruiter_profile = require('./Routers/Recruiter/recruitersprofile.js')
 const company = require('./Routers/Recruiter/company_registation.js')
 const verify = require('./Routers/Recruiter/verify.js')
 const cv = require('./Routers/Cv/cv.js')
+const jobpost = require('./Routers/Recruiter/job_post')
+const adminapi = require('./Routers/Admin_Api/admin_api')
+const seekerjob =  require('./Routers/Seeker/joblist.js')
 
 app.use(express.json());
 app.use('/uploads', express.static('uploads'))
@@ -23,11 +25,13 @@ app.use(careerpreferance)
 app.use(profiledeteles)
 app.use(rusume)
 app.use(adminprofiledetails)
-app.use(registeryourcompany)
 app.use(recruiter_profile)
 app.use(company)
 app.use(verify)
 app.use(cv)
+app.use(jobpost)
+app.use(adminapi)
+app.use(seekerjob)
 
 
 

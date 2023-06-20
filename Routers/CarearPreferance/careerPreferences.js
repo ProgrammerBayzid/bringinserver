@@ -1,6 +1,5 @@
 const express = require("express");
 const app = express();
-
 const tokenverify = require("../../MiddleWare/tokenverify.js");
 const jwt = require("jsonwebtoken");
 const {
@@ -8,6 +7,10 @@ const {
   Category,
   Functionarea,
 } = require("../../Model/industry.js");
+const { City, Division } = require("../../Model/alllocation.js")
+const { Jobtype } = require("../../Model/jobtype");
+const { Salirietype } = require("../../Model/salarie");
+const Career_preferences = require("../../Model/career_preferences.js")
 
 // industry add
 app.post("/industryadd", async (req, res) => {
@@ -29,22 +32,22 @@ app.post("/industryadd", async (req, res) => {
 
 // industry list
 
-app.get("/industry", tokenverify, async (req, res)=> {
-  
+app.get("/industry", tokenverify, async (req, res) => {
+
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
-        if (err) {
-            res.json({ message: "invalid token" })
-        } else {
-          console.log(authdata)
-            const _id = authdata._id;
-            var industrydata = await Expertisearea.find()
-            res.status(200).json(industrydata)
-        }
+      if (err) {
+        res.json({ message: "invalid token" })
+      } else {
+        console.log(authdata)
+        const _id = authdata._id;
+        var industrydata = await Expertisearea.find()
+        res.status(200).json(industrydata)
+      }
     })
-} catch (error) {
+  } catch (error) {
     res.status(400).send(error);
-}
+  }
 })
 
 
@@ -62,7 +65,7 @@ app.post("/categoryadd", async (req, res) => {
         industryid: req.body.industryid,
       });
       catdata.save();
-      await Expertisearea.findByIdAndUpdate(req.body.industryid, {$push: {category: catdata._id}})
+      await Expertisearea.findByIdAndUpdate(req.body.industryid, { $push: { category: catdata._id } })
       res.json({ message: "Categor add successfull" });
     } else {
       res.json({ message: "Category already added" });
@@ -74,7 +77,7 @@ app.post("/categoryadd", async (req, res) => {
 
 app.get("/categorylist", async (req, res) => {
   try {
-    var categorydata = await Category.find().populate("industryid");
+    var categorydata = await Category.find().select("-industryid");
     res.json(categorydata);
   } catch (error) {
     res.send(error);
@@ -89,11 +92,13 @@ app.post("/functionalareaadd", async (req, res) => {
       functionalname: req.body.functionalname,
     });
     if (functionaldata == null) {
-      await Functionarea({
+      var functionarea = await Functionarea({
         industryid: req.body.industryid,
         categoryid: req.body.categoryid,
         functionalname: req.body.functionalname,
-      }).save();
+      });
+      functionarea.save();
+      await Category.findByIdAndUpdate(req.body.categoryid, { $push: { functionarea: functionarea._id } })
       res.json({ message: "Functional Area add successfull" });
     } else {
       res.json({ message: "Functional Area already added" });
@@ -105,8 +110,101 @@ app.post("/functionalareaadd", async (req, res) => {
 
 app.get("/functionalarea", async (req, res) => {
   try {
-    var data = await Functionarea.find().populate(["industryid","categoryid" ]);
+    var data = await Functionarea.find().populate(["industryid", "categoryid"]);
     res.json(data);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+
+
+// location add
+
+app.post("/location", async (req, res) => {
+
+  try {
+    var citydata = await City.findOne({ name: req.body.city });
+    var divisiondata = await Division.findOne({ divisionname: req.body.division });
+    var city;
+    var division;
+    if (citydata == null) {
+      city = await City({ name: req.body.city });
+      city.save()
+    }
+    if (divisiondata == null) {
+      division = await Division({ divisionname: req.body.division, cityid: citydata == null ? city._id : citydata._id });
+      division.save();
+      await City.findOneAndUpdate({ name: req.body.city }, { $push: { divisionid: division._id } })
+      res.status(200).json({ message: "Add Successfull" })
+
+    } else {
+      res.status(200).json({ message: "already added" })
+    }
+
+
+  } catch (error) {
+    res.status(400).send(error)
+  }
+})
+
+
+
+// job type
+
+
+// # post jobtype data 
+
+app.post("/jobtype", async (req, res) => {
+  try {
+    var jobtype = await Jobtype.findOne(req.body)
+    if (jobtype == null) {
+      const jobtypeData = await Jobtype(req.body);
+      const jobData = await jobtypeData.save()
+      res.status(200).send(jobData);
+    } else {
+      res.status(200).json({ message: "allready added" });
+    }
+
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+
+
+
+// # post salarietype
+
+app.post("/salarietype", async (req, res) => {
+  try {
+
+    var saliry = await Salirietype.findOne(req.body)
+    if (saliry == null) {
+      const salirietypeData = await Salirietype(req.body);
+      await salirietypeData.save()
+      res.status(200).json({ message: "add successfull" });
+    } else {
+      res.status(200).json({ message: "allready added" });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+// # gett salarietype
+app.get("/salarietype", tokenverify, async (req, res) => {
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        const _id = authdata._id;
+        const salirieData = await Salirietype.find();
+        res.send(salirieData);
+      }
+    });
+    
   } catch (error) {
     res.send(error);
   }
@@ -116,29 +214,162 @@ app.get("/functionalarea", async (req, res) => {
 
 
 
-// industry list
 
-app.get("/industrylist", tokenverify, async (req, res)=>{
+
+
+
+
+
+
+
+
+
+
+// jon industry list
+
+app.get("/job_industrylist", tokenverify, async (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
       if (err) {
         res.json({ message: "invalid token" });
       } else {
         const _id = authdata._id;
-        var categorydata = await Category.find();
-        var industry = await Expertisearea.find().populate("category");
+        var categorydata = await Category.find().select("-functionarea");
+        var industry = await Expertisearea.find().populate([{ path: "category", select: '-functionarea' }])
+        // .populate(["category"]);
         res.status(200).json({
           "category": categorydata,
           "industry": industry
         })
-
-       
       }
     });
   } catch (error) {
     res.status(404).send(error);
   }
 
+})
+
+
+
+app.get("/job_functionalarea", tokenverify, async (req, res) => {
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        const _id = authdata._id;
+        var industry = await Expertisearea.find().populate([{ path: "category", populate: { path: "functionarea" } }])
+        res.status(200).send(industry)
+      }
+    });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+})
+
+
+
+app.get("/location", tokenverify, async (req, res) => {
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" })
+      } else {
+
+        var citydata = await City.find().populate({ path: "divisionid", select: "-cityid" })
+        res.status(200).send(citydata)
+      }
+    })
+  } catch (error) {
+    res.status(400).send(error);
+  }
+})
+
+
+// # get jobtype data 
+
+app.get("/jobtype", tokenverify, async (req, res) => {
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" })
+      } else {
+
+        const jobtypeData = await Jobtype.find();
+        res.send(jobtypeData);
+      }
+    })
+
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+
+
+// carear preferance add
+
+app.post("/career_preferences", tokenverify, async (req, res) => {
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" })
+      } else {
+        var id = authdata._id;
+        var data = await Career_preferences.findOneAndUpdate({ userid: id, functionalarea: req.body.functionalarea }, {
+          $set: {
+            category: req.body.category,
+            functionalarea: req.body.functionalarea,
+            division: req.body.division,
+            jobtype: req.body.jobtype,
+            salaray: req.body.salaray,
+          }
+        });
+        if (data == null) {
+          await Career_preferences({
+            userid: id,
+            category: req.body.category,
+            functionalarea: req.body.functionalarea,
+            division: req.body.division,
+            jobtype: req.body.jobtype,
+            salaray: req.body.salaray
+          }).save()
+          res.status(200).json({ message: "add successfull" })
+        } else {
+          res.status(200).json({ message: "Update successfull" })
+        }
+
+
+      }
+    })
+
+  } catch (error) {
+    res.send(error);
+  }
+
+})
+
+
+app.get("/career_preferences", tokenverify, async (req, res) => {
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" })
+      } else {
+        var id = authdata._id;
+        var data = await Career_preferences.find({ userid: id }).populate([{path: "category",select: "-functionarea"},
+        "functionalarea",
+        {path: "division",populate: {path: "cityid", select: "-divisionid"}},
+        "jobtype",
+        "salaray"]);
+        res.status(200).send(data)
+
+      }
+    })
+
+  } catch (error) {
+    res.send(error);
+  }
 
 })
 

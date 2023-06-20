@@ -1,10 +1,31 @@
 const { Schema, model, } = require("mongoose");
 
-const alllocationSchema  =  Schema(
+const citySchema  =  Schema(
     {
         name: String,
+        divisionid: [{
+            type: "ObjectId",
+            ref: "Division"
+        }]
     },
    
 );
 
-module.exports.AllLocation = model("AllLocation", alllocationSchema);
+const divisionSchema  =  Schema(
+    {
+        divisionname: String,
+        cityid: {
+            type: "ObjectId",
+            ref: "City"
+        }
+    },
+   
+);
+
+var City  = model("City", citySchema)
+var Division  = model("Division", divisionSchema)
+
+module.exports = {
+    City,
+    Division
+};

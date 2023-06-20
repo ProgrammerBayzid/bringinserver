@@ -157,13 +157,4 @@ app.post("/company_search",tokenverify, (req , res)=> {
 
 
 
-
-
-
-
-
-
-
-
-
 module.exports = app;

@@ -10,4 +10,4 @@ const salirietypeSchema  =  Schema(
    
 );
 
-module.exports.Salirietype = model("Salirietype", salirietypeSchema);
+module.exports.Salirietype = model("Salary", salirietypeSchema);
