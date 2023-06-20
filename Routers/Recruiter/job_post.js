@@ -19,21 +19,7 @@ const upload = multer({ storage: storage });
 
 
 
-app.get('/education_lavel', tokenverify, async (req, res) => {
-    try {
-        jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
-            if (err) {
-                res.json({ message: "invalid token" })
-            } else {
-                var data = await EducationLavel.find();
-                res.status(200).send(data)
-            }
-        })
 
-    } catch (error) {
-        res.send(error);
-    }
-})
 
 
 app.post("/skill", tokenverify, async (req, res) => {
@@ -43,7 +29,7 @@ app.post("/skill", tokenverify, async (req, res) => {
                 res.json({ message: "invalid token" })
             } else {
                 var id = authdata._id;
-                var skilldata = await Skill.findOne({ skill: req.body.skill, userid: id })
+                var skilldata = await Skill.findOne({ skill: req.body.skill})
 
                 if (skilldata == null) {
                     await Skill({ skill: req.body.skill, userid: id }).save();
@@ -69,7 +55,12 @@ app.get("/skill", tokenverify, async (req, res) => {
             } else {
                 var id = authdata._id;
                 var skilldata = await Skill.find({ userid: id })
-                res.status(200).send(skilldata)
+                var data = await Skill.find().select("-userid");
+                
+                    res.status(200).json({userskill: skilldata, defaultskill: data})
+                    
+                
+                
             }
         })
 
@@ -82,17 +73,17 @@ app.get("/skill", tokenverify, async (req, res) => {
 
 
 
-app.get("/job_title", tokenverify, async (req, res)=> {
+app.get("/job_title", tokenverify, async (req, res) => {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
         if (err) {
             res.json({ message: "invalid token" })
         } else {
             var id = authdata._id;
-            var data = await JobPost.find({job_title: {"$regex": req.query.search,"$options": "i"}}).select("job_title");
+            var data = await JobPost.find({ job_title: { "$regex": req.query.search, "$options": "i" } }).select("job_title");
             res.status(200).send(data)
         }
     })
-    
+
 })
 
 
@@ -122,9 +113,9 @@ app.post('/job_post', tokenverify, async (req, res) => {
                         job_status: "Open",
                         postdate: new Date()
                     }).save()
-                    res.status(200).json({message: "Job Post Successfull"})
-                }else{
-                    res.status(200).json({message: "Job Post Allready Submit"})
+                    res.status(200).json({ message: "Job Post Successfull" })
+                } else {
+                    res.status(200).json({ message: "Job Post Allready Submit" })
                 }
             }
         })
@@ -142,30 +133,30 @@ app.get('/job_post', tokenverify, async (req, res) => {
                 res.json({ message: "invalid token" })
             } else {
                 var id = authdata._id;
-                
-                if(req.query.type == 0){
-                    var jobpost = await JobPost.find({ userid: id}).populate(["userid",
-                    "expertice_area",
-                    "experience",
-                    "education",
-                    "salary",
-                    {path: "company",populate: [{path: "c_size"},{path: "industry", select: "-category"}]},
-                    "skill",
-                    "jobtype"])
-                res.status(200).send(jobpost)
-                }else{
-                    var jobpost = await JobPost.find({ userid: id, job_status_type: req.query.type}).populate(["userid",
-                    "expertice_area",
-                    "experience",
-                    "education",
-                    "salary",
-                    {path: "company",populate: [{path: "c_size"},{path: "industry", select: "-category"}]},
-                    "skill",
-                    "jobtype"])
-                res.status(200).send(jobpost)
+
+                if (req.query.type == 0) {
+                    var jobpost = await JobPost.find({ userid: id }).populate(["userid",
+                        "expertice_area",
+                        "experience",
+                        "education",
+                        "salary",
+                        { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
+                        "skill",
+                        "jobtype"])
+                    res.status(200).send(jobpost)
+                } else {
+                    var jobpost = await JobPost.find({ userid: id, job_status_type: req.query.type }).populate(["userid",
+                        "expertice_area",
+                        "experience",
+                        "education",
+                        "salary",
+                        { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
+                        "skill",
+                        "jobtype"])
+                    res.status(200).send(jobpost)
                 }
 
-                
+
             }
         })
 
@@ -181,27 +172,29 @@ app.post('/job_post_update', tokenverify, async (req, res) => {
             if (err) {
                 res.json({ message: "invalid token" })
             } else {
-                
+
                 var id = authdata._id;
                 if (req.query.jobid) {
-                    var jobpost = await JobPost.findOneAndUpdate({ _id: req.query.jobid},{$set: {
-                        userid: id,
-                        job_title: req.body.job_title,
-                        expertice_area: req.body.expertice_area,
-                        job_description: req.body.job_description,
-                        experience: req.body.experience,
-                        education: req.body.education,
-                        salary: req.body.salary,
-                        company: req.body.company,
-                        skill: req.body.skill,
-                        jobtype: req.body.jobtype,
-                        remote: req.body.remote,
-                        job_status_type: req.body.job_status_type ?? 1,
-                        job_status: req.body.job_status_type == 2 ? "Close": "Open",
-                        postdate: new Date()
-                    }})
+                    var jobpost = await JobPost.findOneAndUpdate({ _id: req.query.jobid }, {
+                        $set: {
+                            userid: id,
+                            job_title: req.body.job_title,
+                            expertice_area: req.body.expertice_area,
+                            job_description: req.body.job_description,
+                            experience: req.body.experience,
+                            education: req.body.education,
+                            salary: req.body.salary,
+                            company: req.body.company,
+                            skill: req.body.skill,
+                            jobtype: req.body.jobtype,
+                            remote: req.body.remote,
+                            job_status_type: req.body.job_status_type ?? 1,
+                            job_status: req.body.job_status_type == 2 ? "Close" : "Open",
+                            postdate: new Date()
+                        }
+                    })
 
-                    res.status(200).json({message: "Update Successfull"})
+                    res.status(200).json({ message: "Update Successfull" })
                 }
             }
         })
@@ -217,11 +210,11 @@ app.delete('/job_post_update', tokenverify, async (req, res) => {
             if (err) {
                 res.json({ message: "invalid token" })
             } else {
-                
+
                 var id = authdata._id;
                 if (req.query.jobid) {
-                     await JobPost.findOneAndDelete({ _id: req.query.jobid, userid: id})
-                    res.status(200).json({message: "Delete Successfull"})
+                    await JobPost.findOneAndDelete({ _id: req.query.jobid, userid: id })
+                    res.status(200).json({ message: "Delete Successfull" })
                 }
             }
         })
@@ -232,7 +225,7 @@ app.delete('/job_post_update', tokenverify, async (req, res) => {
 })
 
 
-app.get('/single_jobdetails',tokenverify, async (req, res)=> {
+app.get('/single_jobdetails', tokenverify, async (req, res) => {
     try {
         jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
             if (err) {
@@ -240,14 +233,14 @@ app.get('/single_jobdetails',tokenverify, async (req, res)=> {
             } else {
                 const _id = authdata._id;
                 // var carear = await Career_preferences.find({userid: _id}).populate(["functionalarea"]).select("functionalarea")
-                var company = await JobPost.findOne({_id: req.query.jobid}).populate(["userid",
-                "expertice_area",
-                "experience",
-                "education",
-                "salary",
-                {path: "company",populate: [{path: "c_size"},{path: "industry", select: "-category"}]},
-                "skill",
-                "jobtype"])
+                var company = await JobPost.findOne({ _id: req.query.jobid }).populate(["userid",
+                    "expertice_area",
+                    "experience",
+                    "education",
+                    "salary",
+                    { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
+                    "skill",
+                    "jobtype"])
                 res.status(200).send(company);
             }
         })
