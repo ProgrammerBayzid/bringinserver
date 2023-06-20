@@ -224,7 +224,7 @@ app.post("/skill", tokenverify, async (req, res) => {
       } else {
         const _id = authdata._id;
         const skilldata = await Skill({
-          skillname: req.body.skillname,
+          allskill: req.body.allskill,
           userid: _id,
         });
         const skill = await skilldata.save();
@@ -493,7 +493,7 @@ app.post("/careerpreference", tokenverify, async (req, res) => {
       } else {
         const _id = authdata._id;
         const careerpreferencedata = await CareerPreference({
-          expectedjobindustry: req.body.expectedjobindustry,
+          expectedjobindustry:req.body.expectedjobindustry,
           expertisearea: req.body.expertisearea,
           expectedjoblocation: req.body.expectedjoblocation,
           jobtype: req.body.jobtype,

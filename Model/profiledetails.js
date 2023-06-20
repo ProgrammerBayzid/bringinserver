@@ -22,7 +22,15 @@ const educationlavelSchema = Schema({
 });
 
 const skillSchema = Schema({
-  skillname: String,
+  allskill: [
+    {
+      skillname1: String,
+      skillname2: String,
+      skillname3: String,
+      skillname4: String,
+      skillname5: String,
+    },
+  ],
   userid: String,
 });
 const protfoliolinkSchema = Schema({
@@ -34,11 +42,32 @@ const aboutSchema = Schema({
   userid: String,
 });
 const careerpreferenceSchema = Schema({
-  expectedjobindustry: String,
+  expectedjobindustry: [
+    {
+      jobindustry1: {
+        type: "ObjectId",
+        ref: "industries",
+      },
+      jobindustry2: {
+        type: "ObjectId",
+        ref: "industries",
+      },
+      jobindustry3: {
+        type: "ObjectId",
+        ref: "industries",
+      },
+    },
+  ],
   expertisearea: String,
   expectedjoblocation: String,
-  jobtype: String,
-  expectedsalary: String,
+  jobtype: {
+    type: "ObjectId",
+    ref: "Jobtype",
+  },
+  expectedsalary: {
+    type: "ObjectId",
+    ref: "Salirietype",
+  },
   userid: String,
 });
 
@@ -67,7 +96,6 @@ const allprofiledataSchema = Schema({
     type: "ObjectId",
     ref: "CareerPreference",
   },
- 
 });
 
 var Workexperience = model("Workexperience", workexperienceSchema);
@@ -91,5 +119,5 @@ module.exports = {
   Protfoliolink,
   About,
   CareerPreference,
-  Profiledata
+  Profiledata,
 };
