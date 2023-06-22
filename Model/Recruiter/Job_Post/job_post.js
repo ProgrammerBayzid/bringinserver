@@ -41,7 +41,7 @@ const jobpostSchema = Schema(
         job_status: String,
         postdate: Date
 
-    },
+    },{timestamps: true}
 
 );
 

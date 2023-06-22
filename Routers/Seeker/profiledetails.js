@@ -4,6 +4,7 @@ const app = express();
 const {
   Workexperience,
   Education,
+  DefaultSkill,
   Skill,
   Protfoliolink,
   About,
@@ -221,6 +222,10 @@ app.post("/education", tokenverify, async (req, res) => {
             grade: req.body.grade,
             startdate: req.body.startdate,
             enddate: req.body.enddate,
+            type: req.body.type,
+            grade: req.body.grade,
+            gradetype: req.body.type == 1 ? req.body.gradetype : "Division",
+            division: String,
             otheractivity: req.body.otheractivity,
             userid: _id,
           });
@@ -292,7 +297,9 @@ app.post("/education_update", tokenverify, async (req, res) => {
               institutename: req.body.institutename,
               digree: req.body.digree,
               subject: req.body.subject,
+              type: req.body.type,
               grade: req.body.grade,
+              gradetype: req.body.type == 1 ? req.body.gradetype : "Division",
               startdate: req.body.startdate,
               enddate: req.body.enddate,
               otheractivity: req.body.otheractivity,
@@ -327,28 +334,66 @@ app.post("/education_update", tokenverify, async (req, res) => {
 
 
 
-app.post("/seeker_skill", tokenverify, async (req, res) => {
+app.post("/default_skill", tokenverify, async (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
       if (err) {
         res.json({ message: "invalid token" })
       } else {
         var id = authdata._id;
-        var skilldata = await Skill.findOne({ skill: req.body.skill, userid: id })
+        var skilldata = await DefaultSkill.findOne({ skill: req.body.skill})
 
         if (skilldata == null) {
-          var skilldata = await Skill({ skill: req.body.skill, userid: id });
+          var skilldata = await DefaultSkill({ skill: req.body.skill});
           skilldata.save();
-          var profiledata = await Profiledata.findOneAndUpdate({ userid: id }, { $push: { skill: skilldata._id } })
+          // var profiledata = await Profiledata.findOneAndUpdate({ userid: id }, { $push: { skill: skilldata._id } })
+          // if (profiledata == null) {
+          //   await Profiledata({
+          //     userid: id,
+          //     skill: skilldata._id
+          //   }).save()
+          // }
+          res.status(200).json({ message: "skill add successfull data" })
+        } else {
+          res.status(400).json({ message: "skill allready added" })
+        }
+
+      }
+    })
+
+  } catch (error) {
+    res.send(error);
+  }
+})
+
+app.post("/seeker_skill", tokenverify, async (req, res)=> {
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" })
+      } else {
+        var id = authdata._id;
+        var skilldata = await Skill.findOneAndUpdate({userid: id },{$addToSet: {skill: req.body.skill,}})
+        if (skilldata == null) {
+          var skilldata = await Skill({skill: req.body.skill, userid: id });
+          skilldata.save();
+          var profiledata = await Profiledata.findOneAndUpdate({ userid: id }, { $addToSet: { skill: req.body.skill } })
           if (profiledata == null) {
             await Profiledata({
               userid: id,
-              skill: skilldata._id
+              skill: req.body.skill
             }).save()
           }
           res.status(200).json({ message: "skill add successfull data" })
         } else {
-          res.status(400).json({ message: "skill allready added" })
+          var profiledata = await Profiledata.findOneAndUpdate({ userid: id }, { $addToSet: { skill: req.body.skill } })
+          if (profiledata == null) {
+            await Profiledata({
+              userid: id,
+              skill: req.body.skill
+            }).save()
+          }
+          res.status(400).json({ message: "skill update" })
         }
 
       }
@@ -367,8 +412,9 @@ app.get("/seeker_skill", tokenverify, async (req, res) => {
         res.json({ message: "invalid token" })
       } else {
         var id = authdata._id;
-        var skilldata = await Skill.find({ userid: id })
-        res.status(200).send(skilldata)
+        var skilldata = await Skill.findOne({ userid: id }).populate("skill")
+        var defaultskill = await DefaultSkill.find()
+        res.status(200).json({skill: skilldata, default: defaultskill})
       }
     })
 
@@ -699,7 +745,6 @@ app.patch("/protfolio/:_id", tokenverify, async (req, res) => {
 
 app.get("/profiledetails",tokenverify, async (req, res) => {
    
-
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
       if (err) {
@@ -710,11 +755,11 @@ app.get("/profiledetails",tokenverify, async (req, res) => {
         var data = await Profiledata.find({userid: _id}).populate(
           [
             {path: "workexperience",populate:[{path: "category", select: "-functionarea"},"expertisearea"] },
-            {path: "education",populate: [{path: "digree",select: "-subject"},"subject"]},
+            {path: "education",populate: [{path: "digree",select: "-subject", populate: {path: "education", select: "-digree"}},"subject"]},
             "skill",
             "protfoliolink",
             "about",
-            {path: "careerPreference",populate: [{path: "category",select: "-functionarea"},"functionalarea","division","jobtype","salaray"]},
+            {path: "careerPreference",populate: [{path: "category",select: "-functionarea"},"functionalarea",{ path: "division", populate: { path: "cityid", select: "-divisionid" } },"jobtype","salaray"]},
             {path:"userid", populate: {path: "experiencedlevel"}}
           ]
         );
