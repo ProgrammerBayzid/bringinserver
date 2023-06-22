@@ -34,15 +34,22 @@ const educationlavelSchema = Schema({
     type: "ObjectId",
     ref: "subject"
   },
+  type: Number,
   grade: String,
+  gradetype: String,
+  division: String,
   startdate: Date,
   enddate: Date,
   otheractivity: String,
   userid: String,
 });
 
-const skillSchema = Schema({
+const defaultskillSchema = Schema({
   skill: String,
+  userid: String,
+});
+const skillSchema = Schema({
+  skill: [{type:"ObjectId", ref: "default_Skill"}],
   userid: String,
 });
 const protfoliolinkSchema = Schema({
@@ -77,7 +84,7 @@ const allprofiledataSchema = Schema({
   }],
   skill: [{
     type: "ObjectId",
-    ref: "Skill",
+    ref: "default_Skill",
   }],
   protfoliolink: [{
     type: "ObjectId",
@@ -98,6 +105,7 @@ var Workexperience = model("Workexperience", workexperienceSchema);
 
 var Education = model("Education", educationlavelSchema);
 
+var DefaultSkill = model("default_Skill", defaultskillSchema);
 var Skill = model("Skill", skillSchema);
 
 var Protfoliolink = model("Protfoliolink", protfoliolinkSchema);
@@ -111,6 +119,7 @@ var Profiledata = model("seeker_profiledata", allprofiledataSchema);
 module.exports = {
   Workexperience,
   Education,
+  DefaultSkill,
   Skill,
   Protfoliolink,
   About,
