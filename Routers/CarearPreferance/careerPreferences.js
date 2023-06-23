@@ -40,6 +40,14 @@ app.post("/industryadd", async (req, res) => {
 
 // industry list
 
+
+
+
+
+
+
+
+
 app.get("/industry", tokenverify, async (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
@@ -82,14 +90,7 @@ app.post("/categoryadd", async (req, res) => {
   }
 });
 
-app.get("/categorylist", async (req, res) => {
-  try {
-    var categorydata = await Category.find().select("-industryid");
-    res.json(categorydata);
-  } catch (error) {
-    res.send(error);
-  }
-});
+
 
 // functional area add
 
@@ -117,14 +118,7 @@ app.post("/functionalareaadd", async (req, res) => {
   }
 });
 
-app.get("/functionalarea", async (req, res) => {
-  try {
-    var data = await Functionarea.find().populate(["industryid", "categoryid"]);
-    res.json(data);
-  } catch (error) {
-    res.send(error);
-  }
-});
+
 
 // location add
 
@@ -195,6 +189,10 @@ app.post("/salarietype", async (req, res) => {
   }
 });
 
+
+
+
+
 // # gett salarietype
 app.get("/salarietype", tokenverify, async (req, res) => {
   try {
@@ -212,7 +210,7 @@ app.get("/salarietype", tokenverify, async (req, res) => {
   }
 });
 
-// jon industry list
+// job industry list
 
 app.get("/job_industrylist", tokenverify, async (req, res) => {
   try {
@@ -290,25 +288,8 @@ app.get("/jobtype", tokenverify, async (req, res) => {
   }
 });
 
-app.get("/admin/jobtype", async (req, res) => {
-  try {
-    const jobtypeData = await Jobtype.find();
-    res.send(jobtypeData);
-  } catch (error) {
-    res.send(error);
-  }
-});
-app.delete("/admin/jobtype/:id", async (req, res) => {
-  try {
-    const result = await Jobtype.findOneAndDelete(req.params.id);
-    if (!req.params.id) {
-      return res.status(404).send();
-    }
-    res.send(result);
-  } catch (error) {
-    res.send(error);
-  }
-});
+
+
 
 // carear preferance add
 
