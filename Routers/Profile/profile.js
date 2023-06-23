@@ -4,7 +4,6 @@ const User = require("../../Model/userModel");
 const tokenverify = require("../../MiddleWare/tokenverify.js");
 const jwt = require("jsonwebtoken");
 const Experince = require("../../Model/experience.js");
-
 const multer = require("multer");
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
