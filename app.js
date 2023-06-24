@@ -18,6 +18,8 @@ const adminapi = require('./Routers/Admin_Api/admin_api')
 const seekerjob =  require('./Routers/Seeker/joblist.js')
 const candidate = require('./Routers/Recruiter/candidate')
 
+
+
 app.use(express.json());
 app.use(cors());
 app.use('/uploads', express.static('uploads'))
