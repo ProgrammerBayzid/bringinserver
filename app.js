@@ -16,8 +16,7 @@ const cv = require('./Routers/Cv/cv.js')
 const jobpost = require('./Routers/Recruiter/job_post')
 const adminapi = require('./Routers/Admin_Api/admin_api')
 const seekerjob =  require('./Routers/Seeker/joblist.js')
-const email =  require('./Routers/Email/email')
-const adminPanel =  require('./Routers/AdminPanel/adminpa')
+const candidate = require('./Routers/Recruiter/candidate')
 
 app.use(express.json());
 app.use(cors());
@@ -36,8 +35,7 @@ app.use(cv)
 app.use(jobpost)
 app.use(adminapi)
 app.use(seekerjob)
-app.use(email)
-app.use(adminPanel)
+app.use(candidate)
 
 
 
