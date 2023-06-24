@@ -22,30 +22,55 @@ const upload = multer({ storage: storage });
 async function SocketRoute(io) {
     io.on('connection', (socket) => {
         console.log("1 user connect")
-        socket.on('channelcreate', (channel) => {
-            console.log("channel create")
-            // channelcreate(channel, io)
-
-           
-        })
-
+        // socket.on('channelcreate', async (channel) => {
+        //     console.log(channel)
+        //     // channelcreate(channel, io)
+        //     var data = await Chat.findOne({ seekerid: channel.seekerid, recruiterid: channel.recruiterid }).populate([{ path: "seekerid" }, { path: "recruiterid" }])
+        //     if (data == null) {
+        //         var channeldata = await Chat({ seekerid: channel.seekerid, recruiterid: channel.recruiterid, date: new Date() });
+        //         channeldata.save();
+        //         var channelinfo = await Chat.findOne({ _id: channeldata._id }).populate([{ path: "seekerid" }])
+        //         io.emit("channeldata", channelinfo)
+        //     } else {
+        //         io.emit("channeldata", data)
+        //     }
+        // })
 
         // socket.on("channelid", async (channelid) => {
         //     console.log(channelid)
         //     socket.on(channelid.toString(), (message) => {
-        //         console.log("message")
         //         messagesend(message, io, channelid)
         //     })
         //     var oldmessage = await Message.find({ channel: channelid })
-        //     // socket.on(channelid.toString(), (message) => {
-        //     //     messagesend(message, io, channelid)
-        //     // })
         //     io.emit(`oldmessage${channelid}`, oldmessage)
-        // })
-        
 
-        socket.on('disconnect', (data)=>{
-            console.log("1 room disconnect")
+        //     socket.on('disconnect', (data)=>{
+        //         console.log("1 room disconnect")
+        //     })
+        // })
+
+
+        socket.on("channellist", async (channellist) => {
+            var channellistdata = await Chat.find({ seekerid: channellist }).populate([{ path: "seekerid" }, { path: "recruiterid" }])
+            io.emit("channellist", channellistdata)
+        })
+
+
+        socket.on("channel", (channel) => {
+            socket.on(`messagelist${channel}`, async (channelid) => {
+                var message = await Message.find({ channel: channelid });
+                io.emit(`messagelist${channel}`, message)
+            })
+            io.emit("channel", channel);
+        })
+
+      
+
+        socket.on("1", async (message) => {
+            // var data = await Message({ channel: message.channelid, message: message.message })
+            // data.save()
+            io.emit("1", message)
+            // await Chat.findOneAndUpdate({ _id: message.channelid }, { $set: { lastmessage: data } })
         })
 
 
@@ -60,15 +85,15 @@ async function SocketRoute(io) {
 
 async function channelcreate(channel, io) {
 
-    var data = await Chat.findOne({ seekerid: channel.seekerid, recruiterid: channel.recruiterid }).populate([{ path: "seekerid" }, { path: "recruiterid" }])
-    if (data == null) {
-        var channeldata = await Chat({ seekerid: channel.seekerid, recruiterid: channel.recruiterid, date: new Date() });
-        channeldata.save();
-        var channelinfo = await Chat.findOne({ _id: channeldata._id }).populate([{ path: "seekerid" }])
-        io.emit("channeldata", channelinfo)
-    } else {
-        io.emit("channeldata", data)
-    }
+    // var data = await Chat.findOne({ seekerid: channel.seekerid, recruiterid: channel.recruiterid }).populate([{ path: "seekerid" }, { path: "recruiterid" }])
+    // if (data == null) {
+    //     var channeldata = await Chat({ seekerid: channel.seekerid, recruiterid: channel.recruiterid, date: new Date() });
+    //     channeldata.save();
+    //     var channelinfo = await Chat.findOne({ _id: channeldata._id }).populate([{ path: "seekerid" }])
+    //     io.emit("channeldata", channelinfo)
+    // } else {
+    //     io.emit("channeldata", data)
+    // }
 }
 
 
