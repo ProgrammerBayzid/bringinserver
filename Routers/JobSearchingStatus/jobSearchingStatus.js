@@ -51,7 +51,30 @@ app.post("/jobSearchingStatus", tokenverify, async (req, res) => {
   
   
 
+  app.put('/jobSearchingStatus/:id', tokenverify, async (req, res) => {
 
+    try {
+      jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+        if (err) {
+          res.json({ message: "invalid token" });
+        } else {
+          const _id = authdata._id;
+          const filter =  { userid: _id };
+          const options = { upsert: true };
+          const update = {
+              $set: {
+                lookingforanyjob: 'true'
+              }
+          }
+          const result = await JobSearchingStatus.updateOne(filter, update, options);
+          res.send(result)
+        }
+      });
+    } catch (error) {
+      res.send(error);
+    }
+   
+});
 
 
 module.exports = app;

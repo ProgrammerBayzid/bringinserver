@@ -193,6 +193,7 @@ app.get("/admin/digree", async (req, res) => {
     res.send(error);
   }
 });
+
 app.delete("/admin/digree/:id", async (req, res) => {
   try {
     const result = await Digree.findByIdAndDelete(req.params.id);
@@ -206,13 +207,23 @@ app.delete("/admin/digree/:id", async (req, res) => {
 });
 
 
-app.delete("/admin/subject/:id", async (req, res) => {
+app.delete("/admin/education_lavel/:id", async (req, res) => {
   try {
-    const result = await Subject.findByIdAndDelete(req.params.id);
+    const result = await EducationLavel.findByIdAndDelete(req.params.id);
     if (!req.params.id) {
       return res.status(404).send();
     }
     res.send(result);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+
+app.get("/admin/subject", async (req, res) => {
+  try {
+    const Data = await Subject.find().populate(["educaton","digree"]);
+    res.send(Data);
   } catch (error) {
     res.send(error);
   }
@@ -229,6 +240,7 @@ app.delete("/admin/subject/:id", async (req, res) => {
     res.send(error);
   }
 });
+
 
 
 
