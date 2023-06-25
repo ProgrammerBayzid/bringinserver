@@ -29,9 +29,29 @@ app.get("/admin/industry", async (req, res) => {
   }
 });
 
+// industry add
+app.post("/industryadd", async (req, res) => {
+  try {
+    var industrydata = await Expertisearea.findOne({
+      industryname: req.body.industryname,
+    });
+    if (industrydata == null) {
+      await Expertisearea({ industryname: req.body.industryname }).save();
+      res.json({ message: "industry add successfull" });
+    } else {
+      res.status(400).json({ message: "industry already added" });
+    }
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+
 app.delete("/admin/industry/:id", async (req, res) => {
   try {
     const result = await Expertisearea.findByIdAndDelete(req.params.id);
+    // await Category.deleteMany({industryid: req.params.id})
+    // await Functionarea.deleteMany({})
     if (!req.params.id) {
       return res.status(404).send();
     }
@@ -52,9 +72,34 @@ app.get("/admin/category", async (req, res) => {
   }
 });
 
+
+app.post("/categoryadd", async (req, res) => {
+  try {
+    var categorydata = await Category.findOne({
+      categoryname: req.body.categoryname,
+    });
+    if (categorydata == null) {
+      var catdata = await Category({
+        categoryname: req.body.categoryname,
+        industryid: req.body.industryid,
+      });
+      catdata.save();
+      await Expertisearea.findByIdAndUpdate(req.body.industryid, {
+        $push: { category: catdata._id },
+      });
+      res.json({ message: "Categor add successfull" });
+    } else {
+      res.status(400).json({ message: "Category already added" });
+    }
+  } catch (error) {
+    res.send(error);
+  }
+});
+
 app.delete("/admin/category/:id", async (req, res) => {
   try {
     const result = await Category.findByIdAndDelete(req.params.id);
+    await Functionarea.deleteMany({categoryid: req.params.id})
     if (!req.params.id) {
       return res.status(404).send();
     }
@@ -70,6 +115,31 @@ app.get("/admin/functionalarea", async (req, res) => {
   try {
     var data = await Functionarea.find().populate(["industryid", "categoryid"]);
     res.json(data);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+
+app.post("/functionalareaadd", async (req, res) => {
+  try {
+    var functionaldata = await Functionarea.findOne({
+      functionalname: req.body.functionalname,
+    });
+    if (functionaldata == null) {
+      var functionarea = await Functionarea({
+        industryid: req.body.industryid,
+        categoryid: req.body.categoryid,
+        functionalname: req.body.functionalname,
+      });
+      functionarea.save();
+      await Category.findByIdAndUpdate(req.body.categoryid, {
+        $push: { functionarea: functionarea._id },
+      });
+      res.json({ message: "Functional Area add successfull" });
+    } else {
+      res.status(400).json({ message: "Functional Area already added" });
+    }
   } catch (error) {
     res.send(error);
   }
@@ -121,6 +191,38 @@ app.get("/admin/location", async (req, res) => {
   }
 });
 
+
+app.post("/location", async (req, res) => {
+  try {
+    var citydata = await City.findOne({ name: req.body.city });
+    var divisiondata = await Division.findOne({
+      divisionname: req.body.division,
+    });
+    var city;
+    var division;
+    if (citydata == null) {
+      city = await City({ name: req.body.city });
+      city.save();
+    }
+    if (divisiondata == null) {
+      division = await Division({
+        divisionname: req.body.division,
+        cityid: citydata == null ? city._id : citydata._id,
+      });
+      division.save();
+      await City.findOneAndUpdate(
+        { name: req.body.city },
+        { $push: { divisionid: division._id } }
+      );
+      res.status(200).json({ message: "Add Successfull" });
+    } else {
+      res.status(400).json({ message: "already added" });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
 app.delete("/admin/location/:id", async (req, res) => {
   try {
     const result = await City.findByIdAndDelete(req.params.id);
@@ -142,6 +244,21 @@ app.get("/admin/salarie", async (req, res) => {
     res.json(data);
   } catch (error) {
     res.send(error);
+  }
+});
+
+app.post("/salarietype", async (req, res) => {
+  try {
+    var saliry = await Salirietype.findOne(req.body);
+    if (saliry == null) {
+      const salirietypeData = await Salirietype(req.body);
+      await salirietypeData.save();
+      res.status(200).json({ message: "add successfull" });
+    } else {
+      res.status(400).json({ message: "allready added" });
+    }
+  } catch (error) {
+    res.status(400).send(error);
   }
 });
 
@@ -170,6 +287,22 @@ app.get("/admin/jobtype", async (req, res) => {
     res.send(error);
   }
 });
+
+app.post("/jobtype", async (req, res) => {
+  try {
+    var jobtype = await Jobtype.findOne(req.body);
+    if (jobtype == null) {
+      const jobtypeData = await Jobtype(req.body);
+      const jobData = await jobtypeData.save();
+      res.status(200).send(jobData);
+    } else {
+      res.status(400).json({ message: "allready added" });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
 app.delete("/admin/jobtype/:id", async (req, res) => {
   try {
     const result = await Jobtype.findByIdAndDelete(req.params.id);
