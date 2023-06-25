@@ -17,6 +17,7 @@ const jobpost = require('./Routers/Recruiter/job_post')
 const adminapi = require('./Routers/Admin_Api/admin_api')
 const seekerjob =  require('./Routers/Seeker/joblist.js')
 const candidate = require('./Routers/Recruiter/candidate')
+const videostream = require("./Routers/Chat/video")
 
 
 
@@ -37,7 +38,10 @@ app.use(cv)
 app.use(jobpost)
 app.use(adminapi)
 app.use(seekerjob)
+app.use(videostream)
 app.use(candidate)
+app.set("view engine", 'ejs')
+app.use(express.static('public'))
 
 
 
