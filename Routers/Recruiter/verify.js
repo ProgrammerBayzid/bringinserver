@@ -12,7 +12,7 @@ const transportar = nodemailer.createTransport({
     service: "gmail",
     auth: {
         "user": "bringin.sdk@gmail.com",
-        "pass": "ruofzwyizsthwzqt"
+        "pass": "datjwskkwpqmybih"
     }
 })
 

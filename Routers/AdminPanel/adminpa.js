@@ -10,6 +10,7 @@ const { City, Division } = require("../../Model/alllocation.js");
 const { Jobtype } = require("../../Model/jobtype.js");
 const { Salirietype } = require("../../Model/salarie.js");
 const {} = require("../../Model/Seeker_profile_all_details.js");
+const Experince = require("../../Model/experience.js");
 const {
   EducationLavel,
   Digree,
@@ -462,7 +463,21 @@ app.get('/subject', async (req, res)=> {
 
 
 
+// experience insert
 
+app.post("/experience", async (req, res) => {
+  try {
+    var experidata = await Experince.findOne({ name: req.body.name });
+    if (experidata != null) {
+      res.json({ message: "experience allready available" });
+    } else {
+      await Experince({ name: req.body.name }).save();
+      res.json({ message: "experience insert successfull" });
+    }
+  } catch (error) {
+    res.send(error);
+  }
+});
 
 
 

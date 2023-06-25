@@ -10,6 +10,12 @@ const Career_preferences = require("../../Model/career_preferences.js")
 const JobSave = require("../../Model/jobsave.js")
 const jobreport = require("../../Model/job_report.js");
 const JobReport = require("../../Model/job_report.js");
+const {EducationLavel} = require("../../Model/education_lavel.js");
+const { Salirietype } = require("../../Model/salarie");
+const { forEach } = require("lodash");
+const Experince = require("../../Model/experience.js");
+const experience = require("../../Model/experience.js");
+const {Expertisearea} = require('../../Model/industry')
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, "uploads");
@@ -219,6 +225,106 @@ app.post("/job_report", tokenverify, upload.single("image"), async (req, res)=> 
 
 })
 
+
+
+app.get("/job_filter",tokenverify, async (req, res)=> {
+    try {
+        jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+            if (err) {
+                res.json({ message: "invalid token" })
+            } else {
+                const _id = authdata._id;
+                
+                let alleducation = [];
+                var education = await EducationLavel.find().select("name");
+                education.forEach((e)=> {
+                    alleducation.push(e._id)
+                })
+                let allsalary = [];
+                var salaray = await Salirietype.find()
+                salaray.forEach((e)=> allsalary.push(e._id))
+                let allexperience = [];
+                var experience = await Experince.find()
+                experience.forEach((e)=> {allexperience.push(e._id)})
+                let allindustry = [];
+                var industry = await Expertisearea.find().select("industryname")
+                industry.forEach((e)=> allindustry.push(e._id))
+                let allcompanysize = [];
+                var companysize = await Companysize.find()
+                companysize.forEach((e)=> allcompanysize.push(e._id))
+                let requreeducation = {
+                    allworkplace: [true, false],
+                    workplace: [
+                        {
+                            name: "Remote",
+                            value: true
+                        },
+                        {
+                            name: "On-Site",
+                            value: false
+                        }
+                    ],
+                    alleducation: alleducation,
+                    education: education,
+                    allsalary: allsalary,
+                    salary: salaray,
+                    allexperience: allexperience,
+                    experience: experience,
+                    allindustry: allindustry,
+                    industry: industry,
+                    allcompanysize: allcompanysize,
+                    companysize: companysize,
+
+
+                }
+                res.status(200).json(requreeducation)
+               
+            }
+        })
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
+
+
+app.post('/job_filter', tokenverify, async (req, res)=>{
+    try {
+        jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+            if (err) {
+                res.json({ message: "invalid token" })
+            } else {
+                const _id = authdata._id;
+
+                var workplace = req.body.workplace
+                var education = req.body.education
+                var salary = req.body.salary
+                var experience = req.body.experience
+                var industry = req.body.industry
+                var companysize = req.body.companysize
+
+                var populate = [
+                    {path: "userid"},
+                    {path: "expertice_area", match: {industryid: {$in: industry}}},
+                    {path: "experience", match: {_id: {$in: experience}}},
+                    {path: "education", match: {_id: {$in: education}}},
+                    {path: "company",populate: [{ path: "c_size" , match: {_id: {$in: companysize}}}, { path: "industry", select: "-category" }]},
+                    {path: "salary", match: {_id: {$in: salary}}},
+                    {path: "skill"},
+                    {path: "jobtype"}
+                    
+                ]
+
+                
+                var joblist = await JobPost.find({remote: {$in: workplace}}).populate(populate).then((data) => data.filter((filterdata) =>  filterdata.expertice_area != null && filterdata.experience != null && filterdata.education != null && filterdata.company.c_size != null && filterdata.salary != null))
+                
+                res.status(200).json(joblist)
+               
+            }
+        })
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
 
 
 module.exports = app;
