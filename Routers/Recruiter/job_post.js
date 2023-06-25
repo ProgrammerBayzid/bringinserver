@@ -116,9 +116,9 @@ app.post('/job_post', tokenverify, async (req, res) => {
                     if(functiondata == null){
                         await RecruiterFunctionarea({userid: id, expertice_area: req.body.expertice_area, jobid: jobdata._id}).save()
                     } 
-                    res.status(200).json({ message: "Job Post Successfull" })
+                    res.status(200).json({ jobid: jobdata._id})
                 } else {
-                    res.status(200).json({ message: "Job Post Allready Submit" })
+                    res.status(400).json({ message: "Job Post Allready Submit" })
                 }
             }
         })
