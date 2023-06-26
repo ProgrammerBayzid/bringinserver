@@ -57,9 +57,9 @@ async function SocketRoute(io) {
         socket.on("channellist", async (channellist) => {
             var channellistdata;
             if (channellist.seeker == true) {
-                channellistdata = await Chat.find({ seekerid: channellist.currentid }).populate([{ path: "seekerid" }, { path: "recruiterid" }])
+                channellistdata = await Chat.find({ seekerid: channellist.currentid }).sort({updatedAt: -1}).populate([{ path: "seekerid" }, { path: "recruiterid" ,populate: {path: "companyname", populate: {path: "industry"}}}, {path: "lastmessage"}])
             }else{
-                channellistdata = await Chat.find({ recruiterid: channellist.currentid }).populate([{ path: "seekerid" }, { path: "recruiterid" }])
+                channellistdata = await Chat.find({ recruiterid: channellist.currentid }).sort({updatedAt: -1}).populate([{ path: "seekerid" }, { path: "recruiterid" , populate: {path: "companyname",  populate: {path: "industry"}}}, {path: "lastmessage"}])
             }
             io.to(channellist.currentid).emit("channellist", channellistdata)
             
@@ -85,6 +85,7 @@ async function SocketRoute(io) {
             data.save()
             await Chat.findOneAndUpdate({ _id: message.channelid }, { $set: { lastmessage: data } })
             io.to(message.channelid).emit("singlemsg", message)
+            
         })
 
     })

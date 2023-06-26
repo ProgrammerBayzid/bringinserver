@@ -3,8 +3,11 @@ const { Schema, model, } = require("mongoose");
 const resumeSchema  =  Schema(
     {
        
-        resume:String,
-        userid:String
+        resume:{},
+        userid:{
+            type: "ObjectID",
+            ref: "User"
+        }
 
     },
    

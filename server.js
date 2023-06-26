@@ -2,7 +2,7 @@ require('dotenv/config');
 const mongoose = require('mongoose');
 const app = require('./app');
 const http = require('http')
-const socketroute = require("./Routers/Chat/chat")
+const socketroute = require("./Routers/Chat/chat.io")
 
 
 

@@ -11,6 +11,7 @@ const { City, Division } = require("../../Model/alllocation.js");
 const { Jobtype } = require("../../Model/jobtype");
 const { Salirietype } = require("../../Model/salarie");
 const Career_preferences = require("../../Model/career_preferences.js");
+const Seekerprofile = require("../../Model/userModel.js")
 const {
   Workexperience,
   Education,
@@ -211,6 +212,7 @@ app.post("/career_preferences", tokenverify, async (req, res) => {
               careerPreference: carearpre._id,
             }).save();
           }
+          await Seekerprofile.findOneAndUpdate({_id: id}, {$inc: { carearpre: 1} })
           res.status(200).json({ message: "add successfull" });
         } else {
           res.status(400).json({ message: "allready added" });

@@ -26,11 +26,11 @@ app.post("/resume", tokenverify, resume.single("resume"), async (req, res) => {
       } else {
         const _id = authdata._id;
         const resumedata = await Resume({
-          resume: req.file.path,
+          resume: req.file,
           userid: _id,
         });
         const resumefile = await resumedata.save();
-        res.status(200).send(resumefile);
+        res.status(200).json({message: "upload successfull"});
       }
     });
   } catch (error) {
@@ -38,7 +38,7 @@ app.post("/resume", tokenverify, resume.single("resume"), async (req, res) => {
   }
 });
 
-app.get("/resume/:_id", tokenverify, async (req, res) => {
+app.get("/resume", tokenverify, async (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
       if (err) {
@@ -54,19 +54,15 @@ app.get("/resume/:_id", tokenverify, async (req, res) => {
   }
 });
 
-app.delete("/resume/:_id", tokenverify, async (req, res) => {
+app.delete("/resume", tokenverify, async (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
       if (err) {
         res.json({ message: "invalid token" });
       } else {
         const user = authdata._id;
-        const _id = { userid: user };
-        const deleteData = await Resume.findOneAndDelete(_id);
-        if (!_id) {
-          return res.status(400).send();
-        }
-        res.send(deleteData);
+        const deleteData = await Resume.findOneAndDelete({_id: req.query.id, userid: user});
+        res.status(200).json({message: "delete successfull"});
       }
     });
   } catch (error) {

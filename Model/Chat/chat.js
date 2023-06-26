@@ -13,6 +13,7 @@ const chatSchema  =  Schema(
         date: Date,
         lastmessage: {
             type: "ObjectId",
+            ref: "messagelist"
         }
     },{timestamps: true},
    

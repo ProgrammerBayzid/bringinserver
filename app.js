@@ -20,6 +20,7 @@ const email =  require('./Routers/Email/email')
 const adminPanel =  require('./Routers/AdminPanel/adminpa')
 const candidate = require('./Routers/Recruiter/candidate')
 const jobSearchingStatus = require('./Routers/JobSearchingStatus/jobSearchingStatus')
+const chatrestapi = require('./Routers/Chat/chat_restapi')
 
 app.use(express.json());
 app.use(cors());
@@ -42,6 +43,7 @@ app.use(email)
 app.use(adminPanel)
 app.use(candidate)
 app.use(jobSearchingStatus)
+app.use(chatrestapi)
 
 
 

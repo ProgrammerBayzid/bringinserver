@@ -1,6 +1,5 @@
 const express = require("express");
 const app = express();
-const Recruiters = require("../../Model/Recruiter/recruiters");
 const tokenverify = require("../../MiddleWare/tokenverify.js")
 const jwt = require('jsonwebtoken');
 const { Company, Companysize } = require("../../Model/Recruiter/Company/company.js")
@@ -8,14 +7,14 @@ const JobPost = require('../../Model/Recruiter/Job_Post/job_post.js')
 const multer = require("multer");
 const Career_preferences = require("../../Model/career_preferences.js")
 const JobSave = require("../../Model/jobsave.js")
-const jobreport = require("../../Model/job_report.js");
 const JobReport = require("../../Model/job_report.js");
 const {EducationLavel} = require("../../Model/education_lavel.js");
 const { Salirietype } = require("../../Model/salarie");
-const { forEach } = require("lodash");
 const Experince = require("../../Model/experience.js");
-const experience = require("../../Model/experience.js");
 const {Expertisearea} = require('../../Model/industry')
+const ViewJob = require('../../Model/viewjob')
+const Seekeruser = require('../../Model/userModel.js')
+const { Chat, Message } = require("../../Model/Chat/chat")
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, "uploads");
@@ -157,6 +156,7 @@ app.post("/job_save", tokenverify, async (req, res)=> {
                 var data = await JobSave.findOne({userid: _id, jobid: req.body.jobid})
                 if (data == null) {
                     await JobSave({userid: _id, jobid: req.body.jobid, jobpostuserid: jobdata._id}).save()
+                    await Seekeruser.findOneAndUpdate({_id: _id}, {$inc: { savejob: 1} })
                     res.status(200).json({message: "job save successfull"})
                 }else{
                    await JobSave.findOneAndDelete({_id: data._id})
@@ -325,6 +325,32 @@ app.post('/job_filter', tokenverify, async (req, res)=>{
         res.status(400).send(error);
     }
 })
+
+
+
+app.post("/view_job_count", tokenverify, async (req, res)=>{
+    try {
+        jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+            if (err) {
+                res.json({ message: "invalid token" })
+            } else {
+                const _id = authdata._id;
+
+                var viewjobdata = await ViewJob.findOne({jobid: req.body.jobid, userid: _id})
+                if (viewjobdata == null) {
+                    await ViewJob({jobid: req.body.jobid, userid: _id, jobpost_userid: req.body.jobpost_userid}).save();
+                    await Seekeruser.findOneAndUpdate({_id: _id}, {$inc: { viewjob: 1} })
+                }
+                 res.status(200).json({message: "successfull view"})
+            }
+        })
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
+
+
+
 
 
 module.exports = app;
