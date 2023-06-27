@@ -104,9 +104,6 @@ async function SocketRoute(io) {
             await Chat.findOneAndUpdate({ _id: filedata.channelid }, { $set: { lastmessage: data } })
             io.to(filedata.channelid).emit("singlemsg", data)
         })
-
-
-
     })
 
     io.on('disconnect', (socket) => {
