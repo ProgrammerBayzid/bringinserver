@@ -197,6 +197,10 @@ app.post("/candidate_report", tokenverify, upload.single("image"), async (req, r
 })
 
 
+
+
+
+
 app.get("/candidate_search",  tokenverify, async (req, res)=> {
     try {
         jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {

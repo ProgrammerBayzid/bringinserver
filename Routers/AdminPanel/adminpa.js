@@ -15,8 +15,18 @@ const {
   Digree,
   Subject,
 } = require("../../Model/education_lavel.js");
+const candidateReport = require("../../Model/Recruiter/Candidate_Report/candidate_report")
 
-// industry add
+
+// repoted candidate get
+app.get("/candidate_report", async (req, res) => {
+  try {
+    var data = await candidateReport.find().populate("candidateid");
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
 
 // industry list
 
@@ -206,6 +216,27 @@ app.delete("/admin/digree/:id", async (req, res) => {
   }
 });
 
+
+app.delete("/admin/education_lavel/:id", async (req, res) => {
+  try {
+    var data = await EducationLavel.findOneAndDelete({
+      _id: req.params.id,
+    })
+    if (data == null) {
+      res.status(400).json({ message: "iteam not found" });
+    } else {
+      await Digree.findOneAndUpdate(  
+        { $pull: { digree: data._id } }
+      );
+      await Subject.findOneAndUpdate(  
+        { $pull: { educaton: data._id } }
+      );
+      res.status(200).json({ message: "Delete Sucessfull" });
+    }
+  } catch (error) {
+    res.send(error);
+  }
+});
 
 app.delete("/admin/education_lavel/:id", async (req, res) => {
   try {

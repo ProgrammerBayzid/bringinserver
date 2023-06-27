@@ -1,39 +1,20 @@
 const { Schema, model, } = require("mongoose");
 
-const designationSchema  =  Schema(
+const jobtitleSchema  =  Schema(
     {
-        designation: String,
+        name: String,
     },
    
 );
 const departmentSchema  =  Schema(
     {
-        department: String,
+        name: String,
     },
    
 );
-const institutenameSchema  =  Schema(
-    {
-        institutename: String,
-    },
-   
-);
-const majorinSubjectSchema  =  Schema(
-    {
-        majorinSubject: String,
-    },
-   
-);
-const educationleveldegreeSchema  =  Schema({
-   
-    educationlevel:String,
-    degree:String,
-   
-});
-
 
 const seekercompanyaddSchema = Schema({
-    companyname: String,
+    name: String,
   });
   
   const imageSchema = Schema({
@@ -45,16 +26,20 @@ const seekercompanyaddSchema = Schema({
     cv: String,
   });
 
+  const adminskillSchema = Schema({
+    name: String,
+  });
 
-var Designation = model("Designation", designationSchema)
+
+  const companySizrSchema = Schema({
+    min: String,
+    max: String,
+  });
+
+
+var JobTitle = model("JobTitle", jobtitleSchema)
 
 var Department = model("Department", departmentSchema)
-
-var Institutename = model("Institutename", institutenameSchema)
-
-var MajorinSubject = model ("MajorinSubject", majorinSubjectSchema)
-
-var Educationleveldegree = model ("Educationleveldegree", educationleveldegreeSchema)
 
 var SeekeraddCompany = model("SeekerCompany", seekercompanyaddSchema);
 
@@ -62,6 +47,10 @@ var Image = model("Image", imageSchema);
 
 var Cv = model("Cv", cvSchema);
 
+var AdminSkill = model("AdminSkill", adminskillSchema);
+
+var AdminCompanySize = model("AdminCompanySize", companySizrSchema);
+
 module.exports = {
-    Designation,Department,Institutename,MajorinSubject,Educationleveldegree, SeekeraddCompany, Image, Cv
+    AdminCompanySize, AdminSkill, JobTitle,Department, SeekeraddCompany, Image, Cv
 };
