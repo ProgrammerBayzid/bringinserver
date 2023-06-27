@@ -56,6 +56,7 @@ app.post("/add_candidate_functional", tokenverify, async (req, res) => {
                 })
                 if (candidate_function == null) {
                     await RecruiterFunctionarea({ userid: _id, expertice_area: req.body.expertice_area }).save()
+                    res.status(200).json({ message: "Functional Area add successfull" })
                 } else {
                     res.status(200).json({ message: "Functional Area Update" })
                 }

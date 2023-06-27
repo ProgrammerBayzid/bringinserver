@@ -28,6 +28,7 @@ app.post("/resume", tokenverify, resume.single("resume"), async (req, res) => {
         const resumedata = await Resume({
           resume: req.file,
           userid: _id,
+          uploadtime: new Date()
         });
         const resumefile = await resumedata.save();
         res.status(200).json({message: "upload successfull"});

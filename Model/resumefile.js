@@ -7,7 +7,8 @@ const resumeSchema  =  Schema(
         userid:{
             type: "ObjectID",
             ref: "User"
-        }
+        },
+        uploadtime: Date
 
     },
    

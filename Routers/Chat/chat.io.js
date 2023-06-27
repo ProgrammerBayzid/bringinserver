@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const Experince = require("../../Model/experience.js");
 const { Chat, Message } = require("../../Model/Chat/chat")
 const multer = require("multer");
+const fs = require("fs");
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, "uploads");
@@ -85,8 +86,26 @@ async function SocketRoute(io) {
             data.save()
             await Chat.findOneAndUpdate({ _id: message.channelid }, { $set: { lastmessage: data } })
             io.to(message.channelid).emit("singlemsg", message)
-            
         })
+
+        socket.on('req_msg_update', async (data)=>{
+            console.log(data)
+            await Message.findOneAndUpdate({_id: data.msgid}, { 
+                $set: {"message.customProperties.request" : 0}
+            })
+            var message = await Message.find({ channel: data.channelid });
+            io.to(data.channelid.toString()).emit(`messagelist`, message)
+        })
+
+        socket.on("file_upload", async (filedata)=> {
+            fs.writeFileSync(`./uploads/${filedata.name}`, filedata.base64, { encoding: 'base64' });
+            var data = await Message({ channel: filedata.channelid, message: filedata.message })
+            data.save()
+            await Chat.findOneAndUpdate({ _id: filedata.channelid }, { $set: { lastmessage: data } })
+            io.to(filedata.channelid).emit("singlemsg", data)
+        })
+
+
 
     })
 
