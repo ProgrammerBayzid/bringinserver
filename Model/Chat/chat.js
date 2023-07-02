@@ -15,6 +15,13 @@ const chatSchema  =  Schema(
             type: "ObjectId",
             ref: "messagelist"
         },
+        recruitermsgdate: {
+            type: Date,
+            default: null
+        },
+        currentdate: {
+            type: Date
+        },
         seekerblock: {
             type: Boolean,
             default: false

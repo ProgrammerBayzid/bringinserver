@@ -24,7 +24,19 @@ const recruitersSchema = Schema(
           type: Date, 
           default: new Date()
         },
-        premium: Boolean
+        premium: Boolean,
+        total_chat: {
+          type: Number,
+          default: 0
+        },
+        savecandidate: {
+          type: Number,
+          default: 0
+        },
+        interview: {
+          type: Number,
+          default: 0
+        }
     },
 
 );

@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const User = require("../../Model/userModel");
+const Recruiters = require("../../Model/Recruiter/recruiters");
 const tokenverify = require("../../MiddleWare/tokenverify.js");
 const jwt = require("jsonwebtoken");
 const Experince = require("../../Model/experience.js");
@@ -29,6 +30,7 @@ app.get("/channellist", tokenverify, async (req, res)=> {
     }else{
         data = await Chat.find({ recruiterid: req.query.userid }).sort({updatedAt: -1}).populate([{ path: "seekerid" }, { path: "recruiterid" , populate: {path: "companyname",  populate: {path: "industry"}}}, {path: "lastmessage"}])
     }
+  
    res.status(200).send(data)
 
 })
@@ -128,6 +130,71 @@ app.get("/candidate_reject", tokenverify ,async (req, res)=>{
   }
 })
 
+
+
+
+app.get('/recruiter_msg_date', tokenverify ,async (req, res)=>{
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        const _id = authdata._id;
+       await Chat.findOneAndUpdate({_id: req.query.channelid}, {$set: {recruitermsgdate: new Date()}})
+        
+       res.status(200).send("date update")
+      
+      }
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+  
+})
+
+
+
+app.get('/datetime', (req, res)=>{
+  var date_time = new Date()
+   res.status(200).send(date_time)
+})
+
+
+
+app.post("/channelcreate", tokenverify ,async (req, res)=>{
+
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        const _id = authdata._id;
+        var data = await Chat.findOne({ seekerid: req.body.seekerid, recruiterid: req.body.recruiterid }).populate([{ path: "seekerid" }, { path: "recruiterid" , populate: {path: "companyname",  populate: {path: "industry"}}}, {path: "lastmessage"}])
+        if (data == null) {
+            var channeldata = await Chat({ seekerid: req.body.seekerid, recruiterid: req.body.recruiterid, date: new Date() });
+            await channeldata.save();
+            var channelinfo = await Chat.findOne({ _id: channeldata._id }).populate([{ path: "seekerid" }, { path: "recruiterid" , populate: {path: "companyname",  populate: {path: "industry"}}}, {path: "lastmessage"}])
+            if(_id == req.body.recruiterid) {
+              await Recruiters.findOneAndUpdate({_id: _id}, {$inc: {total_chat: 1}})
+            }else{
+              await User.findOneAndUpdate({_id: _id}, {$inc: { totalchat: 1} })
+            }
+            
+            res.status(200).send(channelinfo)
+        } else {
+          res.status(200).send(data)
+        }
+      
+      }
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+
+
+
+
+})
 
 
 module.exports = app

@@ -76,6 +76,16 @@ app.get("/candidatelist", tokenverify, async (req, res) => {
                 res.json({ message: "invalid token" })
             } else {
                 const _id = authdata._id;
+                function industryfilter(element) {
+                    if(element.functionalarea._id == req.query.functionalareaid){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                  }
+
+
+
                 if (req.query.functionalareaid == 0) {
                     var jobdata = await JobPost.find({ userid: _id }).select(["expertice_area", "company"]).populate([{ path: "company", select: "c_location" }, "expertice_area"])
                     let functionarea = [];
@@ -88,32 +98,37 @@ app.get("/candidatelist", tokenverify, async (req, res) => {
                     }
                     functionalregex = functionarea.join("|");
                     cityregex = cityname.join("|");
-                    // match: { "divisionname": { $regex: cityregex, $options: "i" } },
-                    // ,match: { "functionalname": { $regex: functionalregex, $options: "i" } }
-                    var seekerdata = await Profiledata.find().populate(
-                        [
-                            { path: "workexperience", populate: [{ path: "category", select: "-functionarea" }, "expertisearea"] },
-                            { path: "education", populate: [{ path: "digree", select: "-subject", populate: { path: "education", select: "-digree" } }, "subject"] },
-                            "skill",
-                            "protfoliolink",
-                            "about",
-                            { path: "careerPreference", populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea" }, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype", "salaray"] },
-                            { path: "userid", populate: { path: "experiencedlevel" } }
-                        ]
-                    );
+                    var populate = [
+                        { path: "workexperience", populate: [{ path: "category", select: "-functionarea" }, "expertisearea"] },
+                        { path: "education", populate: [{ path: "digree", select: "-subject", populate: { path: "education", select: "-digree" } }, "subject"] },
+                        "skill",
+                        "protfoliolink",
+                        "about",
+                        { path: "careerPreference", populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea" }, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype", "salaray"] },
+                        { path: "userid", populate: { path: "experiencedlevel" } }
+                    ]
+                    
+                    var seekerdata = await Profiledata.find().populate(populate);
                     res.status(200).send(seekerdata)
                 } else {
-                    var seekerdata = await Profiledata.find().populate(
-                        [
-                            { path: "workexperience", populate: [{ path: "category", select: "-functionarea" }, "expertisearea"] },
-                            { path: "education", populate: [{ path: "digree", select: "-subject", populate: { path: "education", select: "-digree" } }, "subject"] },
-                            "skill",
-                            "protfoliolink",
-                            "about",
-                            { path: "careerPreference", populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea" }, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype", "salaray"] },
-                            { path: "userid", populate: { path: "experiencedlevel" } }
-                        ]
-                    );
+                    var populate2 =[
+                        { path: "workexperience", populate: [{ path: "category", select: "-functionarea" }, "expertisearea"] },
+                        { path: "education", populate: [{ path: "digree", select: "-subject", populate: { path: "education", select: "-digree" } }, "subject"] },
+                        "skill",
+                        "protfoliolink",
+                        "about",
+                        { path: "careerPreference", populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea" }, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype", "salaray"] },
+                        { path: "userid", populate: { path: "experiencedlevel" } }
+                    ]
+                    var seekerdata = await Profiledata.find().populate(populate2).then((data) => data.filter((filterdata) => {
+                        var filterdata2 = filterdata.careerPreference.filter(industryfilter)
+                        if (filterdata2.length > 0) {
+                            return true;
+                        }else{
+                            return false;
+                        }
+                    }));
+                    res.status(200).send(seekerdata)
                 }
             }
         })
@@ -134,9 +149,11 @@ app.post("/candidate_save", tokenverify, async (req, res) => {
                 var data = await candidatesave.findOne({ userid: _id, candidatefullprofile: req.body.candidatefullprofile })
                 if (data == null) {
                     await candidatesave({ userid: _id, candidateid: req.body.candidateid, candidatefullprofile: req.body.candidatefullprofile }).save()
+                    await Recruiters.findOneAndUpdate({_id: _id}, {$inc: {savecandidate: 1}})
                     res.status(200).json({ message: "candidate save successfull" })
                 } else {
                     await candidatesave.findOneAndDelete({ _id: data._id })
+                    await Recruiters.findOneAndUpdate({_id: _id}, {$inc: {savecandidate: -1}})
                     res.status(200).json({ message: "candidate unsave successfull" })
                 }
             }
@@ -267,7 +284,6 @@ app.post('/candidate_filter', tokenverify, async (req, res) => {
                     }else{
                         return false;
                     }
-                    
                   }
                   function educationfilter(element) {
                     if(education.some((e)=> element.digree.education._id == e)){
