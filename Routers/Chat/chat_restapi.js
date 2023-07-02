@@ -4,7 +4,8 @@ const User = require("../../Model/userModel");
 const tokenverify = require("../../MiddleWare/tokenverify.js");
 const jwt = require("jsonwebtoken");
 const Experince = require("../../Model/experience.js");
-const { Chat, Message } = require("../../Model/Chat/chat")
+const { Chat, Message , Chatreport, CandidateReject} = require("../../Model/Chat/chat")
+const {Profiledata} = require("../../Model/Seeker_profile_all_details")
 const multer = require("multer");
 
 const storage = multer.diskStorage({
@@ -52,8 +53,80 @@ app.post('/message_update',tokenverify, async (req, res)=>{
 })
 
 
+app.post('/chat_report',tokenverify, upload.single("image") ,async (req, res)=>{
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        const _id = authdata._id;
+        await Chatreport({
+          userid: _id,
+          channel: req.body.channel,
+          seekerid : req.body.seekerid,
+          report: req.body.report,
+          recruiterid: req.body.recruiterid,
+          image: req.file == null ? "" : req.file.path,
+          discription: req.body.discription}).save()
+          res.status(200).json({message: "report successfull"})
+      }
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+} )
 
 
+
+app.post("/candidate_reject", tokenverify ,async (req, res)=>{
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        const _id = authdata._id;
+          var rejectdata = await CandidateReject.findOne({userid: _id,candidateid: req.body.candidateid})
+          if (rejectdata == null) {
+            var data = await Profiledata.findOne({userid: req.body.candidateid})
+            await CandidateReject({userid: _id,candidateid: req.body.candidateid, candidatefullprofileid: data._id}).save()
+            res.status(200).json({message: "Reject successfull"})
+          }else{
+            res.status(200).json({message: "All ready Reject"})
+          }
+          
+      }
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+})
+
+
+app.get("/candidate_reject", tokenverify ,async (req, res)=>{
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        const _id = authdata._id;
+          var rejectdata = await CandidateReject.find({userid: _id}).populate([{ path:"candidatefullprofileid", populate: [
+            {path: "workexperience",populate:[{path: "category", select: "-functionarea"},"expertisearea"] },
+            {path: "education",populate: [{path: "digree",select: "-subject", populate: {path: "education", select: "-digree"}},"subject"]},
+            "skill",
+            "protfoliolink",
+            "about",
+            {path: "careerPreference",populate: [{path: "category",select: "-functionarea"},"functionalarea",{ path: "division", populate: { path: "cityid", select: "-divisionid" } },"jobtype","salaray"]},
+            {path:"userid", populate: {path: "experiencedlevel"}}
+          ]}])
+          res.status(200).send(rejectdata)
+         
+          
+      }
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+})
 
 
 

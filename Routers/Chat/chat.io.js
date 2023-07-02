@@ -104,6 +104,13 @@ async function SocketRoute(io) {
             await Chat.findOneAndUpdate({ _id: filedata.channelid }, { $set: { lastmessage: data } })
             io.to(filedata.channelid).emit("singlemsg", data)
         })
+
+
+        socket.on("block_user", async (blockdata)=> {
+            await Chat.findOneAndUpdate({ _id: blockdata.channelid}, {$set: {seekerblock: blockdata.seekerblock ,
+                recruiterblock: blockdata.recruiterblock}});
+            io.to(blockdata.channelid).emit("block_user", blockdata)
+        })
     })
 
     io.on('disconnect', (socket) => {

@@ -154,7 +154,7 @@ app.get("/candidate_save", tokenverify, async (req, res) => {
             } else {
                 const _id = authdata._id;
 
-                var data = await candidatesave.findOne({ userid: _id }).populate({
+                var data = await candidatesave.find({ userid: _id }).populate({
                     path: "candidatefullprofile", populate: [{ path: "workexperience", populate: [{ path: "category", select: "-functionarea" }, "expertisearea"] },
                     { path: "education", populate: [{ path: "digree", select: "-subject", populate: { path: "education", select: "-digree" } }, "subject"] },
                         "skill",
@@ -163,11 +163,7 @@ app.get("/candidate_save", tokenverify, async (req, res) => {
                     { path: "careerPreference", populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea" }, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype", "salaray"] },
                     { path: "userid", populate: { path: "experiencedlevel" } }]
                 })
-                if (data == null) {
-                    res.status(400).json({ message: "Save Candidate Not Found" })
-                } else {
-                    res.status(200).send(data)
-                }
+                res.status(200).send(data)
             }
         })
     } catch (error) {

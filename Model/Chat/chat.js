@@ -14,6 +14,14 @@ const chatSchema  =  Schema(
         lastmessage: {
             type: "ObjectId",
             ref: "messagelist"
+        },
+        seekerblock: {
+            type: Boolean,
+            default: false
+        },
+        recruiterblock: {
+            type: Boolean,
+            default: false
         }
     },{timestamps: true},
    
@@ -33,9 +41,57 @@ const messageSchema  =  Schema(
    
 );
 
+const chatreportSchema  =  Schema(
+    {
+        userid: "ObjectId",
+        channel : {
+            type: "ObjectId",
+            ref : "Chat_channel"
+        },
+        seekerid: {
+            type: "ObjectId",
+            ref: "User"
+        },
+        recruiterid: {
+            type: "ObjectId",
+            ref: "Recruiters_profile"
+        },
+        image: [{
+            type: String
+        }],
+        discription: String,
+        report: [{
+            type: String
+        }]
+
+        
+    },{timestamps: true},
+   
+);
+
+const candidaterejectSchema  =  Schema(
+    {
+        userid: "ObjectId",
+        candidateid : {
+            type: "ObjectId",
+            ref : "User"
+        },
+        candidatefullprofileid: {
+            type: "ObjectId",
+            ref: "seeker_profiledata"
+        },
+
+
+        
+    },{timestamps: true},
+   
+);
+
 
 
 var Chat  = model("Chat_channel", chatSchema)
 var Message = model("messagelist", messageSchema)
+var Chatreport = model("chat_report", chatreportSchema)
+var CandidateReject = model("candidate_reject", candidaterejectSchema)
 
-module.exports = {Chat,Message}
+module.exports = {Chat,Message, Chatreport, CandidateReject}
