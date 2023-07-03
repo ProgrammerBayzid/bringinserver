@@ -4,7 +4,7 @@ const jobSearchingStatusSchema  =  Schema(
     {
         jobhuntingstatus: String,
         morestatus:String,
-        lookingforanyjob:String
+        lookingforanyjob:Boolean
     },
    
 );

@@ -76,27 +76,7 @@ app.post("/users", tokenverify, upload.single("image"), async (req, res) => {
   }
 });
 
-// experience insert
 
-app.post("/experience", tokenverify, async (req, res) => {
-  try {
-    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
-      if (err) {
-        res.json({ message: "invalid token" });
-      } else {
-        var experidata = await Experince.findOne({ name: req.body.name });
-        if (experidata != null) {
-          res.json({ message: "experience allready available" });
-        } else {
-          await Experince({ name: req.body.name }).save();
-          res.json({ message: "experience insert successfull" });
-        }
-      }
-    });
-  } catch (error) {
-    res.send(error);
-  }
-});
 
 // experience get
 

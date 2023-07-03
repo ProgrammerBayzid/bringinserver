@@ -5,7 +5,6 @@ const { Otp } = require("../../Model/otpModel");
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
 const Recruiterprofile = require("../../Model/Recruiter/recruiters.js")
-
 const app = express();
 
 
@@ -46,17 +45,25 @@ app.post('/verify', async (req, res) => {
   const validUser = await bcrypt.compare(req.body.otp, rightOtpFind.otp);
   if (rightOtpFind.number === req.body.number && validUser) {
     var token;
+    var carepre = 0;
+    var profile = false;
     // const user = new User(_.pick(req.body, ["number"]));
     if (req.body.isrecruiter == 0) {
       const user = await User.findOne({
         number: req.body.number,
       });
       if (user == null) {
-        const user2 = await User({ number: req.body.number, fastname: null, lastname: null, gender: null, experiencedlevel: null, startedworking: null, deatofbirth: null, email: null, image: null });
+        const user2 = await User({
+          number: req.body.number, fastname: null, lastname: null, gender: null, experiencedlevel: null, startedworking: null, deatofbirth: null, email: null, image: null
+        });
         token = user2.generateJWT()
         await user2.save();
+        profile = false;
+        carepre = 0;
       } else {
         token = user.generateJWT()
+        profile = true;
+        carepre = user.carearpre
       }
 
     } else {
@@ -85,16 +92,14 @@ app.post('/verify', async (req, res) => {
       }
 
     }
-    // const user = await User({number:req.body.number, fastname: "Tanvir",lastname: "mahamud", gender: "male"});
-    // const token = user.generateJWT();
-    // const result = await user.save();
     const OTPDelete = await Otp.deleteMany({
       number: rightOtpFind.number,
     });
     return res.status(200).json({
       message: "User Registration Successfully!",
       token: token,
-      data: {},
+      seekerprofile: profile,
+      carearpre: carepre
     });
   } else {
     return res.status(400).send("Your OTP was wrong!");

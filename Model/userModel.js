@@ -18,6 +18,11 @@ const userSchema = Schema(
     },
     startedworking: Date,
     deatofbirth: Date,
+    viewjob: { type: Number, default: 0 },
+    cvsend:{ type: Number, default: 0 },
+    totalchat: { type: Number, default: 0 },
+    savejob: { type: Number, default: 0 },
+    carearpre: { type: Number, default: 0 },
     email: String,
     image: String
   },

@@ -30,7 +30,7 @@ const jobpostSchema = Schema(
         },
         skill: [{
             type: "ObjectId",
-            ref: "Skill"
+            ref: "default_Skill"
         }],
         jobtype: {
             type: "ObjectId",

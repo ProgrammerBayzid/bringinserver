@@ -2,21 +2,21 @@ require('dotenv/config');
 const mongoose = require('mongoose');
 const app = require('./app');
 const http = require('http')
-const socketroute = require("./Routers/Chat/chat")
+const socketroute = require("./Routers/Chat/chat.io")
+
+
 
 mongoose.connect(process.env.MONGODB_URL)
 .then(()=>console.log('Connected to Databes'))
 .catch((err)=>console.log('connection faild'))
 const server = http.createServer(app)
-const io = require('socket.io')(server, {
-  cors: {
-      origin: "*"
-  }
-});
+const io = require('socket.io')(server);
 
 
 app.use(socketroute)
+
 socketroute(io)
+
 
 
 const port = process.env.PORT || 8000;
