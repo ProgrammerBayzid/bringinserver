@@ -45,6 +45,18 @@ const userSchema = Schema(
         type: Boolean,
         default: false
       }
+    },
+    job_hunting: {
+      type: String,
+      default: null
+    },
+    more_status: {
+      type: String,
+      default: null
+    },
+    job_right_now: {
+      type: Boolean,
+      default: false
     }
   },
   { timestamps: true }

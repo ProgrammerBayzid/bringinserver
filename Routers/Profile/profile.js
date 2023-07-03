@@ -120,4 +120,28 @@ app.post("/notification", tokenverify, async (req, res) => {
 })
 
 
+app.post("/job_hunting", tokenverify, (req, res)=>{
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        const _id = authdata._id;
+        const singalUser = await User.findOneAndUpdate({ _id: _id }, {
+          $set: {
+            "job_hunting": req.body.job_hunting,
+            "more_status": req.body.more_status,
+            "job_right_now": req.body.job_right_now
+          }
+        });
+        res.status(200).json({message: "update successfull"});
+      }
+    });
+  } catch (error) {
+    res.send(error);
+  }
+})
+
+
+
 module.exports = app;

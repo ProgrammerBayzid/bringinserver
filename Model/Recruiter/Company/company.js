@@ -14,8 +14,8 @@ const companySchema = Schema(
             ref: "Company_Size"
         },
         c_location: {
-            lat: Number,
-            lon: Number,
+            lat: Schema.Types.Mixed,
+            lon: Schema.Types.Mixed,
             formet_address: String,
             city: String
         },

@@ -36,6 +36,27 @@ const recruitersSchema = Schema(
         interview: {
           type: Number,
           default: 0
+        },
+        total_step: { type: Number, default: 6 },
+        incomplete: { type: Number, default: 1 },
+        complete: { type: Number, default: 5 },
+        notification: {
+          push_notification: {
+            type: Boolean,
+            default: false
+          },
+          whatsapp_notification: {
+            type: Boolean,
+            default: false
+          },
+          sms_notification: {
+            type: Boolean,
+            default: false
+          },
+          job_recommandation: {
+            type: Boolean,
+            default: false
+          }
         }
     },
 

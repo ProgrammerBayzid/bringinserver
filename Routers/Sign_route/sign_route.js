@@ -5,6 +5,8 @@ const { Otp } = require("../../Model/otpModel");
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
 const Recruiterprofile = require("../../Model/Recruiter/recruiters.js")
+const tokenverify = require("../../MiddleWare/tokenverify.js")
+const jwt = require("jsonwebtoken");
 const app = express();
 
 
@@ -105,6 +107,86 @@ app.post('/verify', async (req, res) => {
     return res.status(400).send("Your OTP was wrong!");
   }
 })
+
+
+
+app.post('/switch', tokenverify, async (req, res) => {
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" })
+      } else {
+        var token;
+        var carepre = 0;
+        var profile = false;
+        const _id = authdata._id;
+        if (req.body.isrecruiter == 1) {
+          const user = await User.findOne({
+            number: authdata.number,
+          });
+          if (user == null) {
+            const user2 = await User({
+              number: authdata.number, fastname: null, lastname: null, gender: null, experiencedlevel: null, startedworking: null, deatofbirth: null, email: null, image: null
+            });
+            token = user2.generateJWT()
+            await user2.save();
+            profile = false;
+            carepre = 0;
+          } else {
+            token = user.generateJWT()
+            profile = true;
+            carepre = user.carearpre
+          }
+
+          res.status(200).json({
+            message: "switch Successfully!",
+            token: token,
+            seekerprofile: profile,
+            carearpre: carepre
+          })
+
+        } else {
+          const recruiter = await Recruiterprofile.findOne({
+            number: authdata.number,
+          });
+          if (recruiter == null) {
+            const recruiter2 = await Recruiterprofile({
+              number: authdata.number,
+              firstname: null,
+              lastname: null,
+              companyname: null,
+              designation: null,
+              email: null,
+              image: null,
+              company_verify: false,
+              profile_verify: false,
+              company_docupload: false,
+              profile_docupload: false,
+              premium: false
+            });
+            token = recruiter2.generateJWT()
+            await recruiter2.save();
+          } else {
+            token = recruiter.generateJWT()
+          }
+
+          res.status(200).json({
+            message: "switch Successfully!",
+            token: token,
+            seekerprofile: profile,
+            carearpre: carepre
+          })
+        }
+
+
+      }
+    })
+  } catch (error) {
+    res.status(400).send(error);
+  }
+})
+
+
 
 
 
