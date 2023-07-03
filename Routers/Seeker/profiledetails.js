@@ -11,6 +11,7 @@ const {
   CareerPreference,
   Profiledata,
 } = require("../../Model/Seeker_profile_all_details.js");
+const Seekeruser = require('../../Model/userModel.js')
 
 const tokenverify = require("../../MiddleWare/tokenverify.js");
 const jwt = require("jsonwebtoken");
@@ -43,6 +44,7 @@ app.post("/about", tokenverify, async (req, res) => {
               aboutid: about._id
             }).save()
           }
+          await Seekeruser.findOneAndUpdate({_id: _id}, {$inc: { incomplete: -1, complete: 1} })
           res.status(200).json({ message: "add successfull" });
         } else {
           console.log(aboutdata._id)
@@ -111,6 +113,7 @@ app.post("/workexperience", tokenverify, async (req, res) => {
             aboutid: workexperiencedata._id
           }).save()
         }
+        await Seekeruser.findOneAndUpdate({_id: _id}, {$inc: { incomplete: -1, complete: 1} })
         res.status(200).json({ message: "Add Successfull" });
       } else {
         res.status(400).json({ message: "All ready Added" })
@@ -237,6 +240,7 @@ app.post("/education", tokenverify, async (req, res) => {
               education: educationdata._id
             }).save()
           }
+          await Seekeruser.findOneAndUpdate({_id: _id}, {$inc: { incomplete: -1, complete: 1} })
           res.status(200).json({ message: "Education Add Successfull" })
         } else {
           res.status(400).json({ message: "already added" })
@@ -384,6 +388,7 @@ app.post("/seeker_skill", tokenverify, async (req, res)=> {
               skill: req.body.skill
             }).save()
           }
+          await Seekeruser.findOneAndUpdate({_id: _id}, {$inc: { incomplete: -1, complete: 1} })
           res.status(200).json({ message: "skill add successfull data" })
         } else {
           var profiledata = await Profiledata.findOneAndUpdate({ userid: id }, { $addToSet: { skill: req.body.skill } })
@@ -563,6 +568,7 @@ app.post("/protfolio", tokenverify, async (req, res) => {
               skill: protfoliodata._id
             }).save()
           }
+          await Seekeruser.findOneAndUpdate({_id: _id}, {$inc: { incomplete: -1, complete: 1} })
           res.status(200).json({message: "add successfull"})
         }else{
           res.status(400).json({message: "allready added"})

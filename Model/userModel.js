@@ -23,6 +23,9 @@ const userSchema = Schema(
     totalchat: { type: Number, default: 0 },
     savejob: { type: Number, default: 0 },
     carearpre: { type: Number, default: 0 },
+    total_step: { type: Number, default: 7 },
+    incomplete: { type: Number, default: 7 },
+    complete: { type: Number, default: 0 },
     email: String,
     image: String
   },

@@ -160,6 +160,7 @@ app.post("/job_save", tokenverify, async (req, res)=> {
                     res.status(200).json({message: "job save successfull"})
                 }else{
                    await JobSave.findOneAndDelete({_id: data._id})
+                   await Seekeruser.findOneAndUpdate({_id: _id}, {$inc: { savejob: -1} })
                    res.status(200).json({message: "job unsave successfull"}) 
                 }   
             }
