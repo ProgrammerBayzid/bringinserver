@@ -388,7 +388,7 @@ app.post("/seeker_skill", tokenverify, async (req, res)=> {
               skill: req.body.skill
             }).save()
           }
-          await Seekeruser.findOneAndUpdate({_id: _id}, {$inc: { incomplete: -1, complete: 1} })
+          await Seekeruser.findOneAndUpdate({_id: id}, {$inc: { incomplete: -1, complete: 1} })
           res.status(200).json({ message: "skill add successfull data" })
         } else {
           var profiledata = await Profiledata.findOneAndUpdate({ userid: id }, { $addToSet: { skill: req.body.skill } })

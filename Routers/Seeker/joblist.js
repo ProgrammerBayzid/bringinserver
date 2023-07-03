@@ -80,9 +80,7 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
                         cityname.push(careardata[index].division.divisionname);
                         minsalary.push(careardata[index].salaray.min_salary);
                         maxsalary.push(careardata[index].salaray.max_salary)
-                        jobtype.push(careardata[index].jobtype.worktype)
-
-                        
+                        jobtype.push(careardata[index].jobtype.worktype)  
                     }
                     functionalregex = functionarea.join("|");
                     cityregex = cityname.join("|");

@@ -9,6 +9,7 @@ const { Chat, Message , Chatreport, CandidateReject} = require("../../Model/Chat
 const {Profiledata} = require("../../Model/Seeker_profile_all_details")
 const multer = require("multer");
 
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, "uploads");
@@ -196,5 +197,23 @@ app.post("/channelcreate", tokenverify ,async (req, res)=>{
 
 })
 
+
+app.get("/cv_send_count",tokenverify ,async (req, res)=>{
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        const _id = authdata._id;
+        await User.findOneAndUpdate({_id: _id}, {$inc: {cvsend: 1} })
+        
+      
+      }
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+
+})
 
 module.exports = app
