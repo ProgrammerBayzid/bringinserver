@@ -3,7 +3,7 @@ const app = express();
 const multer = require("multer");
 
 const {
-    Designation,Department,Institutename,MajorinSubject,Educationleveldegree,SeekeraddCompany, Image,Cv
+  AdminCompanySize, AdminSkill,  JobTitle,Department,SeekeraddCompany, Image,Cv
 } = require("../../Model/adminprofiledetails");
 
 const tokenverify = require("../../MiddleWare/tokenverify.js");
@@ -29,9 +29,9 @@ const image = multer({ storage: storage });
 
  // # post designation data 
 
-app.post("/designation", async (req, res) => {
+app.post("/jobtitle", async (req, res) => {
     try {
-      const designationData = await Designation(req.body);
+      const designationData = await JobTitle(req.body);
       const data = await designationData.save()
       res.status(200).send(data);
     } catch (error) {
@@ -41,10 +41,21 @@ app.post("/designation", async (req, res) => {
   
   // # get designation data 
   
-  app.get("/designation", async (req, res) => {
+  app.get("/jobtitle", async (req, res) => {
     try {
-      const designationData = await Designation.find();
-      res.send(designationData);
+      const data = await JobTitle.find();
+      res.send(data);
+    } catch (error) {
+      res.send(error);
+    }
+  });
+  app.delete("/jobtitle/:id", async (req, res) => {
+    try {
+      const result = await JobTitle.findByIdAndDelete(req.params.id);
+      if (!req.params.id) {
+        return res.status(404).send();
+      }
+      res.send(result);
     } catch (error) {
       res.send(error);
     }
@@ -69,8 +80,19 @@ app.post("/department", async (req, res) => {
   
   app.get("/department", async (req, res) => {
     try {
-      const departmentData = await Department.find();
-      res.send(departmentData);
+      const data = await Department.find();
+      res.send(data);
+    } catch (error) {
+      res.send(error);
+    }
+  });
+  app.delete("/department/:id", async (req, res) => {
+    try {
+      const result = await Department.findByIdAndDelete(req.params.id);
+      if (!req.params.id) {
+        return res.status(404).send();
+      }
+      res.send(result);
     } catch (error) {
       res.send(error);
     }
@@ -80,10 +102,10 @@ app.post("/department", async (req, res) => {
   
  // # post institutename data 
  
-app.post("/institutename", async (req, res) => {
+app.post("/admincompanysize", async (req, res) => {
     try {
-      const institutenameData = await Institutename(req.body);
-      const data = await institutenameData.save()
+      const admincompanysizeData = await AdminCompanySize(req.body);
+      const data = await admincompanysizeData.save()
       res.status(200).send(data);
     } catch (error) {
       res.status(400).send(error);
@@ -92,60 +114,29 @@ app.post("/institutename", async (req, res) => {
   
   // # get Institutename data 
   
-  app.get("/institutename", async (req, res) => {
+  app.get("/admincompanysize", async (req, res) => {
     try {
-      const institutenameData = await Institutename.find();
-      res.send(institutenameData);
+      const admincompanysizeData = await AdminCompanySize.find();
+      res.send(admincompanysizeData);
+    } catch (error) {
+      res.send(error);
+    }
+  });
+  app.delete("/admincompanysize/:id", async (req, res) => {
+    try {
+      const result = await AdminCompanySize.findByIdAndDelete(req.params.id);
+      if (!req.params.id) {
+        return res.status(404).send();
+      }
+      res.send(result);
     } catch (error) {
       res.send(error);
     }
   });
   
- // # post MajorinSubject data 
- 
-app.post("/majorinSubject", async (req, res) => {
-    try {
-      const majorinSubjectData = await MajorinSubject(req.body);
-      const data = await majorinSubjectData.save()
-      res.status(200).send(data);
-    } catch (error) {
-      res.status(400).send(error);
-    }
-  });
+
+
   
-  // # get MajorinSubject data 
-  
-  app.get("/majorinsubject", async (req, res) => {
-    try {
-      const majorinSubjectData = await MajorinSubject.find();
-      res.send(majorinSubjectData);
-    } catch (error) {
-      res.send(error);
-    }
-  });
-  
-//  // # post Educationleveldegree data 
- 
-// app.post("/educationleveldegree", async (req, res) => {
-//     try {
-//       const educationleveldegreeData = await Educationleveldegree(req.body);
-//       const data = await educationleveldegreeData.save()
-//       res.status(200).send(data);
-//     } catch (error) {
-//       res.status(400).send(error);
-//     }
-//   });
-  
-//   // # get Educationleveldegree data 
-  
-//   app.get("/educationleveldegree", async (req, res) => {
-//     try {
-//       const educationleveldegreeData = await Educationleveldegree.find();
-//       res.send(educationleveldegreeData);
-//     } catch (error) {
-//       res.send(error);
-//     }
-//   });
 
 
   
@@ -171,7 +162,17 @@ app.get("/seekercompany", async (req, res) => {
     res.send(error);
   }
 });
-
+app.delete("/seekercompany/:id", async (req, res) => {
+  try {
+    const result = await SeekeraddCompany.findByIdAndDelete(req.params.id);
+    if (!req.params.id) {
+      return res.status(404).send();
+    }
+    res.send(result);
+  } catch (error) {
+    res.send(error);
+  }
+});
 
 // image post api 
 
@@ -215,10 +216,39 @@ app.get("/image/:_id", tokenverify, async (req, res) => {
 });
 
 
+app.post("/admin/skill", async (req, res) => {
+  try {
+    const skillData = await AdminSkill(req.body);
+    const data = await skillData.save()
+    res.status(200).send(data);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+// # get skill data 
+
+app.get("/admin/skill", async (req, res) => {
+  try {
+    const data = await AdminSkill.find();
+    res.send(data);
+  } catch (error) {
+    res.send(error);
+  }
+});
 
 
-
-
+app.delete("/admin/skill/:id", async (req, res) => {
+  try {
+    const result = await AdminSkill.findByIdAndDelete(req.params.id);
+    if (!req.params.id) {
+      return res.status(404).send();
+    }
+    res.send(result);
+  } catch (error) {
+    res.send(error);
+  }
+});
 
 
 module.exports = app;

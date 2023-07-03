@@ -3,10 +3,10 @@ const app = express();
 const Recruiters = require("../../Model/Recruiter/recruiters");
 const tokenverify = require("../../MiddleWare/tokenverify.js")
 const jwt = require('jsonwebtoken');
-const { CompanyVerify } = require("../../Model/Recruiter/Verify/company_verify.js")
 const { Otp } = require("../../Model/otpModel");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer")
+const { CompanyVerify } = require("../../Model/Recruiter/Verify/company_verify.js")
 const { ProfileVerify } = require("../../Model/Recruiter/Verify/profile_verify.js")
 const transportar = nodemailer.createTransport({
     service: "gmail",

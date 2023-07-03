@@ -16,10 +16,10 @@ const cv = require('./Routers/Cv/cv.js')
 const jobpost = require('./Routers/Recruiter/job_post')
 const adminapi = require('./Routers/Admin_Api/admin_api')
 const seekerjob =  require('./Routers/Seeker/joblist.js')
-const email =  require('./Routers/Email/email')
+const email =  require('./Routers/Email/email.js')
+const candidate = require('./Routers/Recruiter/candidate.js')
+const jobSearchingStatus = require('./Routers/JobSearchingStatus/jobSearchingStatus.js')
 const adminPanel =  require('./Routers/AdminPanel/adminpa')
-const candidate = require('./Routers/Recruiter/candidate')
-const jobSearchingStatus = require('./Routers/JobSearchingStatus/jobSearchingStatus')
 const chatrestapi = require('./Routers/Chat/chat_restapi')
 
 app.use(express.json());

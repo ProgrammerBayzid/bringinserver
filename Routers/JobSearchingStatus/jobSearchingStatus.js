@@ -22,10 +22,10 @@ app.post("/jobSearchingStatus", tokenverify, async (req, res) => {
             jobhuntingstatus: req.body.jobhuntingstatus,
             morestatus: req.body.morestatus,
             lookingforanyjob: req.body.lookingforanyjob,
-            userid: _id,
+            userid: _id
           });
-          const protfolio = await data.save();
-          res.status(200).send(protfolio);
+          const jobSearchingData = await data.save();
+          res.status(200).send(jobSearchingData);
         }
       });
     } catch (error) {
