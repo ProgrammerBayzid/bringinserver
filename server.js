@@ -6,6 +6,7 @@ const socketroute = require("./Routers/Chat/chat.io")
 
 
 
+
 mongoose.connect(process.env.MONGODB_URL)
 .then(()=>console.log('Connected to Databes'))
 .catch((err)=>console.log('connection faild'))
@@ -19,7 +20,7 @@ socketroute(io)
 
 
 
-const port = process.env.PORT || 8000;
-server.listen(8000, () => {
+const port = 3002;
+server.listen(port, () => {
     console.log(`bringin  server is running port ${port}`);
   });
