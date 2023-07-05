@@ -1,5 +1,6 @@
 
 const express = require("express");
+var bodyParser = require('body-parser')
 const app = express();
 const cors = require("cors");
 const bringinRouter = require('./Routers/router')
@@ -25,6 +26,8 @@ const chatrestapi = require('./Routers/Chat/chat_restapi')
 app.use(express.json());
 app.use(cors());
 app.use('/uploads', express.static('uploads'))
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(bringinRouter)
 app.use(signroute)
 app.use(profile)

@@ -28,6 +28,7 @@ const userSchema = Schema(
     complete: { type: Number, default: 0 },
     email: String,
     image: String,
+    pushnotification: String,
     notification: {
       push_notification: {
         type: Boolean,
@@ -57,7 +58,8 @@ const userSchema = Schema(
     job_right_now: {
       type: Boolean,
       default: false
-    }
+    },
+
   },
   { timestamps: true }
 );

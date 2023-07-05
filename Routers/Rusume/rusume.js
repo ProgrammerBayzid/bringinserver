@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
-const resume = multer({ storage: storage });
+const resume = multer({ storage: storage ,limits: { fileSize: 2000000 }});
 
 app.post("/resume", tokenverify, resume.single("resume"), async (req, res) => {
   try {
@@ -25,13 +25,18 @@ app.post("/resume", tokenverify, resume.single("resume"), async (req, res) => {
         res.json({ message: "invalid token" });
       } else {
         const _id = authdata._id;
-        const resumedata = await Resume({
-          resume: req.file,
-          userid: _id,
-          uploadtime: new Date()
-        });
-        const resumefile = await resumedata.save();
-        res.status(200).json({message: "upload successfull"});
+        if (req.file && req.file.size < 1048576) {
+          const resumedata = await Resume({
+            resume: req.file,
+            userid: _id,
+            uploadtime: new Date()
+          });
+          const resumefile = await resumedata.save();
+          res.status(200).json({message: "upload successfull"});
+        }else{
+          res.status(400).json({message: "upload maximum 1mb file"});
+        }
+        
       }
     });
   } catch (error) {

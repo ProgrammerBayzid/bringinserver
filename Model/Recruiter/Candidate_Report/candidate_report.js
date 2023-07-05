@@ -10,6 +10,10 @@ const candidatereportSchema  =  Schema(
         candidateid:{
             type:"ObjectID",
             ref: "User"
+        },
+        description: {
+            type: String,
+            default: null
         }
     },
    

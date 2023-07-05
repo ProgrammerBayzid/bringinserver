@@ -198,12 +198,12 @@ app.post("/candidate_report", tokenverify, upload.single("image"), async (req, r
                 const _id = authdata._id;
                 var reportdata = await candidateReport.findOne({ userid: _id, candidateid: req.body.candidateid })
                 if (reportdata == null) {
-                    await candidateReport({ userid: _id, candidateid: req.body.candidateid, report: req.body.report, image: req.file == null ? "" : req.file.path }).save()
+                    await candidateReport({ userid: _id, candidateid: req.body.candidateid, report: req.body.report, image: req.file == null ? "" : req.file.path , description: req.body.description}).save()
                     res.status(200).json({ message: "report successfull" })
                 } else {
                     await candidateReport.findOneAndUpdate({ userid: _id, candidateid: req.body.candidateid }, {
                         $set: {
-                            report: req.body.report, image: req.file == null ? "" : req.file.path
+                            report: req.body.report, image: req.file == null ? "" : req.file.path, description: req.body.description
                         }
                     })
                     res.status(200).json({ message: "you job report update" })

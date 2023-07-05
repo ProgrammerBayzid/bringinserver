@@ -305,6 +305,7 @@ app.delete("/career_preferences_delete", tokenverify, async (req, res) => {
             { userid: id },
             { $pull: { careerPreference: data._id } }
           );
+          await Seekerprofile.findOneAndUpdate({_id: id}, {$inc: { carearpre: -1} })
           res.status(200).json({ message: "Delete Sucessfull" });
         }
       }
