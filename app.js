@@ -47,4 +47,9 @@ app.use(chatrestapi)
 
 
 
+app.get("/", (req, res)=> {
+    res.send(req.headers)
+})
+
+
 module.exports=app

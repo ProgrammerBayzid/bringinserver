@@ -37,14 +37,14 @@ app.get("/users", tokenverify, async (req, res) => {
 //   // # update user data
 
 app.post("/users", tokenverify, upload.single("image"), async (req, res) => {
-  
+
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
       if (err) {
         res.json({ message: "invalid token" });
       } else {
         const _id = authdata._id;
-    
+
         if (req.file) {
           await User.findByIdAndUpdate(_id, {
             $set: { image: req.file.path },
@@ -68,7 +68,7 @@ app.post("/users", tokenverify, upload.single("image"), async (req, res) => {
           }
         );
 
-        res.status(200).json({message: "update successull"});
+        res.status(200).json({ message: "update successull" });
       }
     });
   } catch (error) {
@@ -94,5 +94,54 @@ app.get("/experiencelist", tokenverify, (req, res) => {
     res.send(error);
   }
 });
+
+
+app.post("/notification", tokenverify, async (req, res) => {
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        const _id = authdata._id;
+        const singalUser = await User.findOneAndUpdate({ _id: _id }, {
+          $set: {
+            "notification.push_notification": req.body.push,
+            "notification.whatsapp_notification": req.body.whatsapp,
+            "notification.sms_notification": req.body.sms,
+            "notification.job_recommandation": req.body.job,
+          }
+        });
+        res.status(200).json({message: "update successfull"});
+      }
+    });
+  } catch (error) {
+    res.send(error);
+  }
+})
+
+
+app.post("/job_hunting", tokenverify, (req, res)=>{
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        const _id = authdata._id;
+        const singalUser = await User.findOneAndUpdate({ _id: _id }, {
+          $set: {
+            "job_hunting": req.body.job_hunting,
+            "more_status": req.body.more_status,
+            "job_right_now": req.body.job_right_now
+          }
+        });
+        res.status(200).json({message: "update successfull"});
+      }
+    });
+  } catch (error) {
+    res.send(error);
+  }
+})
+
+
 
 module.exports = app;

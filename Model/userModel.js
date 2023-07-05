@@ -27,7 +27,37 @@ const userSchema = Schema(
     incomplete: { type: Number, default: 7 },
     complete: { type: Number, default: 0 },
     email: String,
-    image: String
+    image: String,
+    notification: {
+      push_notification: {
+        type: Boolean,
+        default: false
+      },
+      whatsapp_notification: {
+        type: Boolean,
+        default: false
+      },
+      sms_notification: {
+        type: Boolean,
+        default: false
+      },
+      job_recommandation: {
+        type: Boolean,
+        default: false
+      }
+    },
+    job_hunting: {
+      type: String,
+      default: null
+    },
+    more_status: {
+      type: String,
+      default: null
+    },
+    job_right_now: {
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true }
 );
