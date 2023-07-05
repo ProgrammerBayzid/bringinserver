@@ -5,6 +5,8 @@ const multer = require("multer");
 const {
   AdminCompanySize, AdminSkill,  JobTitle,Department,SeekeraddCompany, Image,Cv
 } = require("../../Model/adminprofiledetails");
+const { City, Division } = require("../../Model/alllocation.js");
+
 
 const tokenverify = require("../../MiddleWare/tokenverify.js");
 const jwt = require("jsonwebtoken");
@@ -249,6 +251,9 @@ app.delete("/admin/skill/:id", async (req, res) => {
     res.send(error);
   }
 });
+
+
+
 
 
 module.exports = app;

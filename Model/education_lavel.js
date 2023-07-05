@@ -28,10 +28,10 @@ const digreeSchema = Schema(
 const subjectSchema = Schema(
     {
         name: String,
-        educaton: {
+        educaton: [{
             type: "ObjectID",
             ref: "Education_Lavel"
-        },
+        }],
         digree: {
             type: "ObjectId",
             ref: "digree"

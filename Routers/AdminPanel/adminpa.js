@@ -100,8 +100,8 @@ app.get("/verifyCompny", async (req, res) => {
   }
 });
 
-app.get("/company_varify/:id", async (req, res) => {
-  const id = req.params.id;
+app.get("/company_varify", async (req, res) => {
+  const id = req.query._id;
   const query = { _id: id };
   const date = await CompanyVerify.findOne(query);
   res.send(date);
@@ -342,7 +342,7 @@ app.get("/admin/location", async (req, res) => {
 app.post("/location", async (req, res) => {
   try {
     var citydata = await City.findOne({ name: req.body.city });
-    var divisiondata = await Division.findOne({
+    var divisiondata = await City.findOne({
       divisionname: req.body.division,
     });
     var city;
@@ -351,7 +351,7 @@ app.post("/location", async (req, res) => {
       city = await City({ name: req.body.city });
       city.save();
     }
-    if (divisiondata == null) {
+    if (divisiondata == null || divisiondata !== null ) {
       division = await Division({
         divisionname: req.body.division,
         cityid: citydata == null ? city._id : citydata._id,
