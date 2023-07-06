@@ -222,6 +222,7 @@ app.post("/email_code_verify", tokenverify, (req, res)=> {
                     const OTPDelete = await Otp.deleteMany({
                       number: rightOtpFind.number,
                     });
+                    await Recruiters.findByIdAndUpdate({ _id: _id }, { $set: { profile_verify: true } })
                     return res.status(200).json({
                       message: "verification Successfully!",
                     });

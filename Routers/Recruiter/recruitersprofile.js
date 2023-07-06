@@ -34,7 +34,8 @@ app.get("/recruiters_profile", tokenverify, async (req, res) => {
                     path: 'companyname',
                     populate: {
                         path: 'industry',
-                        model: 'industries' 
+                        model: 'industries' ,
+                        select: "industryname"
                     }
                 });
                 res.status(200).send(singalRecruiter);
@@ -75,7 +76,7 @@ app.post("/recruiters_update", tokenverify, upload.single("image"), async (req, 
                     new: true,
                 });
 
-                res.status(200).send("profile update successfull");
+                res.status(200).json({message: "profile update successfull"});
 
             }
         })

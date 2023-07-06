@@ -36,15 +36,17 @@ app.post("/about", tokenverify, async (req, res) => {
             about: req.body.about,
             userid: _id,
           });
-          about.save();
-          var profiledata = await Profiledata.findOneAndUpdate({ userid: _id }, { $set: { aboutid: about._id } })
+          await about.save();
+          console.log(about._id);
+          var profiledata = await Profiledata.findOneAndUpdate({ userid: _id }, { $set: { about: about._id } })
+          
           if (profiledata == null) {
             await Profiledata({
               userid: _id,
               aboutid: about._id
             }).save()
           }
-          await Seekeruser.findOneAndUpdate({_id: _id}, {$inc: { incomplete: -1, complete: 1} })
+          await Seekeruser.findOneAndUpdate({_id: _id}, {$inc: { incomplete: -1, complete: 1}, })
           res.status(200).json({ message: "add successfull" });
         } else {
           console.log(aboutdata._id)
@@ -758,7 +760,7 @@ app.get("/profiledetails",tokenverify, async (req, res) => {
       } else {
         const _id = authdata._id;
      
-        var data = await Profiledata.find({userid: _id}).populate(
+        var data = await Profiledata.findOne({userid: _id}).populate(
           [
             {path: "workexperience",populate:[{path: "category", select: "-functionarea"},"expertisearea"] },
             {path: "education",populate: [{path: "digree",select: "-subject", populate: {path: "education", select: "-digree"}},"subject"]},

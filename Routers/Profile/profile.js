@@ -5,6 +5,7 @@ const tokenverify = require("../../MiddleWare/tokenverify.js");
 const jwt = require("jsonwebtoken");
 const Experince = require("../../Model/experience.js");
 const multer = require("multer");
+const Recruiters = require("../../Model/Recruiter/recruiters");
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads");
@@ -103,15 +104,26 @@ app.post("/notification", tokenverify, async (req, res) => {
         res.json({ message: "invalid token" });
       } else {
         const _id = authdata._id;
-        const singalUser = await User.findOneAndUpdate({ _id: _id }, {
-          $set: {
+        if (req.body.isrecruiter == true) {
+         await Recruiters.findOneAndUpdate({_id: _id}, {$set: {
             "notification.push_notification": req.body.push,
             "notification.whatsapp_notification": req.body.whatsapp,
             "notification.sms_notification": req.body.sms,
             "notification.job_recommandation": req.body.job,
-          }
-        });
-        res.status(200).json({message: "update successfull"});
+          }})
+          res.status(200).json({message: "update successfull"});
+        }else{
+          const singalUser = await User.findOneAndUpdate({ _id: _id }, {
+            $set: {
+              "notification.push_notification": req.body.push,
+              "notification.whatsapp_notification": req.body.whatsapp,
+              "notification.sms_notification": req.body.sms,
+              "notification.job_recommandation": req.body.job,
+            }
+          });
+          res.status(200).json({message: "update successfull"});
+        }
+        
       }
     });
   } catch (error) {
@@ -135,6 +147,34 @@ app.post("/job_hunting", tokenverify, (req, res)=>{
           }
         });
         res.status(200).json({message: "update successfull"});
+      }
+    });
+  } catch (error) {
+    res.send(error);
+  }
+})
+
+
+app.post("/push_notification",tokenverify, async (req, res)=> {
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        const _id = authdata._id;
+        if (req.body.isrecruiter == true) {
+         await Recruiters.findOneAndUpdate({_id: _id}, {$set: {
+          "pushnotification": req.body.pushnotification,
+          }})
+          res.status(200).json({message: "update successfull"});
+        }else{
+          const singalUser = await User.findOneAndUpdate({ _id: _id }, {
+            $set: {
+              "pushnotification": req.body.pushnotification,
+            }
+          });
+          res.status(200).json({message: "update successfull"});
+        }
       }
     });
   } catch (error) {

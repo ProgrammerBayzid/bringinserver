@@ -10,6 +10,10 @@ const jobreportSchema  =  Schema(
         jobid:{
             type:"ObjectID",
             ref: "job_post"
+        },
+        description: {
+            type: String,
+            default: null
         }
     },
    
