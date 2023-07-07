@@ -74,10 +74,11 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
                     let minregex;
                     let maxregex;
                     let jobtyperegex;
+                    
 
                     for (let index = 0; index < careardata.length; index++) {
                         functionarea.push(careardata[index].functionalarea.functionalname);
-                        cityname.push(careardata[index].division.divisionname);
+                        cityname.push(careardata[index].division.cityid.name);
                         minsalary.push(careardata[index].salaray.min_salary);
                         maxsalary.push(careardata[index].salaray.max_salary)
                         jobtype.push(careardata[index].jobtype.worktype)  
@@ -87,6 +88,7 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
                     minregex = minsalary.join("|");
                     maxregex = maxsalary.join("|");
                     jobtyperegex = jobtype.join("|");
+                    console.log(cityregex)
                 if (req.query.functionalarea == 0) {
                     var company = await JobPost.find().populate([
                     {path: "userid"},
@@ -98,6 +100,7 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
                     {path: "skill"},
                     {path: "jobtype",match: { "worktype": { $regex: jobtyperegex, $options: "i" } }},
                 ]).exec().then((data) => data.filter((filterdata) => filterdata.company != null && filterdata.expertice_area != null && filterdata.salary != null && filterdata.jobtype != null))
+              
                     res.status(200).send(company)
                 } else {
                     var company = await JobPost.find({ expertice_area: req.query.functionalarea }).populate(["userid",
@@ -105,7 +108,7 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
                         "experience",
                         "education",
                         "salary",
-                        { path: "company",match: { "c_location.formet_address": { $regex: cityregex, $options: "i" } }, populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
+                        { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
                         "skill",
                         "jobtype"])
                     res.status(200).send(company);
@@ -314,7 +317,7 @@ app.post('/job_filter', tokenverify, async (req, res)=>{
                 ]
 
                 
-                var joblist = await JobPost.find({remote: {$in: workplace}}).populate(populate).then((data) => data.filter((filterdata) =>  filterdata.expertice_area != null && filterdata.experience != null && filterdata.education != null && filterdata.company.c_size != null && filterdata.salary != null))
+                var joblist = await JobPost.find({expertice_area:req.body.functionalareaid , remote: {$in: workplace}}).populate(populate).then((data) => data.filter((filterdata) =>  filterdata.expertice_area != null && filterdata.experience != null && filterdata.education != null && filterdata.company.c_size != null && filterdata.salary != null))
                 
                 res.status(200).json(joblist)
                

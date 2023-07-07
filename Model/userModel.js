@@ -9,6 +9,10 @@ const userSchema = Schema(
       type: String,
       required: true,
     },
+    secoundnumber: {
+      type: String,
+      default: null
+    },
     fastname:  String,
     lastname: String,
     gender: String,
@@ -24,8 +28,8 @@ const userSchema = Schema(
     savejob: { type: Number, default: 0 },
     carearpre: { type: Number, default: 0 },
     total_step: { type: Number, default: 7 },
-    incomplete: { type: Number, default: 7 },
-    complete: { type: Number, default: 0 },
+    incomplete: { type: Number, default: 5 },
+    complete: { type: Number, default: 2 },
     email: String,
     image: String,
     pushnotification: String,

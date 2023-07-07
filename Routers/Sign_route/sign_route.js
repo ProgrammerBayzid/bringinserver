@@ -56,7 +56,16 @@ app.post('/verify', async (req, res) => {
       });
       if (user == null) {
         const user2 = await User({
-          number: req.body.number, fastname: null, lastname: null, gender: null, experiencedlevel: null, startedworking: null, deatofbirth: null, email: null, image: null
+          number: req.body.number, 
+          fastname: null, 
+          lastname: null, 
+          gender: null, 
+          experiencedlevel: null, 
+          startedworking: null, 
+          deatofbirth: null, 
+          email: null, 
+          image: null, 
+          secoundnumber: req.body.number,
         });
         token = user2.generateJWT()
         await user2.save();
@@ -126,7 +135,7 @@ app.post('/switch', tokenverify, async (req, res) => {
           });
           if (user == null) {
             const user2 = await User({
-              number: authdata.number, fastname: null, lastname: null, gender: null, experiencedlevel: null, startedworking: null, deatofbirth: null, email: null, image: null
+              number: authdata.number,  secoundnumber: authdata.number,  fastname: null, lastname: null, gender: null, experiencedlevel: null, startedworking: null, deatofbirth: null, email: null, image: null
             });
             token = user2.generateJWT()
             await user2.save();
