@@ -3,7 +3,7 @@ const { Schema, model, } = require("mongoose");
 const experienceSchema  =  Schema(
     {
         name: String
-    },
+    },{timestamps: true}
    
 );
 

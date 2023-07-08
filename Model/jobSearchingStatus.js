@@ -5,7 +5,7 @@ const jobSearchingStatusSchema  =  Schema(
         jobhuntingstatus: String,
         morestatus:String,
         lookingforanyjob:Boolean
-    },
+    },{timestamps: true}
    
 );
 

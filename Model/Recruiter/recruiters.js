@@ -59,7 +59,7 @@ const recruitersSchema = Schema(
             default: false
           }
         }
-    },
+    },{timestamps: true}
 
 );
 

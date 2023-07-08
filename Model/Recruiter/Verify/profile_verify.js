@@ -13,7 +13,7 @@ const profileverifySchema = Schema(
         filename: String,
         path: String,
         size: Number
-    },
+    },{timestamps: true}
 
 );
 

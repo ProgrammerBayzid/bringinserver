@@ -8,7 +8,7 @@ const jobsaveSchema  =  Schema(
             type:"ObjectID",
             ref: "job_post"
         }
-    },
+    },{timestamps: true}
    
 );
 

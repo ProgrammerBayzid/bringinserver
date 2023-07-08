@@ -22,7 +22,7 @@ const workexperienceSchema = Schema({
     type: "ObjectId",
     ref: "User"
   },
-});
+},{timestamps: true});
 
 const educationlavelSchema = Schema({
   institutename: String,
@@ -42,24 +42,24 @@ const educationlavelSchema = Schema({
   enddate: Date,
   otheractivity: String,
   userid: String,
-});
+},{timestamps: true});
 
 const defaultskillSchema = Schema({
   skill: String,
   userid: String,
-});
+},{timestamps: true});
 const skillSchema = Schema({
   skill: [{type:"ObjectId", ref: "default_Skill"}],
   userid: String,
-});
+},{timestamps: true});
 const protfoliolinkSchema = Schema({
   protfoliolink: String,
   userid: String,
-});
+},{timestamps: true});
 const aboutSchema = Schema({
   about: String,
   userid: String,
-});
+},{timestamps: true});
 const careerpreferenceSchema = Schema({
   expectedjobindustry: [
     {
@@ -88,7 +88,7 @@ const careerpreferenceSchema = Schema({
     ref: "Salirietype",
   },
   userid: String,
-});
+},{timestamps: true});
 
 const allprofiledataSchema = Schema({
   userid: {
@@ -120,7 +120,7 @@ const allprofiledataSchema = Schema({
     ref: "career_preferences",
   }],
  
-});
+},{timestamps: true});
 
 var Workexperience = model("Workexperience", workexperienceSchema);
 

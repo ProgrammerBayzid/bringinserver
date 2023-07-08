@@ -8,7 +8,7 @@ const industrySchema  =  Schema(
             ref: "Category"
         }]
         
-    },
+    },{timestamps: true}
    
 );
 
@@ -25,7 +25,7 @@ const categorySchema  =  Schema(
             ref: "FunctionalArea"
         }]
         
-    },
+    },{timestamps: true}
    
 );
 
@@ -43,7 +43,7 @@ const functionalareaSchema  =  Schema(
         },
         functionalname: String,
         
-    },
+    },{timestamps: true}
    
 );
 

@@ -3,7 +3,7 @@ const { Schema, model, } = require("mongoose");
 const jobtypeSchema  =  Schema(
     {
         worktype:String
-        },
+        },{timestamps: true}
    
 );
 

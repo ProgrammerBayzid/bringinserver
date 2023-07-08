@@ -16,7 +16,7 @@ const viewjobSchema  =  Schema(
         }
         
 
-    },
+    },{timestamps: true}
    
 );
 var viewjob  = model("view_job", viewjobSchema);

@@ -7,7 +7,7 @@ const educationlavelSchema = Schema(
             type: "ObjectId",
             ref: "digree"
         }]
-    },
+    },{timestamps: true}
 
 );
 
@@ -22,7 +22,7 @@ const digreeSchema = Schema(
             type: "ObjectId",
             ref: "subject"
         }]
-    },
+    },{timestamps: true}
 );
 
 const subjectSchema = Schema(
@@ -37,7 +37,7 @@ const subjectSchema = Schema(
             ref: "digree"
         }],
         
-    },
+    },{timestamps: true}
 );
 
 

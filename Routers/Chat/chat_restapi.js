@@ -105,6 +105,29 @@ app.post("/candidate_reject", tokenverify ,async (req, res)=>{
 })
 
 
+app.post("/candidate_unreject", tokenverify ,async (req, res)=>{
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        const _id = authdata._id;
+          var rejectdata = await CandidateReject.findOneAndDelete({userid: _id,candidateid: req.body.candidateid})
+          if (rejectdata == null) {
+            
+            res.status(400).json({message: "Candidate Not Found"})
+          }else{
+            res.status(200).json({message: "Candidate Unrejected Successfull"})
+          }
+          
+      }
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+})
+
+
 app.get("/candidate_reject", tokenverify ,async (req, res)=>{
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
