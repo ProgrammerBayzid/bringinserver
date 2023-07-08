@@ -6,8 +6,13 @@ const {
   Category,
   Functionarea,
 } = require("../../Model/industry.js");
+const {
+  
+  Profiledata,
+} = require("../../Model/Seeker_profile_all_details.js");
 const Recruiters = require("../../Model/Recruiter/recruiters");
-
+const tokenverify = require("../../MiddleWare/tokenverify.js");
+const jwt = require("jsonwebtoken");
 const JobReport = require("../../Model/job_report.js");
 
 const { City, Division } = require("../../Model/alllocation.js");
@@ -222,6 +227,11 @@ app.get("/admin/category", async (req, res) => {
   }
 });
 
+
+
+
+
+
 app.post("/categoryadd", async (req, res) => {
   try {
     var categorydata = await Category.findOne({
@@ -316,17 +326,17 @@ app.get("/admin/functionalarea", async (req, res) => {
   }
 });
 
-app.delete("/admin/functionalarea/:id", async (req, res) => {
-  try {
-    const result = await Functionarea.findByIdAndDelete(req.params.id);
-    if (!req.params.id) {
-      return res.status(404).send();
-    }
-    res.send(result);
-  } catch (error) {
-    res.send(error);
-  }
-});
+// app.delete("/admin/functionalarea/:id", async (req, res) => {
+//   try {
+//     const result = await Functionarea.findByIdAndDelete(req.params.id);
+//     if (!req.params.id) {
+//       return res.status(404).send();
+//     }
+//     res.send(result);
+//   } catch (error) {
+//     res.send(error);
+//   }
+// });
 
 // location
 
@@ -520,7 +530,7 @@ app.delete("/admin/subject/:id", async (req, res) => {
   try {
     const result = await Subject.findByIdAndDelete(req.params.id);
     if (!req.params.id) {
-      return res.status(404).send();
+      return res.status(404).send();    
     }
     res.send(result);
   } catch (error) {
