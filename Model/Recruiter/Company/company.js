@@ -20,14 +20,14 @@ const companySchema = Schema(
             city: String
         },
         c_website: String,
-    },
+    },{timestamps: true}
 
 );
 
 const companysizeSchema = Schema(
     {
         size: String
-    },
+    },{timestamps: true}
 );
 
 

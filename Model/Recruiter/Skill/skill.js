@@ -4,7 +4,7 @@ const skillSchema = Schema(
     {
         userid: String,
         skill: String
-    },
+    },{timestamps: true}
 
 );
 

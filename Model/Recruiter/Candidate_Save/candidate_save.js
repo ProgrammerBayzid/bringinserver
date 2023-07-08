@@ -10,7 +10,7 @@ const candidateSaveSchema = Schema(
             type: "ObjectId",
             ref: "seeker_profiledata"
         }
-    },
+    },{timestamps: true}
 );
 
 

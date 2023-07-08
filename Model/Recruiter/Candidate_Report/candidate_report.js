@@ -15,7 +15,7 @@ const candidatereportSchema  =  Schema(
             type: String,
             default: null
         }
-    },
+    },{timestamps: true}
    
 );
 

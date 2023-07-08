@@ -7,7 +7,7 @@ const citySchema  =  Schema(
             type: "ObjectId",
             ref: "Division"
         }]
-    },
+    },{timestamps: true}
    
 );
 
@@ -18,7 +18,7 @@ const divisionSchema  =  Schema(
             type: "ObjectId",
             ref: "City"
         }
-    },
+    },{timestamps: true}
    
 );
 

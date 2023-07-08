@@ -76,43 +76,65 @@ app.get("/candidatelist", tokenverify, async (req, res) => {
                 res.json({ message: "invalid token" })
             } else {
                 const _id = authdata._id;
-                function industryfilter(element) {
-                    if(element.functionalarea._id == req.query.functionalareaid){
+                var profiledata = await Recruiters.findOne({ _id: _id }).populate([{path: "companyname"}])
+                function functionalareafilter(element) {
+                    if(element.functionalarea._id == req.query.functionalareaid && (new RegExp(element.division.cityid.name.toLowerCase())).test(profiledata.companyname.c_location.formet_address.toLowerCase()) == true){
                         return true;
                     }else{
                         return false;
                     }
                   }
-
-
-
-                if (req.query.functionalareaid == 0) {
-                    var jobdata = await JobPost.find({ userid: _id }).select(["expertice_area", "company"]).populate([{ path: "company", select: "c_location" }, "expertice_area"])
-                    let functionarea = [];
-                    let cityname = [];
-                    let functionalregex;
-                    let cityregex;
-                    for (let index = 0; index < jobdata.length; index++) {
-                        functionarea.push(jobdata[index].expertice_area.functionalname);
-                        cityname.push(jobdata[index].company.c_location.formet_address);
+                  function industryfilter(element) {
+                    var data = element.category.filter((data)=> data.industryid == profiledata.companyname.industry)
+                    // console.log(element.division.cityid.name.toLowerCase().indexOf('Dhaka'))
+                    // profiledata.companyname.c_location.formet_address
+                    // element.division.cityid.name.toLowerCase()
+                    // console.log(profiledata.companyname.c_location.formet_address.toLowerCase())
+                    // console.log()
+                    if (data.length > 0 && (new RegExp(element.division.cityid.name.toLowerCase())).test(profiledata.companyname.c_location.formet_address.toLowerCase()) == true) {
+                        return true;
+                    }else{
+                        return false;
                     }
-                    functionalregex = functionarea.join("|");
-                    cityregex = cityname.join("|");
+                  }
+                if (req.query.functionalareaid == 0) {
+                   
+                   // profiledata.companyname.industry
+                    
+                    
+                    // let functionarea = [];
+                    // let cityname = [];
+                    // let functionalregex;
+                    // let cityregex;
+                    // for (let index = 0; index < jobdata.length; index++) {
+                    //     functionarea.push(jobdata[index].expertice_area.functionalname);
+                    //     cityname.push(jobdata[index].company.c_location.formet_address);
+                    // }
+                    // functionalregex = functionarea.join("|");
+                    // cityregex = cityname.join("|");
                     var populate = [
                         { path: "workexperience", populate: [{ path: "category", select: "-functionarea" }, "expertisearea"] },
                         { path: "education", populate: [{ path: "digree", select: "-subject", populate: { path: "education", select: "-digree" } }, "subject"] },
                         "skill",
                         "protfoliolink",
                         "about",
-                        { path: "careerPreference", populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea" }, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype", "salaray"] },
+                        { path: "careerPreference", populate: [{ path: "category",  select: "-functionarea" }, { path: "functionalarea" }, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype", "salaray"] },
                         { path: "userid", populate: { path: "experiencedlevel" } }
                     ]
                     
-                    var seekerdata = await Profiledata.find().populate(populate);
+                    var seekerdata = await Profiledata.find().populate(populate).then((data)=> data.filter((filterdata)=> {
+                        var industrydata = filterdata.careerPreference.filter(industryfilter)
+                        if(industrydata.length > 0){
+                            return true;
+                        }else{
+                            return false;
+                        }
+
+                    }));
                     res.status(200).send(seekerdata)
                 } else {
                     var populate2 =[
-                        { path: "workexperience", populate: [{ path: "category", select: "-functionarea" }, "expertisearea"] },
+                        { path: "workexperience", populate: [{ path: "category",  select: "-functionarea" }, "expertisearea"] },
                         { path: "education", populate: [{ path: "digree", select: "-subject", populate: { path: "education", select: "-digree" } }, "subject"] },
                         "skill",
                         "protfoliolink",
@@ -121,7 +143,7 @@ app.get("/candidatelist", tokenverify, async (req, res) => {
                         { path: "userid", populate: { path: "experiencedlevel" } }
                     ]
                     var seekerdata = await Profiledata.find().populate(populate2).then((data) => data.filter((filterdata) => {
-                        var filterdata2 = filterdata.careerPreference.filter(industryfilter)
+                        var filterdata2 = filterdata.careerPreference.filter(functionalareafilter)
                         if (filterdata2.length > 0) {
                             return true;
                         }else{

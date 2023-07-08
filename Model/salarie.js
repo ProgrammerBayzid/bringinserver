@@ -6,7 +6,7 @@ const salirietypeSchema  =  Schema(
         max_salary:String,
         currency:String,
 
-    },
+    },{timestamps: true}
    
 );
 

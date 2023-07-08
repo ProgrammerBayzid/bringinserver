@@ -4,7 +4,7 @@ const expectedjobindustrySchema  =  Schema(
     {
         name: String,
         parent_industry_name:String
-    },
+    },{timestamps: true}
    
 );
 

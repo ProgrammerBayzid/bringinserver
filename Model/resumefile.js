@@ -10,7 +10,7 @@ const resumeSchema  =  Schema(
         },
         uploadtime: Date
 
-    },
+    },{timestamps: true}
    
 );
 

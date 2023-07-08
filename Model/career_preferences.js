@@ -27,7 +27,7 @@ const career_preferencesSchema = Schema(
             ref: "Salary"
         }
 
-    },
+    },{timestamps: true}
 
 );
 

@@ -15,7 +15,7 @@ const jobreportSchema  =  Schema(
             type: String,
             default: null
         }
-    },
+    },{timestamps: true}
    
 );
 
