@@ -231,4 +231,70 @@ app.get("/candidatelist_clint", async (req, res) => {
   }
 });
 
+app.get("/candidatelist_clint", async (req, res) => {
+  
+    function functionalareafilter(element) {
+      if (element.functionalarea._id == req.query.functionalareaid) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    var populate2 = [
+      {
+        path: "workexperience",
+        populate: [
+          { path: "category", select: "-functionarea",  },
+          "expertisearea" ,
+        ],
+      },
+      {
+        path: "education",
+        populate: [
+          {
+            path: "digree",
+            select: "-subject",
+            populate: { path: "education", select: "-digree" },
+          },
+          "subject",
+        ],
+      },
+      "skill",
+      "protfoliolink",
+      "about",
+      {
+        path: "careerPreference",
+        populate: [
+          { path: "category", select: "-functionarea" },
+          { path: "functionalarea", populate:{path: "industryid"} },
+          {
+            path: "division",
+            populate: { path: "cityid", select: "-divisionid" },
+          },
+          "jobtype",
+          "salaray",
+        ],
+      },
+      { path: "userid", populate: { path: "experiencedlevel" } },
+    ];
+    var seekerdata = await Profiledata.find()
+      .populate(populate2)
+      .then((data) =>
+        data.filter((filterdata) => {
+          var filterdata2 =
+            filterdata.careerPreference.filter(functionalareafilter);
+          if (filterdata2.length > 0) {
+            return true;
+          } else {
+            return false;
+          }
+        })
+      );
+    res.status(200).send(seekerdata);
+ 
+    res.status(400).send(error);
+  
+});
+
 module.exports = app;
