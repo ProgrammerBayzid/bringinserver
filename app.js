@@ -22,6 +22,7 @@ const candidate = require('./Routers/Recruiter/candidate.js')
 const jobSearchingStatus = require('./Routers/JobSearchingStatus/jobSearchingStatus.js')
 const adminPanel =  require('./Routers/AdminPanel/adminpa')
 const chatrestapi = require('./Routers/Chat/chat_restapi')
+const clintsiteapi = require('./Routers/ClintSiteApi/clintsiteapi.js')
 
 app.use(express.json());
 app.use(cors())
@@ -47,6 +48,7 @@ app.use(adminPanel)
 app.use(candidate)
 app.use(jobSearchingStatus)
 app.use(chatrestapi)
+app.use(clintsiteapi)
 
 
 

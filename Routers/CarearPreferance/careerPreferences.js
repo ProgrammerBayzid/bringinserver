@@ -141,6 +141,10 @@ app.get("/job_functionalarea", tokenverify, async (req, res) => {
   }
 });
 
+
+
+
+
 app.get("/location", tokenverify, async (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
