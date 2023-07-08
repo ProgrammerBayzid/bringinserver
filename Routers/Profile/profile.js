@@ -62,6 +62,7 @@ app.post("/users", tokenverify, upload.single("image"), async (req, res) => {
               startedworking: req.body.startedworking,
               deatofbirth: req.body.deatofbirth,
               email: req.body.email,
+              secoundnumber: req.body.number,
             },
           },
           {
