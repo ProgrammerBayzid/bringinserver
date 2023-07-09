@@ -86,11 +86,6 @@ app.get("/candidatelist", tokenverify, async (req, res) => {
                   }
                   function industryfilter(element) {
                     var data = element.category.filter((data)=> data.industryid == profiledata.companyname.industry)
-                    // console.log(element.division.cityid.name.toLowerCase().indexOf('Dhaka'))
-                    // profiledata.companyname.c_location.formet_address
-                    // element.division.cityid.name.toLowerCase()
-                    // console.log(profiledata.companyname.c_location.formet_address.toLowerCase())
-                    // console.log()
                     if (data.length > 0 && (new RegExp(element.division.cityid.name.toLowerCase())).test(profiledata.companyname.c_location.formet_address.toLowerCase()) == true) {
                         return true;
                     }else{
@@ -98,20 +93,6 @@ app.get("/candidatelist", tokenverify, async (req, res) => {
                     }
                   }
                 if (req.query.functionalareaid == 0) {
-                   
-                   // profiledata.companyname.industry
-                    
-                    
-                    // let functionarea = [];
-                    // let cityname = [];
-                    // let functionalregex;
-                    // let cityregex;
-                    // for (let index = 0; index < jobdata.length; index++) {
-                    //     functionarea.push(jobdata[index].expertice_area.functionalname);
-                    //     cityname.push(jobdata[index].company.c_location.formet_address);
-                    // }
-                    // functionalregex = functionarea.join("|");
-                    // cityregex = cityname.join("|");
                     var populate = [
                         { path: "workexperience", populate: [{ path: "category", select: "-functionarea" }, "expertisearea"] },
                         { path: "education", populate: [{ path: "digree", select: "-subject", populate: { path: "education", select: "-digree" } }, "subject"] },
@@ -139,7 +120,7 @@ app.get("/candidatelist", tokenverify, async (req, res) => {
                         "skill",
                         "protfoliolink",
                         "about",
-                        { path: "careerPreference", populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea", populate: [{path: "industryid"}]}, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype", "salaray"] },
+                        { path: "careerPreference", populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea", populate: [{path: "industryid", select: "-category"}]}, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype", "salaray"] },
                         { path: "userid", populate: { path: "experiencedlevel" } }
                     ]
                     var seekerdata = await Profiledata.find().populate(populate2).then((data) => data.filter((filterdata) => {
@@ -171,11 +152,11 @@ app.post("/candidate_save", tokenverify, async (req, res) => {
                 var data = await candidatesave.findOne({ userid: _id, candidatefullprofile: req.body.candidatefullprofile })
                 if (data == null) {
                     await candidatesave({ userid: _id, candidateid: req.body.candidateid, candidatefullprofile: req.body.candidatefullprofile }).save()
-                    await Recruiters.findOneAndUpdate({_id: _id}, {$inc: {savecandidate: 1}})
+                    await Recruiters.findOneAndUpdate({_id: _id}, {$inc: {"other.savecandidate": 1}})
                     res.status(200).json({ message: "candidate save successfull" })
                 } else {
                     await candidatesave.findOneAndDelete({ _id: data._id })
-                    await Recruiters.findOneAndUpdate({_id: _id}, {$inc: {savecandidate: -1}})
+                    await Recruiters.findOneAndUpdate({_id: _id}, {$inc: {"other.savecandidate": -1}})
                     res.status(200).json({ message: "candidate unsave successfull" })
                 }
             }

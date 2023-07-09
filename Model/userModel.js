@@ -13,15 +13,31 @@ const userSchema = Schema(
       type: String,
       default: null
     },
-    fastname:  String,
-    lastname: String,
-    gender: String,
+    fastname: {
+      type: String,
+      default: ""
+    },
+    lastname: {
+      type: String,
+      default: ""
+    },
+    gender: {
+      type: String,
+      default: ""
+    },
     experiencedlevel:{
       type: "ObjectId",
       ref: "Experience"
+      
     },
-    startedworking: Date,
-    deatofbirth: Date,
+    startedworking: {
+      type: Date,
+      default: new Date()
+    },
+    deatofbirth: {
+      type: Date,
+      default: new Date()
+    },
     other: {
       viewjob: { type: Number, default: 0 },
       cvsend:{ type: Number, default: 0 },
@@ -36,7 +52,7 @@ const userSchema = Schema(
       notification: {
         push_notification: {
           type: Boolean,
-          default: false
+          default: true
         },
         whatsapp_notification: {
           type: Boolean,
@@ -48,7 +64,7 @@ const userSchema = Schema(
         },
         job_recommandation: {
           type: Boolean,
-          default: false
+          default: true
         }
       },
       job_hunting: {
@@ -64,8 +80,14 @@ const userSchema = Schema(
         default: false
       },
     },
-    email: String,
-    image: String,
+    email: {
+      type: String,
+      default: null
+    },
+    image: {
+      type: String,
+      default: null
+    },
   },
   { timestamps: true }
 );

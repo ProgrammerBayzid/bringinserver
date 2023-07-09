@@ -106,7 +106,7 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
                     var company = await JobPost.find({ expertice_area: req.query.functionalarea }).populate(["userid",
                         "expertice_area",
                         "experience",
-                        "education",
+                        {path: "education", select: "-digree"},
                         "salary",
                         { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
                         "skill",

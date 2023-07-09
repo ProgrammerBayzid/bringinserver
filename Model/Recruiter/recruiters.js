@@ -16,15 +16,31 @@ const recruitersSchema = Schema(
         designation: String,
         email: String,
         image: String,
-        company_verify: Boolean,
-        profile_verify: Boolean,
-        company_docupload: Boolean,
-        profile_docupload: Boolean,
-        profile_verify_date: {
+        other: {
+          company_verify: {
+            type: Boolean,
+            default: false
+          },
+          profile_verify:  {
+            type: Boolean,
+            default: false
+          },
+          company_docupload:  {
+            type: Boolean,
+            default: false
+          },
+          profile_docupload:  {
+            type: Boolean,
+            default: false
+          },
+          profile_verify_date: {
           type: Date, 
           default: new Date()
         },
-        premium: Boolean,
+        premium:  {
+          type: Boolean,
+          default: false
+        },
         total_chat: {
           type: Number,
           default: 0
@@ -44,7 +60,7 @@ const recruitersSchema = Schema(
         notification: {
           push_notification: {
             type: Boolean,
-            default: false
+            default: true
           },
           whatsapp_notification: {
             type: Boolean,
@@ -56,9 +72,11 @@ const recruitersSchema = Schema(
           },
           job_recommandation: {
             type: Boolean,
-            default: false
+            default: true
           }
         }
+        }
+        
     },{timestamps: true}
 
 );
