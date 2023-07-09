@@ -202,19 +202,7 @@ app.post("/industryadd", async (req, res) => {
   }
 });
 
-app.delete("/admin/industry/:id", async (req, res) => {
-  try {
-    const result = await Expertisearea.findByIdAndDelete(req.params.id);
-    // await Category.deleteMany({industryid: req.params.id})
-    // await Functionarea.deleteMany({})
-    if (!req.params.id) {
-      return res.status(404).send();
-    }
-    res.send(result);
-  } catch (error) {
-    res.send(error);
-  }
-});
+
 
 //category get
 
@@ -255,6 +243,22 @@ app.post("/categoryadd", async (req, res) => {
   }
 });
 
+
+
+app.delete("/admin/industry/:id", async (req, res) => {
+  try {
+    const result = await Expertisearea.findByIdAndDelete(req.params.id);
+    // await Category.deleteMany({industryid: req.params.id})
+    // await Functionarea.deleteMany({})
+    if (!req.params.id) {
+      return res.status(404).send();
+    }
+    res.send(result);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
 app.delete("/admin/category/:id", async (req, res) => {
   try {
     const result = await Category.findByIdAndDelete(req.params.id);
@@ -263,6 +267,120 @@ app.delete("/admin/category/:id", async (req, res) => {
       return res.status(404).send();
     }
     res.send(result);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+
+app.delete("/admin/functionalarea/:id", async (req, res) => {
+  try {
+    
+    const result = await Functionarea.findByIdAndDelete(req.params.id);
+    if (!req.params.id) {
+      return res.status(404).send();
+    }
+    res.send(result);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+
+app.delete("/admin/location/:id", async (req, res) => {
+  try {
+
+
+    var data = await City.findOneAndDelete({
+      _id: req.params.id,
+    });
+    if (data == null) {
+      res.status(400).json({ message: "iteam not found" });
+    } else {
+      await Division.findManyAndUpdate({ $pull: { Division: data._id } });
+      res.status(200).json({ message: "Delete Sucessfull" });
+    }
+
+   
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+
+app.delete("/admin/salarie/:id", async (req, res) => {
+  try {
+    const result = await Salirietype.findByIdAndDelete(req.params.id);
+    if (!req.params.id) {
+      return res.status(404).send();
+    }
+    res.send(result);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+
+app.delete("/admin/jobtype/:id", async (req, res) => {
+  try {
+    const result = await Jobtype.findByIdAndDelete(req.params.id);
+    if (!req.params.id) {
+      return res.status(404).send();
+    }
+    res.send(result);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+app.delete("/admin/digree/:id", async (req, res) => {
+  try {
+    var data = await Digree.findOneAndDelete({
+      _id: req.params.id,
+    });
+    if (data == null) {
+      res.status(400).json({ message: "iteam not found" });
+    } else {
+      await EducationLavel.findManyAndUpdate({ $pull: { EducationLavel: data._id } });
+      await Subject.findManyAndUpdate({ $pull: { Subject: data._id } });
+      res.status(200).json({ message: "Delete Sucessfull" });
+    }
+   
+    res.send(result);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+app.delete("/admin/education_lavel/:id", async (req, res) => {
+  try {
+    var data = await EducationLavel.findOneAndDelete({
+      _id: req.params.id,
+    });
+    if (data == null) {
+      res.status(400).json({ message: "iteam not found" });
+    } else {
+      await Digree.findManyAndUpdate({ $pull: { Digree: data._id } });
+      await Subject.findManyAndUpdate({ $pull: { Subject: data._id } });
+      res.status(200).json({ message: "Delete Sucessfull" });
+    }
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+
+app.delete("/admin/subject/:id", async (req, res) => {
+  try {
+    var data = await Subject.findOneAndDelete({
+      _id: req.params.id,
+    });
+    if (data == null) {
+      res.status(400).json({ message: "iteam not found" });
+    } else {
+      await Digree.findManyAndUpdate({ $pull: { digree: data._id } });
+      res.status(200).json({ message: "Delete Sucessfull" });
+    }
   } catch (error) {
     res.send(error);
   }
@@ -284,7 +402,7 @@ app.post("/functionalareaadd", async (req, res) => {
     var functionaldata = await Functionarea.findOne({
       functionalname: req.body.functionalname,
     });
-    if (functionaldata == null) {
+    if (functionaldata == null || functionaldata !== null) {
       var functionarea = await Functionarea({
         industryid: req.body.industryid,
         categoryid: req.body.categoryid,
@@ -303,17 +421,9 @@ app.post("/functionalareaadd", async (req, res) => {
   }
 });
 
-app.delete("/admin/functionalarea/:id", async (req, res) => {
-  try {
-    const result = await Functionarea.findByIdAndDelete(req.params.id);
-    if (!req.params.id) {
-      return res.status(404).send();
-    }
-    res.send(result);
-  } catch (error) {
-    res.send(error);
-  }
-});
+
+
+
 
 // functionalarea add
 
@@ -380,17 +490,7 @@ app.post("/location", async (req, res) => {
   }
 });
 
-app.delete("/admin/location/:id", async (req, res) => {
-  try {
-    const result = await City.findByIdAndDelete(req.params.id);
-    if (!req.params.id) {
-      return res.status(404).send();
-    }
-    res.send(result);
-  } catch (error) {
-    res.send(error);
-  }
-});
+
 
 // # post salarietype
 app.get("/admin/salarie", async (req, res) => {
@@ -417,17 +517,7 @@ app.post("/salarietype", async (req, res) => {
   }
 });
 
-app.delete("/admin/salarie/:id", async (req, res) => {
-  try {
-    const result = await Salirietype.findByIdAndDelete(req.params.id);
-    if (!req.params.id) {
-      return res.status(404).send();
-    }
-    res.send(result);
-  } catch (error) {
-    res.send(error);
-  }
-});
+
 
 // # get jobtype data
 
@@ -455,17 +545,7 @@ app.post("/jobtype", async (req, res) => {
   }
 });
 
-app.delete("/admin/jobtype/:id", async (req, res) => {
-  try {
-    const result = await Jobtype.findByIdAndDelete(req.params.id);
-    if (!req.params.id) {
-      return res.status(404).send();
-    }
-    res.send(result);
-  } catch (error) {
-    res.send(error);
-  }
-});
+
 
 app.get("/admin/digree", async (req, res) => {
   try {
@@ -476,46 +556,9 @@ app.get("/admin/digree", async (req, res) => {
   }
 });
 
-app.delete("/admin/digree/:id", async (req, res) => {
-  try {
-    const result = await Digree.findByIdAndDelete(req.params.id);
-    if (!req.params.id) {
-      return res.status(404).send();
-    }
-    res.send(result);
-  } catch (error) {
-    res.send(error);
-  }
-});
 
-app.delete("/admin/education_lavel/:id", async (req, res) => {
-  try {
-    var data = await EducationLavel.findOneAndDelete({
-      _id: req.params.id,
-    });
-    if (data == null) {
-      res.status(400).json({ message: "iteam not found" });
-    } else {
-      await Digree.findOneAndUpdate({ $pull: { digree: data._id } });
-      await Subject.findOneAndUpdate({ $pull: { educaton: data._id } });
-      res.status(200).json({ message: "Delete Sucessfull" });
-    }
-  } catch (error) {
-    res.send(error);
-  }
-});
 
-app.delete("/admin/education_lavel/:id", async (req, res) => {
-  try {
-    const result = await EducationLavel.findByIdAndDelete(req.params.id);
-    if (!req.params.id) {
-      return res.status(404).send();
-    }
-    res.send(result);
-  } catch (error) {
-    res.send(error);
-  }
-});
+
 
 app.get("/admin/subject", async (req, res) => {
   try {
@@ -526,22 +569,12 @@ app.get("/admin/subject", async (req, res) => {
   }
 });
 
-app.delete("/admin/subject/:id", async (req, res) => {
-  try {
-    const result = await Subject.findByIdAndDelete(req.params.id);
-    if (!req.params.id) {
-      return res.status(404).send();    
-    }
-    res.send(result);
-  } catch (error) {
-    res.send(error);
-  }
-});
+
 
 app.post("/education_lavel", async (req, res) => {
   try {
     var data = await EducationLavel.findOne(req.body);
-    if (data == null ) {
+    if (data == null || data !== null) {
       await EducationLavel(req.body).save();
       res.status(200).json({ message: "add successfull" });
     } else {
@@ -566,7 +599,7 @@ app.get("/education_lavel", async (req, res) => {
 app.post("/digree_add", async (req, res) => {
   try {
     var data = await Digree.findOne({ name: req.body.name });
-    if (data == null) {
+    if ( data == null || data !== null) {
       var digreedata = await Digree({
         name: req.body.name,
         education: req.body.education,
@@ -603,10 +636,12 @@ app.post("/digree_add", async (req, res) => {
 //     res.status(400).send(error);
 //   }
 // });
+
+
 app.post("/subject_add", async (req, res) => {
   // try {
     var data = await Subject.findOne({ name: req.body.name });
-    if (data == null) {
+    if (data == null || data !== null) {
       var subjectdata = await Subject({name: req.body.name, digree: req.body.digree});
       await subjectdata.save();
        await Digree.updateMany(
