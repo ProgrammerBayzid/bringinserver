@@ -50,32 +50,6 @@ app.get("/industry", tokenverify, async (req, res) => {
   }
 });
 
-//category add
-
-
-
-
-// functional area add
-
-
-
-
-
-// location add
-
-
-
-// job type
-
-// # post jobtype data
-
-
-// # post salarietype
-
-
-
-
-
 
 
 // # gett salarietype
@@ -216,7 +190,7 @@ app.post("/career_preferences", tokenverify, async (req, res) => {
               careerPreference: carearpre._id,
             }).save();
           }
-          await Seekerprofile.findOneAndUpdate({_id: id}, {$inc: { carearpre: 1} })
+          await Seekerprofile.findOneAndUpdate({_id: id}, {$inc: { "other.carearpre": 1} })
           res.status(200).json({ message: "add successfull" });
         } else {
           res.status(400).json({ message: "allready added" });
@@ -250,13 +224,7 @@ app.post("/career_preferences_update", tokenverify, async (req, res) => {
         if (data == null) {
           res.status(400).json({ message: "iteam not found" });
         } else {
-          // var profiledata = await Profiledata.findOneAndUpdate({ userid: id }, {$pull: { "careerPreference": data._id }})
-          // if (profiledata == null) {
-          //   await Profiledata({
-          //     userid: id,
-          //     careerPreference: data._id
-          //   }).save()
-          // }
+
           res.status(200).json({ message: "Update Sucessfull" });
         }
       }
@@ -309,7 +277,7 @@ app.delete("/career_preferences_delete", tokenverify, async (req, res) => {
             { userid: id },
             { $pull: { careerPreference: data._id } }
           );
-          await Seekerprofile.findOneAndUpdate({_id: id}, {$inc: { carearpre: -1} })
+          await Seekerprofile.findOneAndUpdate({_id: id}, {$inc: { "other.carearpre": -1} })
           res.status(200).json({ message: "Delete Sucessfull" });
         }
       }

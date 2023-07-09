@@ -49,7 +49,6 @@ app.post('/verify', async (req, res) => {
     var token;
     var carepre = 0;
     var profile = false;
-    // const user = new User(_.pick(req.body, ["number"]));
     if (req.body.isrecruiter == 0) {
       const user = await User.findOne({
         number: req.body.number,
@@ -74,7 +73,7 @@ app.post('/verify', async (req, res) => {
       } else {
         token = user.generateJWT()
         profile = true;
-        carepre = user.carearpre
+        carepre = user.other.carearpre
       }
 
     } else {

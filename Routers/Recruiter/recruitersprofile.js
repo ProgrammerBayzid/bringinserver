@@ -61,7 +61,7 @@ app.post("/recruiters_update", tokenverify, upload.single("image"), async (req, 
                 if (req.file) {
                     console.log(req.file.path)
                     await Recruiters.findOneAndUpdate({ _id: _id }, {
-                        $set: { image: req.file.path ,incomplete: 0, complete: 6}
+                        $set: { image: req.file.path ,"other.incomplete": 0, "other.complete": 6}
                     });
                   
                 }

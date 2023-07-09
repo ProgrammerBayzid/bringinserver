@@ -107,19 +107,19 @@ app.post("/notification", tokenverify, async (req, res) => {
         const _id = authdata._id;
         if (req.body.isrecruiter == true) {
          await Recruiters.findOneAndUpdate({_id: _id}, {$set: {
-            "notification.push_notification": req.body.push,
-            "notification.whatsapp_notification": req.body.whatsapp,
-            "notification.sms_notification": req.body.sms,
-            "notification.job_recommandation": req.body.job,
+            "other.notification.push_notification": req.body.push,
+            "other.notification.whatsapp_notification": req.body.whatsapp,
+            "other.notification.sms_notification": req.body.sms,
+            "other.notification.job_recommandation": req.body.job,
           }})
           res.status(200).json({message: "update successfull"});
         }else{
           const singalUser = await User.findOneAndUpdate({ _id: _id }, {
             $set: {
-              "notification.push_notification": req.body.push,
-              "notification.whatsapp_notification": req.body.whatsapp,
-              "notification.sms_notification": req.body.sms,
-              "notification.job_recommandation": req.body.job,
+              "other.notification.push_notification": req.body.push,
+              "other.notification.whatsapp_notification": req.body.whatsapp,
+              "other.notification.sms_notification": req.body.sms,
+              "other.notification.job_recommandation": req.body.job,
             }
           });
           res.status(200).json({message: "update successfull"});
@@ -142,9 +142,9 @@ app.post("/job_hunting", tokenverify, (req, res)=>{
         const _id = authdata._id;
         const singalUser = await User.findOneAndUpdate({ _id: _id }, {
           $set: {
-            "job_hunting": req.body.job_hunting,
-            "more_status": req.body.more_status,
-            "job_right_now": req.body.job_right_now
+            "other.job_hunting": req.body.job_hunting,
+            "other.more_status": req.body.more_status,
+            "other.job_right_now": req.body.job_right_now
           }
         });
         res.status(200).json({message: "update successfull"});
@@ -165,13 +165,13 @@ app.post("/push_notification",tokenverify, async (req, res)=> {
         const _id = authdata._id;
         if (req.body.isrecruiter == true) {
          await Recruiters.findOneAndUpdate({_id: _id}, {$set: {
-          "pushnotification": req.body.pushnotification,
+          "other.pushnotification": req.body.pushnotification,
           }})
           res.status(200).json({message: "update successfull"});
         }else{
           const singalUser = await User.findOneAndUpdate({ _id: _id }, {
             $set: {
-              "pushnotification": req.body.pushnotification,
+              "other.pushnotification": req.body.pushnotification,
             }
           });
           res.status(200).json({message: "update successfull"});

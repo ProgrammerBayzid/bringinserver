@@ -59,7 +59,7 @@ app.post("/company_verify", tokenverify, upload.single("image"), (req, res) => {
                         path: req.file.path,
                         size: req.file.size
                     }).save()
-                    await Recruiters.findByIdAndUpdate({ _id: _id }, { $set: { company_docupload: true } })
+                    await Recruiters.findByIdAndUpdate({ _id: _id }, { $set: { "other.company_docupload": true } })
                     res.status(200).send("file upload successfull")
                 } else {
                     await CompanyVerify.findOneAndUpdate({ userid: _id }, {
@@ -74,7 +74,7 @@ app.post("/company_verify", tokenverify, upload.single("image"), (req, res) => {
                             size: req.file.size
                         }
                     })
-                    await Recruiters.findByIdAndUpdate({ _id: _id }, { $set: { company_docupload: true } })
+                    await Recruiters.findByIdAndUpdate({ _id: _id }, { $set: { "other.company_docupload": true } })
                     res.status(200).send("file reupload successfull")
                 }
 
@@ -112,7 +112,7 @@ app.post("/profile_verify", tokenverify, upload.single("image"), async (req, res
                         if (err) {
                             res.status(400).send(err)
                         } else {
-                            await Recruiters.findByIdAndUpdate({ _id: _id }, { $set: { profile_docupload: true } })
+                            await Recruiters.findByIdAndUpdate({ _id: _id }, { $set: { "other.profile_docupload": true } })
                             res.status(200).send("verification code send successfull")
                         }
                     })
@@ -133,7 +133,7 @@ app.post("/profile_verify", tokenverify, upload.single("image"), async (req, res
                             size: 0, type: req.body.type,
                             link: req.body.link,
                         }).save()
-                        await Recruiters.findByIdAndUpdate({ _id: _id }, { $set: { profile_docupload: true } })
+                        await Recruiters.findByIdAndUpdate({ _id: _id }, { $set: { "other.profile_docupload": true } })
                         res.status(200).send("send successfull")
                     } else {
                         await ProfileVerify.findOneAndUpdate({ userid: _id }, {
@@ -150,7 +150,7 @@ app.post("/profile_verify", tokenverify, upload.single("image"), async (req, res
                                 link: req.body.link,
                             }
                         })
-                        await Recruiters.findByIdAndUpdate({ _id: _id }, { $set: { profile_docupload: true } })
+                        await Recruiters.findByIdAndUpdate({ _id: _id }, { $set: { "other.profile_docupload": true } })
                         res.status(200).send("send successfull")
                     }
                 } else {
@@ -168,7 +168,7 @@ app.post("/profile_verify", tokenverify, upload.single("image"), async (req, res
                             size: req.file.size, type: req.body.type,
                             link: "",
                         }).save()
-                        await Recruiters.findByIdAndUpdate({ _id: _id }, { $set: { profile_docupload: true } })
+                        await Recruiters.findByIdAndUpdate({ _id: _id }, { $set: { "other.profile_docupload": true } })
                         res.status(200).send("send successfull")
                     } else {
                         await ProfileVerify.findOneAndUpdate({ userid: _id }, {
@@ -184,7 +184,7 @@ app.post("/profile_verify", tokenverify, upload.single("image"), async (req, res
                                 link: "",
                             }
                         })
-                        await Recruiters.findByIdAndUpdate({ _id: _id }, { $set: { profile_docupload: true } })
+                        await Recruiters.findByIdAndUpdate({ _id: _id }, { $set: { "other.profile_docupload": true } })
                         res.status(200).send("send successfull")
                     }
                 }
@@ -222,7 +222,7 @@ app.post("/email_code_verify", tokenverify, (req, res)=> {
                     const OTPDelete = await Otp.deleteMany({
                       number: rightOtpFind.number,
                     });
-                    await Recruiters.findByIdAndUpdate({ _id: _id }, { $set: { profile_verify: true } })
+                    await Recruiters.findByIdAndUpdate({ _id: _id }, { $set: { "other.profile_verify": true } })
                     return res.status(200).json({
                       message: "verification Successfully!",
                     });

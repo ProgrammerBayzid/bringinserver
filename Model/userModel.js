@@ -13,57 +13,81 @@ const userSchema = Schema(
       type: String,
       default: null
     },
-    fastname:  String,
-    lastname: String,
-    gender: String,
+    fastname: {
+      type: String,
+      default: ""
+    },
+    lastname: {
+      type: String,
+      default: ""
+    },
+    gender: {
+      type: String,
+      default: ""
+    },
     experiencedlevel:{
       type: "ObjectId",
       ref: "Experience"
+      
     },
-    startedworking: Date,
-    deatofbirth: Date,
-    viewjob: { type: Number, default: 0 },
-    cvsend:{ type: Number, default: 0 },
-    totalchat: { type: Number, default: 0 },
-    savejob: { type: Number, default: 0 },
-    carearpre: { type: Number, default: 0 },
-    total_step: { type: Number, default: 7 },
-    incomplete: { type: Number, default: 5 },
-    complete: { type: Number, default: 2 },
-    email: String,
-    image: String,
-    pushnotification: String,
-    notification: {
-      push_notification: {
-        type: Boolean,
-        default: false
-      },
-      whatsapp_notification: {
-        type: Boolean,
-        default: false
-      },
-      sms_notification: {
-        type: Boolean,
-        default: false
-      },
-      job_recommandation: {
-        type: Boolean,
-        default: false
-      }
+    startedworking: {
+      type: Date,
+      default: new Date()
     },
-    job_hunting: {
-      type: String,
-      default: null
+    deatofbirth: {
+      type: Date,
+      default: new Date()
     },
-    more_status: {
-      type: String,
-      default: null
-    },
-    job_right_now: {
-      type: Boolean,
-      default: false
-    },
+    other: {
+      viewjob: { type: Number, default: 0 },
+      cvsend:{ type: Number, default: 0 },
+      totalchat: { type: Number, default: 0 },
+      savejob: { type: Number, default: 0 },
+      carearpre: { type: Number, default: 0 },
+      total_step: { type: Number, default: 7 },
+      incomplete: { type: Number, default: 5 },
+      complete: { type: Number, default: 2 },
 
+      pushnotification: String,
+      notification: {
+        push_notification: {
+          type: Boolean,
+          default: true
+        },
+        whatsapp_notification: {
+          type: Boolean,
+          default: false
+        },
+        sms_notification: {
+          type: Boolean,
+          default: false
+        },
+        job_recommandation: {
+          type: Boolean,
+          default: true
+        }
+      },
+      job_hunting: {
+        type: String,
+        default: null
+      },
+      more_status: {
+        type: String,
+        default: null
+      },
+      job_right_now: {
+        type: Boolean,
+        default: false
+      },
+    },
+    email: {
+      type: String,
+      default: null
+    },
+    image: {
+      type: String,
+      default: null
+    },
   },
   { timestamps: true }
 );
