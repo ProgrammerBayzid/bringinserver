@@ -201,7 +201,7 @@ app.post("/channelcreate", tokenverify ,async (req, res)=>{
             if(_id == req.body.recruiterid) {
               await Recruiters.findOneAndUpdate({_id: _id}, {$inc: {total_chat: 1}})
             }else{
-              await User.findOneAndUpdate({_id: _id}, {$inc: { totalchat: 1} })
+              await User.findOneAndUpdate({_id: _id}, {$inc: { "other.totalchat": 1} })
             }
             
             res.status(200).send(channelinfo)
@@ -228,7 +228,7 @@ app.get("/cv_send_count",tokenverify ,async (req, res)=>{
         res.json({ message: "invalid token" });
       } else {
         const _id = authdata._id;
-        await User.findOneAndUpdate({_id: _id}, {$inc: {cvsend: 1} })
+        await User.findOneAndUpdate({_id: _id}, {$inc: {"other.cvsend": 1} })
         
       
       }

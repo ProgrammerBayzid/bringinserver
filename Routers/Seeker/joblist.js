@@ -157,11 +157,11 @@ app.post("/job_save", tokenverify, async (req, res)=> {
                 var data = await JobSave.findOne({userid: _id, jobid: req.body.jobid})
                 if (data == null) {
                     await JobSave({userid: _id, jobid: req.body.jobid, jobpostuserid: jobdata._id}).save()
-                    await Seekeruser.findOneAndUpdate({_id: _id}, {$inc: { savejob: 1} })
+                    await Seekeruser.findOneAndUpdate({_id: _id}, {$inc: { "other.savejob": 1} })
                     res.status(200).json({message: "job save successfull"})
                 }else{
                    await JobSave.findOneAndDelete({_id: data._id})
-                   await Seekeruser.findOneAndUpdate({_id: _id}, {$inc: { savejob: -1} })
+                   await Seekeruser.findOneAndUpdate({_id: _id}, {$inc: { "other.savejob": -1} })
                    res.status(200).json({message: "job unsave successfull"}) 
                 }   
             }
@@ -341,7 +341,7 @@ app.post("/view_job_count", tokenverify, async (req, res)=>{
                 var viewjobdata = await ViewJob.findOne({jobid: req.body.jobid, userid: _id})
                 if (viewjobdata == null) {
                     await ViewJob({jobid: req.body.jobid, userid: _id, jobpost_userid: req.body.jobpost_userid}).save();
-                    await Seekeruser.findOneAndUpdate({_id: _id}, {$inc: { viewjob: 1} })
+                    await Seekeruser.findOneAndUpdate({_id: _id}, {$inc: { "other.viewjob": 1} })
                 }
                  res.status(200).json({message: "successfull view"})
             }
