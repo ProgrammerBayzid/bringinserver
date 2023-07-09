@@ -225,7 +225,7 @@ app.post("/categoryadd", async (req, res) => {
     var categorydata = await Category.findOne({
       categoryname: req.body.categoryname,
     });
-    if (categorydata == null) {
+    if (categorydata == null || categorydata !== null) {
       var catdata = await Category({
         categoryname: req.body.categoryname,
         industryid: req.body.industryid,
