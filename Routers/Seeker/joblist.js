@@ -99,7 +99,7 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
                     {path: "salary" ,match: { "min_salary": { $regex: minregex, $options: "i" }, "max_salary": { $regex: maxregex, $options: "i" }  }},
                     {path: "skill"},
                     {path: "jobtype",match: { "worktype": { $regex: jobtyperegex, $options: "i" } }},
-                ]).exec().then((data) => data.filter((filterdata) => filterdata.company != null && filterdata.expertice_area != null && filterdata.salary != null && filterdata.jobtype != null))
+                ]).exec().then((data) => data.filter((filterdata) => filterdata.userid.other.profile_verify == true &&  filterdata.company != null && filterdata.expertice_area != null && filterdata.salary != null && filterdata.jobtype != null))
               
                     res.status(200).send(company)
                 } else {
@@ -110,7 +110,7 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
                         "salary",
                         { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
                         "skill",
-                        "jobtype"])
+                        "jobtype"]).then((data)=>data.filter((filterdata)=> filterdata.userid.other.profile_verify == true))
                     res.status(200).send(company);
                 }
             }
@@ -135,7 +135,7 @@ app.get("/job_search",  tokenverify, async (req, res)=> {
                         "salary",
                         { path: "company",match: { "c_location.formet_address": { $regex: req.query.city ?? "", $options: "i" } }, populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
                         "skill",
-                        "jobtype"]).then((data) => data.filter((filterdata) => filterdata.company != null))
+                        "jobtype"]).then((data) => data.filter((filterdata) => filterdata.userid.other.profile_verify == true && filterdata.company != null))
                     res.status(200).send(company);
                 
             }

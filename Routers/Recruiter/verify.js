@@ -6,13 +6,15 @@ const jwt = require('jsonwebtoken');
 const { Otp } = require("../../Model/otpModel");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer")
+const smtppool = require("nodemailer")
 const { CompanyVerify } = require("../../Model/Recruiter/Verify/company_verify.js")
 const { ProfileVerify } = require("../../Model/Recruiter/Verify/profile_verify.js")
 const transportar = nodemailer.createTransport({
-    service: "gmail",
+    host: 'smtp.gmail.com',
+    port:  465,
     auth: {
-        "user": "bringin.sdk@gmail.com",
-        "pass": "datjwskkwpqmybih"
+        "user": "hello@bringin.io",
+        "pass": "@Rony.1995"
     }
 })
 
@@ -98,6 +100,7 @@ app.post("/profile_verify", tokenverify, upload.single("image"), async (req, res
                 const _id = authdata._id;
                 if (req.body.type == 1) {
                     const OTP = getRandomInt(4);
+                    console.log(OTP)
                     const otp = await Otp({ number: authdata.number, otp: OTP, });
                     const salt = await bcrypt.genSalt(10);
                     otp.otp = await bcrypt.hash(otp.otp, salt);
@@ -106,7 +109,8 @@ app.post("/profile_verify", tokenverify, upload.single("image"), async (req, res
                         from: "bringin.sdk@gmail.com",
                         to: req.body.email,
                         subject: "Otp verify",
-                        text: `Otp is ${OTP}`
+                        text: `Otp is ${OTP}`,
+                        html: "<p>HTML version of the message</p>"
                     }
                     transportar.sendMail(mailoption, async (err, info) => {
                         if (err) {
