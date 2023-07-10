@@ -6,6 +6,7 @@ const {
   AdminCompanySize, AdminSkill,  JobTitle,Department,SeekeraddCompany, Image,Cv
 } = require("../../Model/adminprofiledetails");
 const { City, Division } = require("../../Model/alllocation.js");
+const Experince = require("../../Model/experience.js");
 
 
 const tokenverify = require("../../MiddleWare/tokenverify.js");
@@ -26,8 +27,37 @@ const image = multer({ storage: storage });
 
 
 
+app.post("/admin_exprience", async (req, res) => {
+  try {
+    const Data = await Experince(req.body);
+    const ex = await Data.save()
+    res.status(200).send(ex);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
 
 
+app.get("/admin_exprience", async (req, res) => {
+  try {
+    const data = await Experince.find();
+    res.send(data);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+app.delete("/admin_exprience/:id", async (req, res) => {
+  try {
+    const result = await Experince.findByIdAndDelete(req.params.id);
+    if (!req.params.id) {
+      return res.status(404).send();
+    }
+    res.send(result);
+  } catch (error) {
+    res.send(error);
+  }
+});
 
  // # post designation data 
 

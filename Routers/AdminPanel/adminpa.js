@@ -148,29 +148,9 @@ app.patch("/verifyRecruterCompny/:_id", async (req, res) => {
   const filter = { _id: _id };
   // const options = { upsert: true };
   const updateDoc = {
-    $set: {
-      other:{
-        company_docupload:req.body.company_docupload,
-        complete:req.body.complete,
-        incomplete:req.body.incomplete,
-        interview:req.body.interview,
-        premium:req.body.premium,
-        profile_docupload:req.body.profile_docupload,
-        profile_verify_date:req.body.profile_verify_date,
-        savecandidate:req.body.savecandidate,
-        total_chat:req.body.total_chat,
-        total_step:req.body.total_step,
-        notification:{
-          job_recommandation:req.body.job_recommandation,
-          push_notification:req.body.push_notification,
-          sms_notification:req.body.sms_notification,
-          whatsapp_notification:req.body.whatsapp_notification,
-
-        },
-        profile_verify: req.body.profile_verify, 
-        company_verify: true,
-      }
-    },
+   
+      $set: { "other.profile_verify": true }
+ 
   };
   const result = await recruiters.findByIdAndUpdate(filter, updateDoc, );
   res.send(result);
@@ -189,30 +169,8 @@ app.patch("/verifyRecruterProfile/:_id", async (req, res) => {
   const filter = { _id: _id };
   // const options = { upsert: true };
   const updateDoc = {
-    $set: {
-      other:{
-        company_verify:req.body.company_verify,
-        company_docupload:req.body.company_docupload,
-        complete:req.body.complete,
-        incomplete:req.body.incomplete,
-        interview:req.body.interview,
-        premium:req.body.premium,
-        profile_docupload:req.body.profile_docupload,
-        profile_verify_date:req.body.profile_verify_date,
-        savecandidate:req.body.savecandidate,
-        total_chat:req.body.total_chat,
-        total_step:req.body.total_step,
-        notification:{
-          job_recommandation:req.body.job_recommandation,
-          push_notification:req.body.push_notification,
-          sms_notification:req.body.sms_notification,
-          whatsapp_notification:req.body.whatsapp_notification,
+    $set: { "other.company_verify": true }
 
-        },
-        profile_verify: true, 
-      }
-      
-    },
   };
   const result = await recruiters.findByIdAndUpdate(filter, updateDoc, );
   res.send(result);
