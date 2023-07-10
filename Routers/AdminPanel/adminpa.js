@@ -10,7 +10,7 @@ const {
   
   Profiledata,
 } = require("../../Model/Seeker_profile_all_details.js");
-const Recruiters = require("../../Model/Recruiter/recruiters");
+const recruiters = require("../../Model/Recruiter/recruiters");
 const tokenverify = require("../../MiddleWare/tokenverify.js");
 const jwt = require("jsonwebtoken");
 const JobReport = require("../../Model/job_report.js");
@@ -81,7 +81,7 @@ app.get("/not_premium_user", async (req, res) => {
   try {
     const premium = req.query.premium;
     const filter = { premium: premium === "false" };
-    var data = await Recruiters.find(filter);
+    var data = await recruiters.find(filter);
     res.status(200).json(data);
   } catch (error) {
     res.status(400).send(error);
@@ -90,7 +90,7 @@ app.get("/not_premium_user", async (req, res) => {
 app.get("/premium_user/:id", async (req, res) => {
   const id = req.params.id;
   const query = { _id: id };
-  const date = await Recruiters.findOne(query);
+  const date = await recruiters.findOne(query);
   res.send(date);
 });
 
@@ -106,9 +106,12 @@ app.get("/verifyCompny", async (req, res) => {
 });
 
 app.get("/company_varify", async (req, res) => {
-  const id = req.query._id;
-  const query = { _id: id };
+  const userid = req.query.userid;
+  const query = { userid: userid };
+    // console.log(query);
+
   const date = await CompanyVerify.findOne(query);
+  // console.log(date);
   res.send(date);
 });
 
@@ -135,44 +138,86 @@ app.get("/profile_varify/:id", async (req, res) => {
 app.get("/verifyRecruterCompny", async (req, res) => {
   const id = req.query._id;
   const query = { _id: id };
-  console.log(query);
-  const date = await Recruiters.findOne(query);
+  // console.log(query);
+  const date = await recruiters.findOne(query);
   res.send(date);
 });
 
 app.patch("/verifyRecruterCompny/:_id", async (req, res) => {
-  const id = req.params._id;
-  const filter = { _id: id };
-  const options = { upsert: true };
+  const _id = req.params._id;
+  const filter = { _id: _id };
+  // const options = { upsert: true };
   const updateDoc = {
     $set: {
-      company_verify: true,
+      other:{
+        company_docupload:req.body.company_docupload,
+        complete:req.body.complete,
+        incomplete:req.body.incomplete,
+        interview:req.body.interview,
+        premium:req.body.premium,
+        profile_docupload:req.body.profile_docupload,
+        profile_verify_date:req.body.profile_verify_date,
+        savecandidate:req.body.savecandidate,
+        total_chat:req.body.total_chat,
+        total_step:req.body.total_step,
+        notification:{
+          job_recommandation:req.body.job_recommandation,
+          push_notification:req.body.push_notification,
+          sms_notification:req.body.sms_notification,
+          whatsapp_notification:req.body.whatsapp_notification,
+
+        },
+        profile_verify: req.body.profile_verify, 
+        company_verify: true,
+      }
     },
   };
-  const result = await Recruiters.findOneAndUpdate(filter, updateDoc, options);
+  const result = await recruiters.findByIdAndUpdate(filter, updateDoc, );
   res.send(result);
 });
 
 app.get("/verifyRecruterProfile", async (req, res) => {
   const id = req.query._id;
   const query = { _id: id };
-  console.log(query);
-  const date = await Recruiters.findOne(query);
+  // console.log(query);
+  const date = await recruiters.findOne(query);
   res.send(date);
 });
 
 app.patch("/verifyRecruterProfile/:_id", async (req, res) => {
-  const id = req.params._id;
-  const filter = { _id: id };
-  const options = { upsert: true };
+  const _id = req.params._id;
+  const filter = { _id: _id };
+  // const options = { upsert: true };
   const updateDoc = {
     $set: {
-      profile_verify: true,
+      other:{
+        company_verify:req.body.company_verify,
+        company_docupload:req.body.company_docupload,
+        complete:req.body.complete,
+        incomplete:req.body.incomplete,
+        interview:req.body.interview,
+        premium:req.body.premium,
+        profile_docupload:req.body.profile_docupload,
+        profile_verify_date:req.body.profile_verify_date,
+        savecandidate:req.body.savecandidate,
+        total_chat:req.body.total_chat,
+        total_step:req.body.total_step,
+        notification:{
+          job_recommandation:req.body.job_recommandation,
+          push_notification:req.body.push_notification,
+          sms_notification:req.body.sms_notification,
+          whatsapp_notification:req.body.whatsapp_notification,
+
+        },
+        profile_verify: true, 
+      }
+      
     },
   };
-  const result = await Recruiters.findOneAndUpdate(filter, updateDoc, options);
+  const result = await recruiters.findByIdAndUpdate(filter, updateDoc, );
   res.send(result);
 });
+
 
 // industry list
 

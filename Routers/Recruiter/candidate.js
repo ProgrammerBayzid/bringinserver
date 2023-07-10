@@ -237,15 +237,17 @@ app.get("/candidate_search", tokenverify, async (req, res) => {
                 //         "jobtype"]).then((data) => data.filter((filterdata) => filterdata.company != null))
 
                 var seekerdata = await Profiledata.find().populate(
-                    [
-                        { path: "workexperience", populate: [{ path: "category", select: "-functionarea" }, "expertisearea"] },
-                        { path: "education", populate: [{ path: "digree", select: "-subject", populate: { path: "education", select: "-digree" } }, "subject"] },
-                        "skill",
-                        "protfoliolink",
-                        "about",
-                        { path: "careerPreference", populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea" }, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype", "salaray"] },
-                        { path: "userid", match: { "fastname": { $regex: req.query.name, $options: "i" } }, populate: { path: "experiencedlevel" } }
-                    ]
+                   
+                
+                [
+                    { path: "workexperience", populate: [{ path: "category", select: "-functionarea" }, "expertisearea"] },
+                    { path: "education", populate: [{ path: "digree", select: "-subject", populate: { path: "education", select: "-digree" } }, "subject"] },
+                    "skill",
+                    "protfoliolink",
+                    "about",
+                    { path: "careerPreference", populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea" }, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype", "salaray"] },
+                    { path: "userid", match: { "fastname": { $regex: req.query.name, $options: "i" } }, populate: { path: "experiencedlevel" } }
+                ]
                 ).then((data) => data.filter((filterdata) => filterdata.userid != null));
                 res.status(200).send(seekerdata);
 
