@@ -88,7 +88,7 @@ app.get("/single_profile/:_id", async (req, res) => {
         path: "careerPreference",
         populate: [
           { path: "category", select: "-functionarea" },
-          { path: "functionalarea" },
+          { path: "functionalarea", populate: [{ path: "industryid" }] },
           {
             path: "division",
             populate: { path: "cityid", select: "-divisionid" },
@@ -106,130 +106,130 @@ app.get("/single_profile/:_id", async (req, res) => {
   }
 });
 
-app.get("/candidatelist_clint", async (req, res) => {
-  try {
-    function industryfilter(element) {
-      if (element.functionalarea._id == req.query.functionalareaid) {
-        return true;
-      } else {
-        return false;
-      }
-    }
+// app.get("/candidatelist_clint", async (req, res) => {
+//   try {
+//     function industryfilter(element) {
+//       if (element.functionalarea._id == req.query.functionalareaid) {
+//         return true;
+//       } else {
+//         return false;
+//       }
+//     }
 
-    if (req.query.functionalareaid == 0) {
-      var jobdata = await JobPost.find()
-        .select(["expertice_area", "company"])
-        .populate([
-          { path: "company", select: "c_location" },
-          "expertice_area",
-        ]);
-      let functionarea = [];
-      let cityname = [];
-      let functionalregex;
-      let cityregex;
-      for (let index = 0; index < jobdata.length; index++) {
-        functionarea.push(jobdata[index].expertice_area.functionalname);
-        cityname.push(jobdata[index].company.c_location.formet_address);
-      }
-      functionalregex = functionarea.join("|");
-      cityregex = cityname.join("|");
-      var populate = [
-        {
-          path: "workexperience",
-          populate: [
-            { path: "category", select: "-functionarea" },
-            "expertisearea",
-          ],
-        },
-        {
-          path: "education",
-          populate: [
-            {
-              path: "digree",
-              select: "-subject",
-              populate: { path: "education", select: "-digree" },
-            },
-            "subject",
-          ],
-        },
-        "skill",
-        "protfoliolink",
-        "about",
-        {
-          path: "careerPreference",
-          populate: [
-            { path: "category", select: "-functionarea" },
-            { path: "functionalarea" },
-            {
-              path: "division",
-              populate: { path: "cityid", select: "-divisionid" },
-            },
-            "jobtype",
-            "salaray",
-          ],
-        },
-        { path: "userid", populate: { path: "experiencedlevel" } },
-      ];
+//     if (req.query.functionalareaid == 0) {
+//       var jobdata = await JobPost.find()
+//         .select(["expertice_area", "company"])
+//         .populate([
+//           { path: "company", select: "c_location" },
+//           "expertice_area",
+//         ]);
+//       let functionarea = [];
+//       let cityname = [];
+//       let functionalregex;
+//       let cityregex;
+//       for (let index = 0; index < jobdata.length; index++) {
+//         functionarea.push(jobdata[index].expertice_area.functionalname);
+//         cityname.push(jobdata[index].company.c_location.formet_address);
+//       }
+//       functionalregex = functionarea.join("|");
+//       cityregex = cityname.join("|");
+//       var populate = [
+//         {
+//           path: "workexperience",
+//           populate: [
+//             { path: "category", select: "-functionarea" },
+//             "expertisearea",
+//           ],
+//         },
+//         {
+//           path: "education",
+//           populate: [
+//             {
+//               path: "digree",
+//               select: "-subject",
+//               populate: { path: "education", select: "-digree" },
+//             },
+//             "subject",
+//           ],
+//         },
+//         "skill",
+//         "protfoliolink",
+//         "about",
+//         {
+//           path: "careerPreference",
+//           populate: [
+//             { path: "category", select: "-functionarea" },
+//             { path: "functionalarea" },
+//             {
+//               path: "division",
+//               populate: { path: "cityid", select: "-divisionid" },
+//             },
+//             "jobtype",
+//             "salaray",
+//           ],
+//         },
+//         { path: "userid", populate: { path: "experiencedlevel" } },
+//       ];
 
-      var seekerdata = await Profiledata.find().populate(populate);
-      res.status(200).send(seekerdata);
-    } else {
-      var populate2 = [
-        {
-          path: "workexperience",
-          populate: [
-            { path: "category", select: "-functionarea" },
-            "expertisearea",
-          ],
-        },
-        {
-          path: "education",
-          populate: [
-            {
-              path: "digree",
-              select: "-subject",
-              populate: { path: "education", select: "-digree" },
-            },
-            "subject",
-          ],
-        },
-        "skill",
-        "protfoliolink",
-        "about",
-        {
-          path: "careerPreference",
-          populate: [
-            { path: "category", select: "-functionarea" },
-            { path: "functionalarea" },
-            {
-              path: "division",
-              populate: { path: "cityid", select: "-divisionid" },
-            },
-            "jobtype",
-            "salaray",
-          ],
-        },
-        { path: "userid", populate: { path: "experiencedlevel" } },
-      ];
-      var seekerdata = await Profiledata.find()
-        .populate(populate2)
-        .then((data) =>
-          data.filter((filterdata) => {
-            var filterdata2 =
-              filterdata.careerPreference.filter(industryfilter);
-            if (filterdata2.length > 0) {
-              return true;
-            } else {
-              return false;
-            }
-          })
-        );
-      res.status(200).send(seekerdata);
-    }
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
+//       var seekerdata = await Profiledata.find().populate(populate);
+//       res.status(200).send(seekerdata);
+//     } else {
+//       var populate2 = [
+//         {
+//           path: "workexperience",
+//           populate: [
+//             { path: "category", select: "-functionarea" },
+//             "expertisearea",
+//           ],
+//         },
+//         {
+//           path: "education",
+//           populate: [
+//             {
+//               path: "digree",
+//               select: "-subject",
+//               populate: { path: "education", select: "-digree" },
+//             },
+//             "subject",
+//           ],
+//         },
+//         "skill",
+//         "protfoliolink",
+//         "about",
+//         {
+//           path: "careerPreference",
+//           populate: [
+//             { path: "category", select: "-functionarea" },
+//             { path: "functionalarea" },
+//             {
+//               path: "division",
+//               populate: { path: "cityid", select: "-divisionid" },
+//             },
+//             "jobtype",
+//             "salaray",
+//           ],
+//         },
+//         { path: "userid", populate: { path: "experiencedlevel" } },
+//       ];
+//       var seekerdata = await Profiledata.find()
+//         .populate(populate2)
+//         .then((data) =>
+//           data.filter((filterdata) => {
+//             var filterdata2 =
+//               filterdata.careerPreference.filter(industryfilter);
+//             if (filterdata2.length > 0) {
+//               return true;
+//             } else {
+//               return false;
+//             }
+//           })
+//         );
+//       res.status(200).send(seekerdata);
+//     }
+//   } catch (error) {
+//     res.status(400).send(error);
+//   }
+// });
 
 app.get("/candidatelist_clint", async (req, res) => {
   function functionalareafilter(element) {
@@ -331,5 +331,118 @@ app.get("/candidatelist_clint", async (req, res) => {
 
   res.status(400).send(error);
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.get("/clint_candidate_search", async (req, res) => {
+  try {
+              var seekerdata = await Profiledata.find().populate(
+                [
+                  { path: "workexperience", populate: [{ path: "category", select: "-functionarea" }, "expertisearea"] },
+                  { path: "education", populate: [{ path: "digree", select: "-subject", populate: { path: "education", select: "-digree" } }, "subject"] },
+                  "skill",
+                  "protfoliolink",
+                  "about",
+                  { path: "careerPreference", populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea" }, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype", "salaray"] },
+
+                  { path: "careerPreference", populate: [{ path: "functionalarea", match: { "functionalname": { $regex: req.query.name, $options: "i" } } }, ] },
+                  { path: "userid", populate: { path: "experiencedlevel" } }
+              ]
+              
+              ).then((data) => data.filter((filterdata) => filterdata.userid != null));
+              res.status(200).send(seekerdata);
+
+          
+    
+  } catch (error) {
+      res.status(400).send(error);
+  }
+})
+
+
+
+app.post('/candidate_filter', tokenverify, async (req, res) => {
+  try {
+      jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+          if (err) {
+              res.json({ message: "invalid token" })
+          } else {
+              const _id = authdata._id;
+              var workplace = req.body.workplace
+              var education = req.body.education
+              var salary = req.body.salary
+              var experience = req.body.experience
+              var industry = req.body.industry
+              var companysize = req.body.companysize
+              var populate = [
+                  { path: "workexperience", populate: [{ path: "category", select: "-functionarea" }, "expertisearea"] },
+                  { path: "education", populate: [{ path: "digree", select: "-subject", populate: { path: "education", select: "-digree" } }, "subject"] },
+                  "skill",
+                  "protfoliolink",
+                  "about",
+                  { path: "careerPreference" , populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea"}, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype", "salaray"] },
+                  { path: "userid",  populate: { path: "experiencedlevel" , match: {_id: {$in: experience}}} }
+              ]
+              
+              function industryfilter(element) {
+                  if(industry.some((e)=> element.functionalarea.industryid == e) && salary.some((e)=> element.salaray._id == e)){
+                      return true;
+                  }else{
+                      return false;
+                  }
+                }
+                function educationfilter(element) {
+                  if(education.some((e)=> element.digree.education._id == e)){
+                      return true;
+                  }else{
+                      return false;
+                  }
+                  
+                }
+
+              var seekerdata = await Profiledata.find().populate(populate)
+              .then((data) => data.filter((filterdata) => {
+                  var filterdata2 = filterdata.careerPreference.filter(industryfilter)
+                  var educationdata2 = filterdata.education.filter(educationfilter)
+                  
+                  if (filterdata2.length > 0 && educationdata2.length > 0 && filterdata.userid.experiencedlevel != null) {
+                      
+                      return true;
+                      
+                  }else{
+                      return false;
+                  }
+                  
+                  
+              }));
+              res.status(200).send(seekerdata)
+          }
+      })
+  } catch (error) {
+      res.status(400).send(error);
+  }
+})
+
+
+
+
+
+
+
+
+
+
+
+
 
 module.exports = app;
