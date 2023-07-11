@@ -103,8 +103,13 @@ app.post("/workexperience", tokenverify, async (req, res) => {
             userid: _id,
             aboutid: workexperiencedata._id
           }).save()
+          await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.incomplete": -1, "other.complete": 1 } })
+        }else{
+          if(profiledata.workexperience.length == 0){
+            await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.incomplete": -1, "other.complete": 1 } })
+          }
         }
-        await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.incomplete": -1, "other.complete": 1 } })
+         
         res.status(200).json({ message: "Add Successfull" });
       } else {
         res.status(400).json({ message: "All ready Added" })
@@ -145,6 +150,10 @@ app.delete("/workexperience", tokenverify, async (req, res) => {
           res.status(400).json({ message: "iteam not found" });
         } else {
           await Profiledata.findOneAndUpdate({ userid: user }, { $pull: { "workexperience": req.query.id } })
+          var workdata = await Workexperience.find({userid: user})
+          if (workdata.length == 0) {
+            await Seekeruser.findOneAndUpdate({ _id: user }, { $inc: { "other.incomplete": 1, "other.complete": -1 } })
+          }
           res.status(200).json({ message: "delete successfull" });
         }
 
@@ -230,8 +239,13 @@ app.post("/education", tokenverify, async (req, res) => {
               userid: _id,
               education: educationdata._id
             }).save()
+            await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.incomplete": -1, "other.complete": 1 } })
+          }else{
+            if(profiledata.education.length == 0){
+              await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.incomplete": -1, "other.complete": 1 } })
+            }
           }
-          await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.incomplete": -1, "other.complete": 1 } })
+          
           res.status(200).json({ message: "Education Add Successfull" })
         } else {
           res.status(400).json({ message: "already added" })
@@ -269,6 +283,10 @@ app.delete("/education", tokenverify, async (req, res) => {
 
         await Education.findOneAndDelete({ _id: req.query.id });
         await Profiledata.findOneAndUpdate({ userid: _id }, { $pull: { "education": req.query.id } })
+        var edudata = await Education.find({userid: _id})
+          if (edudata.length == 0) {
+            await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.incomplete": 1, "other.complete": -1 } })
+          }
 
         res.status(200).json({ message: "Delete Successfull" });
       }
@@ -378,8 +396,13 @@ app.post("/seeker_skill", tokenverify, async (req, res) => {
               userid: id,
               skill: req.body.skill
             }).save()
+            await Seekeruser.findOneAndUpdate({ _id: id }, { $inc: { "other.incomplete": -1, "other.complete": 1 } })
+          }else{
+            if(profiledata.skill.length == 0){
+              await Seekeruser.findOneAndUpdate({ _id: id }, { $inc: { "other.incomplete": -1, "other.complete": 1 } })
+            }
           }
-          await Seekeruser.findOneAndUpdate({ _id: id }, { $inc: { "other.incomplete": -1, "other.complete": 1 } })
+          
           res.status(200).json({ message: "skill add successfull data" })
         } else {
           var profiledata = await Profiledata.findOneAndUpdate({ userid: id }, { $addToSet: { skill: req.body.skill } })
@@ -433,6 +456,10 @@ app.delete("/seeker_skill", tokenverify, async (req, res) => {
           res.status(400).json({ message: "iteam not found" })
         } else {
           await Profiledata.findOneAndUpdate({ userid: id }, { $pull: { skill: req.query.id } })
+          var skilldata = await Skill.find({userid: id})
+          if (skilldata.length == 0) {
+            await Seekeruser.findOneAndUpdate({ _id: id }, { $inc: { "other.incomplete": 1, "other.complete": -1 } })
+          }
           res.status(200).json({ message: "delete successfull" })
         }
 
@@ -463,16 +490,22 @@ app.post("/protfolio", tokenverify, async (req, res) => {
             protfoliolink: req.body.protfoliolink,
             userid: _id,
           });
-          protfoliodata.save();
+          await protfoliodata.save();
           var profiledata = await Profiledata.findOneAndUpdate({ userid: _id }, { $push: { protfoliolink: protfoliodata._id } })
           if (profiledata == null) {
             await Profiledata({
               userid: _id,
-              skill: protfoliodata._id
+              protfoliolink: protfoliodata._id
             }).save()
+            await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.incomplete": -1, "other.complete": 1 } })
+          }else{
+            if(profiledata.protfoliolink.length == 0){
+              await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.incomplete": -1, "other.complete": 1 } })
+            }
           }
-          await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.incomplete": -1, "other.complete": 1 } })
-          res.status(200).json({ message: "add successfull" })
+          
+          
+          res.status(200).json(profiledata)
         } else {
           res.status(400).json({ message: "allready added" })
         }
@@ -513,6 +546,10 @@ app.delete("/protfolio", tokenverify, async (req, res) => {
           res.status(400).json({ message: "iteam not found" })
         } else {
           await Profiledata.findOneAndUpdate({ userid: _id }, { $pull: { protfoliolink: req.query.id } })
+          var skilldata = await Protfoliolink.find({userid: _id})
+          if (skilldata.length == 0) {
+            await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.incomplete": 1, "other.complete": -1 } })
+          }
           res.status(200).json({ message: "delete successfull" })
 
         }
@@ -556,7 +593,6 @@ app.patch("/protfolio/:_id", tokenverify, async (req, res) => {
 // get profile data
 
 app.get("/profiledetails", tokenverify, async (req, res) => {
-
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
       if (err) {
