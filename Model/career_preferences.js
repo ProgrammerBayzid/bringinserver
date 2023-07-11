@@ -23,8 +23,15 @@ const career_preferencesSchema = Schema(
             ref: "Jobtype"
         },
         salaray: {
-            type: "ObjectId",
-            ref: "Salary"
+            min_salary: {
+                type: "ObjectId",
+                ref: "Salary"
+            },
+            max_salary: {
+                type: "ObjectId",
+                ref: "Salary"
+            }
+            
         }
 
     },{timestamps: true}

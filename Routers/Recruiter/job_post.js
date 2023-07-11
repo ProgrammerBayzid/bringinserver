@@ -27,7 +27,7 @@ app.post("/skill", tokenverify, async (req, res) => {
                 res.json({ message: "invalid token" })
             } else {
                 var id = authdata._id;
-                var skilldata = await Skill.findOne({ skill: req.body.skill})
+                var skilldata = await Skill.findOne({ skill: req.body.skill })
 
                 if (skilldata == null) {
                     await Skill({ skill: req.body.skill, userid: id }).save();
@@ -54,11 +54,11 @@ app.get("/skill", tokenverify, async (req, res) => {
                 var id = authdata._id;
                 var skilldata = await Skill.find({ userid: id })
                 var data = await Skill.find().select("-userid");
-                
-                    res.status(200).json({userskill: skilldata, defaultskill: data})
-                    
-                
-                
+
+                res.status(200).json({ userskill: skilldata, defaultskill: data })
+
+
+
             }
         })
 
@@ -112,11 +112,11 @@ app.post('/job_post', tokenverify, async (req, res) => {
                         postdate: new Date()
                     });
                     jobdata.save();
-                    var functiondata = await RecruiterFunctionarea.findOne({userid: id, expertice_area: req.body.expertice_area});
-                    if(functiondata == null){
-                        await RecruiterFunctionarea({userid: id, expertice_area: req.body.expertice_area, jobid: jobdata._id}).save()
-                    } 
-                    res.status(200).json({ jobid: jobdata._id})
+                    var functiondata = await RecruiterFunctionarea.findOne({ userid: id, expertice_area: req.body.expertice_area });
+                    if (functiondata == null) {
+                        await RecruiterFunctionarea({ userid: id, expertice_area: req.body.expertice_area, jobid: jobdata._id }).save()
+                    }
+                    res.status(200).json({ jobid: jobdata._id })
                 } else {
                     res.status(400).json({ message: "Job Post Allready Submit" })
                 }
@@ -137,25 +137,21 @@ app.get('/job_post', tokenverify, async (req, res) => {
             } else {
                 var id = authdata._id;
 
+                var populate = ["userid",
+                    "expertice_area",
+                    "experience",
+                    "education",
+                    { path: "salary.min_salary", select: "-other_salary" },
+                    { path: "salary.max_salary", select: "-other_salary" },
+                    { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
+                    "skill",
+                    "jobtype"];
+
                 if (req.query.type == 0) {
-                    var jobpost = await JobPost.find({ userid: id }).populate(["userid",
-                        "expertice_area",
-                        "experience",
-                        "education",
-                        "salary",
-                        { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
-                        "skill",
-                        "jobtype"])
+                    var jobpost = await JobPost.find({ userid: id }).populate(populate)
                     res.status(200).send(jobpost)
                 } else {
-                    var jobpost = await JobPost.find({ userid: id, job_status_type: req.query.type }).populate(["userid",
-                        "expertice_area",
-                        "experience",
-                        "education",
-                        "salary",
-                        { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
-                        "skill",
-                        "jobtype"])
+                    var jobpost = await JobPost.find({ userid: id, job_status_type: req.query.type }).populate(populate)
                     res.status(200).send(jobpost)
                 }
 
@@ -178,7 +174,7 @@ app.post('/job_post_update', tokenverify, async (req, res) => {
 
                 var id = authdata._id;
                 if (req.query.jobid) {
-                     await JobPost.findOneAndUpdate({ _id: req.query.jobid }, {
+                    await JobPost.findOneAndUpdate({ _id: req.query.jobid }, {
                         $set: {
                             userid: id,
                             job_title: req.body.job_title,
@@ -196,7 +192,7 @@ app.post('/job_post_update', tokenverify, async (req, res) => {
                             postdate: new Date()
                         }
                     })
-                    await RecruiterFunctionarea.findOneAndUpdate({userid: id, jobid: req.query.jobid}, {$set: {expertice_area: req.body.expertice_area}})
+                    await RecruiterFunctionarea.findOneAndUpdate({ userid: id, jobid: req.query.jobid }, { $set: { expertice_area: req.body.expertice_area } })
 
                     res.status(200).json({ message: "Update Successfull" })
                 }
@@ -218,7 +214,7 @@ app.delete('/job_post_update', tokenverify, async (req, res) => {
                 var id = authdata._id;
                 if (req.query.jobid) {
                     await JobPost.findOneAndDelete({ _id: req.query.jobid, userid: id })
-                    await RecruiterFunctionarea.deleteMany({userid: id, jobid: req.query.jobid})
+                    await RecruiterFunctionarea.deleteMany({ userid: id, jobid: req.query.jobid })
                     res.status(200).json({ message: "Delete Successfull" })
                 }
             }
@@ -237,15 +233,16 @@ app.get('/single_jobdetails', tokenverify, async (req, res) => {
                 res.json({ message: "invalid token" })
             } else {
                 const _id = authdata._id;
-                // var carear = await Career_preferences.find({userid: _id}).populate(["functionalarea"]).select("functionalarea")
-                var company = await JobPost.findOne({ _id: req.query.jobid }).populate(["userid",
-                    "expertice_area",
-                    "experience",
-                    "education",
-                    "salary",
-                    { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
-                    "skill",
-                    "jobtype"])
+                var populate = ["userid",
+                "expertice_area",
+                "experience",
+                "education",
+                { path: "salary.min_salary", select: "-other_salary" },
+                { path: "salary.max_salary", select: "-other_salary" },
+                { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
+                "skill",
+                "jobtype"];
+                var company = await JobPost.findOne({ _id: req.query.jobid }).populate()
                 res.status(200).send(company);
             }
         })

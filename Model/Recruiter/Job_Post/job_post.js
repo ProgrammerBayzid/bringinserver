@@ -21,8 +21,15 @@ const jobpostSchema = Schema(
             ref: "Education_Lavel"
         },
         salary: {
-            type: "ObjectId",
-            ref: "Salary"
+            min_salary: {
+                type: "ObjectId",
+                ref: "Salary"
+            },
+            max_salary: {
+                type: "ObjectId",
+                ref: "Salary"
+            }
+            
         },
         company: {
           type: "ObjectId",

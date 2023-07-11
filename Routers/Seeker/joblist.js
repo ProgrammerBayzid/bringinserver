@@ -57,60 +57,59 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
             } else {
                 const _id = authdata._id;
 
-                var creaarpopulate = [{ path: "category", select: "-functionarea" },
-                        "functionalarea",
-                    { path: "division", populate: { path: "cityid", select: "-divisionid" } },
-                        "jobtype",
-                        "salaray"];
-                    var careardata = await Career_preferences.find({ userid: _id }).populate(creaarpopulate);
+                // var creaarpopulate = [{ path: "category", select: "-functionarea" },
+                //         "functionalarea",
+                //     { path: "division", populate: { path: "cityid", select: "-divisionid" } },
+                //         "jobtype",
+                //         { path: "salaray.min_salary", select: "-other_salary" },
+                //         { path: "salaray.max_salary", select: "-other_salary" },];
+                //     var careardata = await Career_preferences.find({ userid: _id }).populate(creaarpopulate);
                     
-                    let functionarea = [];
-                    let cityname = [];
-                    let minsalary = []
-                    let maxsalary = []
-                    let jobtype = [];
-                    let functionalregex;
-                    let cityregex;
-                    let minregex;
-                    let maxregex;
-                    let jobtyperegex;
+                //     let functionarea = [];
+                //     let cityname = [];
+                //     let minsalary = []
+                //     let maxsalary = []
+                //     let jobtype = [];
+                //     let functionalregex;
+                //     let cityregex;
+                //     let minregex;
+                //     let maxregex;
+                //     let jobtyperegex;
                     
 
-                    for (let index = 0; index < careardata.length; index++) {
-                        functionarea.push(careardata[index].functionalarea.functionalname);
-                        cityname.push(careardata[index].division.cityid.name);
-                        minsalary.push(careardata[index].salaray.min_salary);
-                        maxsalary.push(careardata[index].salaray.max_salary)
-                        jobtype.push(careardata[index].jobtype.worktype)  
-                    }
-                    functionalregex = functionarea.join("|");
-                    cityregex = cityname.join("|");
-                    minregex = minsalary.join("|");
-                    maxregex = maxsalary.join("|");
-                    jobtyperegex = jobtype.join("|");
-                    console.log(cityregex)
-                if (req.query.functionalarea == 0) {
-                    var company = await JobPost.find().populate([
+                //     for (let index = 0; index < careardata.length; index++) {
+                //         functionarea.push(careardata[index].functionalarea.functionalname);
+                //         cityname.push(careardata[index].division.cityid.name);
+                //         minsalary.push(careardata[index].salaray.min_salary);
+                //         maxsalary.push(careardata[index].salaray.max_salary)
+                //         jobtype.push(careardata[index].jobtype.worktype)  
+                //     }
+                //     functionalregex = functionarea.join("|");
+                //     cityregex = cityname.join("|");
+                //     minregex = minsalary.join("|");
+                //     maxregex = maxsalary.join("|");
+                //     jobtyperegex = jobtype.join("|");
+                //     console.log(cityregex)
+
+                var populate = [
                     {path: "userid"},
-                    {path: "expertice_area", match: { "functionalname": { $regex: functionalregex, $options: "i" } }},
+                    {path: "expertice_area"},
                     {path: "experience"},
                     {path: "education"},
-                    {path: "company",match: { "c_location.formet_address": { $regex: cityregex, $options: "i" } },populate: [{ path: "c_size" }, { path: "industry", select: "-category" }]},
-                    {path: "salary" ,match: { "min_salary": { $regex: minregex, $options: "i" }, "max_salary": { $regex: maxregex, $options: "i" }  }},
+                    {path: "company",populate: [{ path: "c_size" }, { path: "industry", select: "-category" }]},
+                    { path: "salary.min_salary", select: "-other_salary" },
+                    { path: "salary.max_salary", select: "-other_salary" },
                     {path: "skill"},
-                    {path: "jobtype",match: { "worktype": { $regex: jobtyperegex, $options: "i" } }},
-                ]).exec().then((data) => data.filter((filterdata) => filterdata.userid.other.profile_verify == true &&  filterdata.company != null && filterdata.expertice_area != null && filterdata.salary != null && filterdata.jobtype != null))
+                    {path: "jobtype"},
+                ];
+
+                if (req.query.functionalarea == 0) {
+                    var company = await JobPost.find().populate(populate);
+                    // .exec().then((data) => data.filter((filterdata) => filterdata.userid.other.profile_verify == true &&  filterdata.company != null && filterdata.expertice_area != null && filterdata.salary != null && filterdata.jobtype != null))
               
                     res.status(200).send(company)
                 } else {
-                    var company = await JobPost.find({ expertice_area: req.query.functionalarea }).populate(["userid",
-                        "expertice_area",
-                        "experience",
-                        {path: "education", select: "-digree"},
-                        "salary",
-                        { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
-                        "skill",
-                        "jobtype"]).then((data)=>data.filter((filterdata)=> filterdata.userid.other.profile_verify == true))
+                    var company = await JobPost.find({ expertice_area: req.query.functionalarea }).populate(populate).then((data)=>data.filter((filterdata)=> filterdata.userid.other.profile_verify == true))
                     res.status(200).send(company);
                 }
             }
@@ -132,10 +131,12 @@ app.get("/job_search",  tokenverify, async (req, res)=> {
                         "expertice_area",
                         "experience",
                         "education",
-                        "salary",
+                        { path: "salary.min_salary", select: "-other_salary" },
+                    { path: "salary.max_salary", select: "-other_salary" },
                         { path: "company",match: { "c_location.formet_address": { $regex: req.query.city ?? "", $options: "i" } }, populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
                         "skill",
-                        "jobtype"]).then((data) => data.filter((filterdata) => filterdata.userid.other.profile_verify == true && filterdata.company != null))
+                        "jobtype"]);
+                        // .then((data) => data.filter((filterdata) => filterdata.userid.other.profile_verify == true && filterdata.company != null))
                     res.status(200).send(company);
                 
             }
@@ -183,7 +184,8 @@ app.get("/job_save", tokenverify, async (req, res)=>{
                 "expertice_area",
                 "experience",
                 "education",
-                "salary",
+                { path: "salary.min_salary", select: "-other_salary" },
+                    { path: "salary.max_salary", select: "-other_salary" },
                 { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
                 "skill",
                 "jobtype"]})
@@ -303,21 +305,24 @@ app.post('/job_filter', tokenverify, async (req, res)=>{
                 var experience = req.body.experience
                 var industry = req.body.industry
                 var companysize = req.body.companysize
-
+                
                 var populate = [
                     {path: "userid"},
                     {path: "expertice_area", match: {industryid: {$in: industry}}},
                     {path: "experience", match: {_id: {$in: experience}}},
                     {path: "education", match: {_id: {$in: education}}},
                     {path: "company",populate: [{ path: "c_size" , match: {_id: {$in: companysize}}}, { path: "industry", select: "-category" }]},
-                    {path: "salary", match: {_id: {$in: salary}}},
+                    { path: "salary.min_salary", select: "-other_salary" },
+                    { path: "salary.max_salary", select: "-other_salary" },
                     {path: "skill"},
                     {path: "jobtype"}
                     
                 ]
 
                 
-                var joblist = await JobPost.find({expertice_area:req.body.functionalareaid , remote: {$in: workplace}}).populate(populate).then((data) => data.filter((filterdata) =>  filterdata.expertice_area != null && filterdata.experience != null && filterdata.education != null && filterdata.company.c_size != null && filterdata.salary != null))
+                var joblist = await JobPost.find({expertice_area:req.body.functionalareaid , remote: {$in: workplace}}).populate(populate)
+                
+                // .then((data) => data.filter((filterdata) =>  filterdata.expertice_area != null && filterdata.experience != null && filterdata.education != null && filterdata.company.c_size != null && filterdata.salary != null))
                 
                 res.status(200).json(joblist)
                

@@ -99,7 +99,8 @@ app.get("/candidatelist", tokenverify, async (req, res) => {
                         "skill",
                         "protfoliolink",
                         "about",
-                        { path: "careerPreference", populate: [{ path: "category",  select: "-functionarea" }, { path: "functionalarea" }, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype", "salaray"] },
+                        { path: "careerPreference", populate: [{ path: "category",  select: "-functionarea" }, { path: "functionalarea" }, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype",  { path: "salaray.min_salary", select: "-other_salary" },
+                        { path: "salaray.max_salary", select: "-other_salary" },] },
                         { path: "userid", populate: { path: "experiencedlevel" } }
                     ]
                     
@@ -120,7 +121,8 @@ app.get("/candidatelist", tokenverify, async (req, res) => {
                         "skill",
                         "protfoliolink",
                         "about",
-                        { path: "careerPreference", populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea", populate: [{path: "industryid", select: "-category"}]}, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype", "salaray"] },
+                        { path: "careerPreference", populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea", populate: [{path: "industryid", select: "-category"}]}, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype",  { path: "salaray.min_salary", select: "-other_salary" },
+                        { path: "salaray.max_salary", select: "-other_salary" },] },
                         { path: "userid", populate: { path: "experiencedlevel" } }
                     ]
                     var seekerdata = await Profiledata.find().populate(populate2).then((data) => data.filter((filterdata) => {
@@ -180,7 +182,8 @@ app.get("/candidate_save", tokenverify, async (req, res) => {
                         "skill",
                         "protfoliolink",
                         "about",
-                    { path: "careerPreference", populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea" }, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype", "salaray"] },
+                    { path: "careerPreference", populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea" }, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype",  { path: "salaray.min_salary", select: "-other_salary" },
+                    { path: "salaray.max_salary", select: "-other_salary" },] },
                     { path: "userid", populate: { path: "experiencedlevel" } }]
                 })
                 res.status(200).send(data)
@@ -243,7 +246,8 @@ app.get("/candidate_search", tokenverify, async (req, res) => {
                         "skill",
                         "protfoliolink",
                         "about",
-                        { path: "careerPreference", populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea" }, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype", "salaray"] },
+                        { path: "careerPreference", populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea" }, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype",  { path: "salaray.min_salary", select: "-other_salary" },
+                        { path: "salaray.max_salary", select: "-other_salary" },] },
                         { path: "userid", match: { "fastname": { $regex: req.query.name, $options: "i" } }, populate: { path: "experiencedlevel" } }
                     ]
                 ).then((data) => data.filter((filterdata) => filterdata.userid != null));
@@ -277,7 +281,8 @@ app.post('/candidate_filter', tokenverify, async (req, res) => {
                     "skill",
                     "protfoliolink",
                     "about",
-                    { path: "careerPreference" , populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea"}, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype", "salaray"] },
+                    { path: "careerPreference" , populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea"}, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype",  { path: "salaray.min_salary", select: "-other_salary" },
+                    { path: "salaray.max_salary", select: "-other_salary" },] },
                     { path: "userid",  populate: { path: "experiencedlevel" , match: {_id: {$in: experience}}} }
                 ]
                 

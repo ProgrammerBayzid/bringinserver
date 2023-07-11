@@ -60,7 +60,7 @@ app.get("/salarietype", tokenverify, async (req, res) => {
         res.json({ message: "invalid token" });
       } else {
         const _id = authdata._id;
-        const salirieData = await Salirietype.find();
+        const salirieData = await Salirietype.find({},{other_salary: {$slice: 6}}).populate({path: "other_salary", select: "-other_salary"});
         res.send(salirieData);
       }
     });
@@ -127,7 +127,7 @@ app.get("/location", tokenverify, async (req, res) => {
       } else {
         var citydata = await City.find().populate({
           path: "divisionid",
-          select: "-cityid",
+          populate: [{path: "cityid", select: "-divisionid"}]
         });
         res.status(200).send(citydata);
       }
@@ -249,7 +249,8 @@ app.get("/career_preferences", tokenverify, async (req, res) => {
             populate: { path: "cityid", select: "-divisionid" },
           },
           "jobtype",
-          "salaray",
+          {path: "salaray.min_salary", select: "-other_salary"},
+          {path: "salaray.max_salary", select: "-other_salary"},
         ]);
         res.status(200).send(data);
       }

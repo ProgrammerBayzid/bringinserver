@@ -503,18 +503,31 @@ app.get("/admin/salarie", async (req, res) => {
 });
 
 app.post("/salarietype", async (req, res) => {
-  try {
-    var saliry = await Salirietype.findOne(req.body);
-    if (saliry == null) {
-      const salirietypeData = await Salirietype(req.body);
-      await salirietypeData.save();
-      res.status(200).json({ message: "add successfull" });
-    } else {
-      res.status(400).json({ message: "allready added" });
+  
+    // var saliry = await Salirietype.findOne(req.body);
+    // if (saliry == null) {
+    //   const salirietypeData = await Salirietype(req.body);
+    //   await salirietypeData.save();
+    //   res.status(200).json({ message: "add successfull" });
+    // } else {
+    //   res.status(400).json({ message: "allready added" });
+    // }
+    
+
+    if (req.body.type == 0) {
+      var salary = await Salirietype({salary: "Negotiable", type: req.body.type , currency: req.body.currency,simbol: req.body.simbol})
+      await salary.save();
+      await Salirietype.findOneAndUpdate({_id: salary._id}, {$addToSet: {other_salary: salary._id}})
+      res.status(200).json({message: "add successfull"})
+    }else{
+      var salary = await Salirietype({salary: req.body.salary,type: req.body.type, currency: req.body.currency, simbol: req.body.simbol})
+      await Salirietype.updateMany({},{$addToSet: {other_salary: salary._id}})
+      await salary.save();
+      res.status(200).json({message: "Salary add successfull"})
     }
-  } catch (error) {
-    res.status(400).send(error);
-  }
+
+
+
 });
 
 
