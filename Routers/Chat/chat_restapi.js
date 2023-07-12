@@ -141,12 +141,12 @@ app.get("/candidate_reject", tokenverify ,async (req, res)=>{
             "skill",
             "protfoliolink",
             "about",
-            {path: "careerPreference",populate: [{path: "category",select: "-functionarea"},"functionalarea",{ path: "division", populate: { path: "cityid", select: "-divisionid" } },"jobtype","salaray"]},
+            {path: "careerPreference",populate: [{path: "category",select: "-functionarea"},"functionalarea",{ path: "division", populate: { path: "cityid", select: "-divisionid" } },"jobtype", 
+            { path: "salaray.min_salary", select: "-other_salary" },
+            { path: "salaray.max_salary", select: "-other_salary" },]},
             {path:"userid", populate: {path: "experiencedlevel"}}
           ]}])
-          res.status(200).send(rejectdata)
-         
-          
+          res.status(200).send(rejectdata) 
       }
     });
   } catch (error) {

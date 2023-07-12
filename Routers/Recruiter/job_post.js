@@ -7,6 +7,7 @@ const EducationLavel = require('../../Model/education_lavel.js')
 const Skill = require('../../Model/Recruiter/Skill/skill.js')
 const JobPost = require('../../Model/Recruiter/Job_Post/job_post.js')
 const RecruiterFunctionarea = require("../../Model/Recruiter/Recruiter_Functionarea/recruiter_functionarea.js")
+const {Functionarea} = require("../../Model/industry.js")
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, "uploads");
@@ -77,8 +78,8 @@ app.get("/job_title", tokenverify, async (req, res) => {
             res.json({ message: "invalid token" })
         } else {
             var id = authdata._id;
-            var data = await JobPost.find({ job_title: { "$regex": req.query.search, "$options": "i" } }).select("job_title");
-            res.status(200).send(data)
+            var data2 = await Functionarea.find({functionalname: {"$regex": req.query.search, "$options": "i"}}).populate([{path: "industryid", select: "-category"},{path: "categoryid", select: "-functionarea"}])
+            res.status(200).send(data2)
         }
     })
 
@@ -242,7 +243,7 @@ app.get('/single_jobdetails', tokenverify, async (req, res) => {
                 { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
                 "skill",
                 "jobtype"];
-                var company = await JobPost.findOne({ _id: req.query.jobid }).populate()
+                var company = await JobPost.findOne({ _id: req.query.jobid }).populate(populate)
                 res.status(200).send(company);
             }
         })
