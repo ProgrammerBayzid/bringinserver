@@ -48,6 +48,29 @@ app.get("/admin_exprience", async (req, res) => {
   }
 });
 
+
+app.patch("/experince_update/:_id", async (req, res) => {
+  try {
+    const _id = req.params._id;
+    await Experince.findByIdAndUpdate(
+     _id,
+      {
+        $set: {
+          name: req.body.name,
+          
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    res.status(200).json({ message: "update successfull" });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+});
+
 app.delete("/admin_exprience/:id", async (req, res) => {
   try {
     const result = await Experince.findByIdAndDelete(req.params.id);
@@ -82,6 +105,36 @@ app.post("/jobtitle", async (req, res) => {
       res.send(error);
     }
   });
+
+
+
+
+
+  app.patch("/jobtitle_update/:_id", async (req, res) => {
+    try {
+      const _id = req.params._id;
+      await JobTitle.findByIdAndUpdate(
+       _id,
+        {
+          $set: {
+            name: req.body.name,
+            
+          },
+        },
+        {
+          new: true,
+        }
+      );
+  
+      res.status(200).json({ message: "update successfull" });
+    } catch (error) {
+      res.status(404).send(error);
+    }
+  });
+
+
+
+
   app.delete("/jobtitle/:id", async (req, res) => {
     try {
       const result = await JobTitle.findByIdAndDelete(req.params.id);
@@ -109,6 +162,27 @@ app.post("/department", async (req, res) => {
     }
   });
   
+  app.patch("/department_update/:_id", async (req, res) => {
+    try {
+      const _id = req.params._id;
+      await Department.findByIdAndUpdate(
+       _id,
+        {
+          $set: {
+            name: req.body.name,
+            
+          },
+        },
+        {
+          new: true,
+        }
+      );
+  
+      res.status(200).json({ message: "update successfull" });
+    } catch (error) {
+      res.status(404).send(error);
+    }
+  });
   // # get department data 
   
   app.get("/department", async (req, res) => {
@@ -155,6 +229,30 @@ app.post("/department", async (req, res) => {
       res.send(error);
     }
   });
+
+  app.patch("/company_size_update/:_id", async (req, res) => {
+    try {
+      const _id = req.params._id;
+      await Companysize.findByIdAndUpdate(
+       _id,
+        {
+          $set: {
+            size: req.body.size,
+            
+          },
+        },
+        {
+          new: true,
+        }
+      );
+  
+      res.status(200).json({ message: "update successfull" });
+    } catch (error) {
+      res.status(404).send(error);
+    }
+  });
+
+
   app.delete("/admincompanysize/:id", async (req, res) => {
     try {
       const result = await AdminCompanySize.Companysize(req.params.id);
@@ -195,6 +293,30 @@ app.get("/seekercompany", async (req, res) => {
     res.send(error);
   }
 });
+
+
+app.patch("/company_name_update/:_id", async (req, res) => {
+  try {
+    const _id = req.params._id;
+    await SeekeraddCompany.findByIdAndUpdate(
+     _id,
+      {
+        $set: {
+          name: req.body.name,
+          
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    res.status(200).json({ message: "update successfull" });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+});
+
 app.delete("/seekercompany/:id", async (req, res) => {
   try {
     const result = await SeekeraddCompany.findByIdAndDelete(req.params.id);
@@ -270,6 +392,27 @@ app.get("/admin/skill", async (req, res) => {
   }
 });
 
+app.patch("/skill_update/:_id", async (req, res) => {
+  try {
+    const _id = req.params._id;
+    await AdminSkill.findByIdAndUpdate(
+     _id,
+      {
+        $set: {
+          name: req.body.name,
+          
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    res.status(200).json({ message: "update successfull" });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+});
 
 app.delete("/admin/skill/:id", async (req, res) => {
   try {
