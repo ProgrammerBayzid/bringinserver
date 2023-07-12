@@ -275,14 +275,21 @@ app.post('/candidate_filter', tokenverify, async (req, res) => {
                 var experience = req.body.experience
                 var industry = req.body.industry
                 var companysize = req.body.companysize
+                var minsalary = [];
+                var maxsalary = [];
+                for (let index = 0; index < req.body.salary.length; index++) {
+                    minsalary.push(req.body.salary[index].min_salary)
+                    maxsalary.push(req.body.salary[index].max_salary)
+                }
                 var populate = [
                     { path: "workexperience", populate: [{ path: "category", select: "-functionarea" }, "expertisearea"] },
                     { path: "education", populate: [{ path: "digree", select: "-subject", populate: { path: "education", select: "-digree" } }, "subject"] },
                     "skill",
                     "protfoliolink",
                     "about",
-                    { path: "careerPreference" , populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea"}, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype",  { path: "salaray.min_salary", select: "-other_salary" },
-                    { path: "salaray.max_salary", select: "-other_salary" },] },
+                    { path: "careerPreference" , populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea"}, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype",  
+                    { path: "salaray.min_salary", select: "-other_salary" ,match: {_id: {$in: minsalary}}},
+                    { path: "salaray.max_salary", select: "-other_salary" ,match: {_id: {$in: maxsalary}}},] },
                     { path: "userid",  populate: { path: "experiencedlevel" , match: {_id: {$in: experience}}} }
                 ]
                 
