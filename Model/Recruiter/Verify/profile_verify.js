@@ -4,7 +4,11 @@ const profileverifySchema = Schema(
     {
         type: Number,
         link: String,
-        userid: String,
+        userid: { 
+            type: "ObjectId",
+            ref: "Recruiters_profile"
+        },
+            // String, 
         fieldname: String,
         originalname: String,
         encoding: String,

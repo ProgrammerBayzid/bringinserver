@@ -7,6 +7,7 @@ const {
 } = require("../../Model/adminprofiledetails");
 const { City, Division } = require("../../Model/alllocation.js");
 const Experince = require("../../Model/experience.js");
+const { Company, Companysize } = require("../../Model/Recruiter/Company/company.js")
 
 
 const tokenverify = require("../../MiddleWare/tokenverify.js");
@@ -134,21 +135,21 @@ app.post("/department", async (req, res) => {
   
  // # post institutename data 
  
-app.post("/admincompanysize", async (req, res) => {
-    try {
-      const admincompanysizeData = await AdminCompanySize(req.body);
-      const data = await admincompanysizeData.save()
-      res.status(200).send(data);
-    } catch (error) {
-      res.status(400).send(error);
-    }
-  });
+// app.post("/admincompanysize", async (req, res) => {
+//     try {
+//       const admincompanysizeData = await Companysize(req.body);
+//       const data = await admincompanysizeData.save()
+//       res.status(200).send(data);
+//     } catch (error) {
+//       res.status(400).send(error);
+//     }
+//   });
   
   // # get Institutename data 
   
   app.get("/admincompanysize", async (req, res) => {
     try {
-      const admincompanysizeData = await AdminCompanySize.find();
+      const admincompanysizeData = await Companysize.find();
       res.send(admincompanysizeData);
     } catch (error) {
       res.send(error);
@@ -156,7 +157,7 @@ app.post("/admincompanysize", async (req, res) => {
   });
   app.delete("/admincompanysize/:id", async (req, res) => {
     try {
-      const result = await AdminCompanySize.findByIdAndDelete(req.params.id);
+      const result = await AdminCompanySize.Companysize(req.params.id);
       if (!req.params.id) {
         return res.status(404).send();
       }

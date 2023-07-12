@@ -2,8 +2,11 @@ const { Schema, model, } = require("mongoose");
 
 const companyverifySchema = Schema(
     {
-        userid: String,
-        fieldname: String,
+        userid: { 
+            type: "ObjectId",
+            ref: "Recruiters_profile"
+        },
+                fieldname: String,
         originalname: String,
         encoding: String,
         mimetype: String,

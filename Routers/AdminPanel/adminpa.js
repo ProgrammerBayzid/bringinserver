@@ -71,7 +71,7 @@ app.get("/premium_user", async (req, res) => {
   try {
     const premium = req.query.premium;
     const filter = { premium: premium === "true" };
-    var data = await Recruiters.find(filter);
+    var data = await recruiters.find(filter);
     res.status(200).json(data);
   } catch (error) {
     res.status(400).send(error);
@@ -87,12 +87,12 @@ app.get("/not_premium_user", async (req, res) => {
     res.status(400).send(error);
   }
 });
-app.get("/premium_user/:id", async (req, res) => {
-  const id = req.params.id;
-  const query = { _id: id };
-  const date = await recruiters.findOne(query);
-  res.send(date);
-});
+// app.get("/premium_user/:id", async (req, res) => {
+//   const id = req.params.id;
+//   const query = { _id: id };
+//   const date = await recruiters.findOne(query);
+//   res.send(date);
+// });
 
 // company and profile verify doc and verify
 
