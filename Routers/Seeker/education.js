@@ -18,16 +18,9 @@ app.get("/subject",tokenverify, async (req, res) => {
             if (err) {
                 res.json({ message: "invalid token" })
             } else {
-                var data = await Subject.find()
-                // .then((data)=> data.filter((filterdata)=> {
-                //    if (filterdata.digree.some((e)=> e == req.query.digreeid)) {
-                //     return true;
-                //    }else{
-                //     return false
-                //    }
-
-                // }))
-                res.status(200).send(data);
+                
+                var data = await Digree.findOne({_id: req.query.digreeid}).populate({path: "subject", select: "-digree"})
+                res.status(200).send(data.subject);
             }
         })
         
