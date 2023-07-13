@@ -647,6 +647,30 @@ app.post("/salarietype", async (req, res) => {
   }
 });
 
+
+app.post("/edit_salarietype/:_id", async (req, res) => {
+  try {
+    const _id = req.params._id;
+    await Salirietype.findByIdAndUpdate(
+      _id,
+      {
+        $set: {
+          salary: req.body.salary,
+          simbol: req.body.simbol,
+          currency: req.body.currency,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    res.status(200).json({ message: "update successfull" });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+});
+
 // # get jobtype data
 
 app.get("/admin/jobtype", async (req, res) => {
