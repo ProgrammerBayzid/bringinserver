@@ -36,7 +36,7 @@ const {
 // repoted candidate get
 app.get("/candidate_report", async (req, res) => {
   try {
-    var data = await candidateReport.find().populate("candidateid");
+    var data = await candidateReport.find().populate(["candidateid"]);
     res.status(200).json(data);
   } catch (error) {
     res.status(400).send(error);
@@ -54,7 +54,7 @@ app.get("/candidate_report/:id", async (req, res) => {
 //  job_report get
 app.get("/job_report", async (req, res) => {
   try {
-    var data = await JobReport.find().populate("jobid");
+    var data = await JobReport.find().populate(["jobid", "jobid"]);
     res.status(200).json(data);
   } catch (error) {
     res.status(400).send(error);
@@ -138,11 +138,23 @@ app.get("/verifyRecruterCompny", async (req, res) => {
   const id = req.query._id;
   const query = { _id: id };
   // console.log(query);
-  const date = await recruiters.findOne(query);
+  const date = await recruiters.findOne(query).populate("Company");
   res.send(date);
 });
 
 app.patch("/verifyRecruterCompny/:_id", async (req, res) => {
+  const _id = req.params._id;
+  const filter = { _id: _id };
+  // const options = { upsert: true };
+  const updateDoc = {
+   
+      $set: { "other.company_verify": true }
+ 
+  };
+  const result = await recruiters.findByIdAndUpdate(filter, updateDoc, );
+  res.send(result);
+});
+app.patch("/verifyRecruterProfile/:_id", async (req, res) => {
   const _id = req.params._id;
   const filter = { _id: _id };
   // const options = { upsert: true };
@@ -155,25 +167,17 @@ app.patch("/verifyRecruterCompny/:_id", async (req, res) => {
   res.send(result);
 });
 
+
 app.get("/verifyRecruterProfile", async (req, res) => {
   const id = req.query._id;
   const query = { _id: id };
   // console.log(query);
-  const date = await recruiters.findOne(query);
+  const date = await recruiters.findOne(query).populate(  'companyname');
   res.send(date);
 });
 
-app.patch("/verifyRecruterProfile/:_id", async (req, res) => {
-  const _id = req.params._id;
-  const filter = { _id: _id };
-  // const options = { upsert: true };
-  const updateDoc = {
-    $set: { "other.company_verify": true }
 
-  };
-  const result = await recruiters.findByIdAndUpdate(filter, updateDoc, );
-  res.send(result);
-});
+  
 
 
 // industry list
