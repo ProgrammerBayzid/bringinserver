@@ -68,14 +68,13 @@ app.get("/job_report/:id", async (req, res) => {
 });
 
 app.get("/premium_user", async (req, res) => {
-  try {
+ 
     const premium = req.query.premium;
-    const filter = { premium: premium === "true" };
+    const filter = { "other.premium": premium  };
     var data = await recruiters.find(filter);
     res.status(200).json(data);
-  } catch (error) {
-    res.status(400).send(error);
-  }
+    // console.log(filter);
+  
 });
 app.get("/not_premium_user", async (req, res) => {
   try {
@@ -206,6 +205,28 @@ app.post("/industryadd", async (req, res) => {
 });
 
 
+app.post("/industry_update/:_id", async (req, res) => {
+  try {
+    const _id = req.params._id;
+    await Expertisearea.findByIdAndUpdate(
+     _id,
+      {
+        $set: {
+          industryname: req.body.industryname,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    res.status(200).json({ message: "update successfull" });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+});
+
+
 
 //category get
 
@@ -220,7 +241,27 @@ app.get("/admin/category", async (req, res) => {
 
 
 
+app.patch("/category_update/:_id", async (req, res) => {
+  try {
+    const _id = req.params._id;
+    await Category.findByIdAndUpdate(
+     _id,
+      {
+        $set: {
+          categoryname: req.body.categoryname,
+          
+        },
+      },
+      {
+        new: true,
+      }
+    );
 
+    res.status(200).json({ message: "update successfull" });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+});
 
 
 app.post("/categoryadd", async (req, res) => {
@@ -399,6 +440,27 @@ app.get("/admin/functionalarea", async (req, res) => {
     res.send(error);
   }
 });
+app.patch("/functional_update/:_id", async (req, res) => {
+  try {
+    const _id = req.params._id;
+    await Functionarea.findByIdAndUpdate(
+     _id,
+      {
+        $set: {
+          functionalname: req.body.functionalname,
+          
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    res.status(200).json({ message: "update successfull" });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+});
 
 app.post("/functionalareaadd", async (req, res) => {
   try {
@@ -462,6 +524,28 @@ app.get("/admin/location", async (req, res) => {
   }
 });
 
+app.patch("/location_update/:_id", async (req, res) => {
+  try {
+    const _id = req.params._id;
+    await City.findByIdAndUpdate(
+     _id,
+      {
+        $set: {
+          name: req.body.name,
+          
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    res.status(200).json({ message: "update successfull" });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+});
+
 app.post("/location", async (req, res) => {
   try {
     var citydata = await City.findOne({ name: req.body.city });
@@ -493,7 +577,49 @@ app.post("/location", async (req, res) => {
   }
 });
 
+app.get("/admin/city", async (req, res) => {
+  try {
+    var data = await Division.find().populate("cityid");
+    res.json(data);
+  } catch (error) {
+    res.send(error);
+  }
+});
+app.delete("/admin/city/:id", async (req, res) => {
+  try {
+    
+    const result = await Division.findByIdAndDelete(req.params.id);
+    if (!req.params.id) {
+      return res.status(404).send();
+    }
+    res.send(result);
+  } catch (error) {
+    res.send(error);
+  }
+});
 
+
+app.patch("/city_update/:_id", async (req, res) => {
+  try {
+    const _id = req.params._id;
+    await Division.findByIdAndUpdate(
+     _id,
+      {
+        $set: {
+          divisionname: req.body.divisionname,
+          
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    res.status(200).json({ message: "update successfull" });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+});
 
 // # post salarietype
 app.get("/admin/salarie", async (req, res) => {
@@ -601,6 +727,28 @@ app.post("/education_lavel", async (req, res) => {
   }
 });
 
+app.patch("/education_update/:_id", async (req, res) => {
+  try {
+    const _id = req.params._id;
+    await EducationLavel.findByIdAndUpdate(
+     _id,
+      {
+        $set: {
+          name: req.body.name,
+          
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    res.status(200).json({ message: "update successfull" });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+});
+
 app.get("/education_lavel", async (req, res) => {
   try {
     var data = await EducationLavel.find().populate([
@@ -631,6 +779,29 @@ app.post("/digree_add", async (req, res) => {
     }
   } catch (error) {
     res.status(400).send(error);
+  }
+});
+
+
+app.patch("/degree_update/:_id", async (req, res) => {
+  try {
+    const _id = req.params._id;
+    await Digree.findByIdAndUpdate(
+     _id,
+      {
+        $set: {
+          name: req.body.name,
+          
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    res.status(200).json({ message: "update successfull" });
+  } catch (error) {
+    res.status(404).send(error);
   }
 });
 
