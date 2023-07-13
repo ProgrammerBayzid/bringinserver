@@ -677,16 +677,16 @@ app.post("/subject_add", async (req, res) => {
   // }
 });
 
-app.get("/subject", async (req, res) => {
-  try {
-    var data = await Subject.find({
-      name: { $regex: req.query.name, $options: "i" },
-    });
-    res.status(200).send(data);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
+// app.get("/subject", async (req, res) => {
+//   try {
+//     var data = await Subject.find({
+//       name: { $regex: req.query.name, $options: "i" },
+//     });
+//     res.status(200).send(data);
+//   } catch (error) {
+//     res.status(400).send(error);
+//   }
+// });
 
 // experience insert
 
