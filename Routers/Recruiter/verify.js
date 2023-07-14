@@ -227,7 +227,7 @@ app.post("/email_code_verify", tokenverify, (req, res)=> {
                     });
                     await Recruiters.findByIdAndUpdate({ _id: _id }, { $set: { "other.profile_verify": true } })
                     return res.status(200).json({
-                      message: "verification Successfully!",
+                      message: "Verified Succefully",
                     });
                   } else {
                     return res.status(400).send("Your OTP was wrong!");

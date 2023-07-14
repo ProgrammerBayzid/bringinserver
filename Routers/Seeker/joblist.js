@@ -118,14 +118,15 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
                // , match: { _id: { $in: jobtype } } 
                 if (req.query.functionalarea == 0) {
                     var company = await JobPost.find({expertice_area: {$in: functionarea}}).populate(populate).then((data) => data.filter((filterdata) => {
-                        var salary = salaryfilter(filterdata, careardata);
-                        var location = locationfilter(filterdata, careardata)
-                       // && filterdata.expertice_area != null && filterdata.jobtype != null
-                       if (salary.length > 0 && location.length > 0 && filterdata.expertice_area != null && filterdata.jobtype != null &&  filterdata.userid.other.profile_verify == true) {
-                            return true;
-                        } else {
-                            return false
-                        }
+                    //     var salary = salaryfilter(filterdata, careardata);
+                    //     var location = locationfilter(filterdata, careardata)
+                       
+                    //    if (salary.length > 0 && location.length > 0 && filterdata.expertice_area != null && filterdata.jobtype != null &&  filterdata.userid.other.profile_verify == true) {
+                    //         return true;
+                    //     } else {
+                    //         return false
+                    //     }
+                    return true;
                     }));
                     // .exec().then((data) => data.filter((filterdata) => filterdata.userid.other.profile_verify == true &&  filterdata.company != null && filterdata.expertice_area != null && filterdata.salary != null && filterdata.jobtype != null))
 

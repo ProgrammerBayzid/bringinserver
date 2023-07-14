@@ -14,7 +14,7 @@ const JobReport = require("../../Model/job_report.js");
 const { City, Division } = require("../../Model/alllocation.js");
 const { Jobtype } = require("../../Model/jobtype.js");
 const { Salirietype } = require("../../Model/salarie.js");
-const {} = require("../../Model/Seeker_profile_all_details.js");
+const { } = require("../../Model/Seeker_profile_all_details.js");
 const Experince = require("../../Model/experience.js");
 const Profiledata = require("../../Model/Seeker_profile_all_details.js");
 const {
@@ -29,6 +29,10 @@ const {
 const {
   ProfileVerify,
 } = require("../../Model/Recruiter/Verify/profile_verify.js");
+const {
+  DefaultSkill,
+} = require("../../Model/Seeker_profile_all_details.js");
+
 
 // repoted candidate get
 app.get("/candidate_report", async (req, res) => {
@@ -52,7 +56,7 @@ app.get("/candidate_report/:id", async (req, res) => {
 app.get("/job_report", async (req, res) => {
   try {
     var data = await JobReport.find().populate([
-      { path: "jobid",select: "", populate: [{ path: "company", select: "" }, { path: "userid", select: "" },"education" ,"jobtype" ]  },
+      { path: "jobid", select: "", populate: [{ path: "company", select: "" }, { path: "userid", select: "" }, "education", "jobtype"] },
     ]);
     res.status(200).json(data);
   } catch (error) {
@@ -62,9 +66,9 @@ app.get("/job_report", async (req, res) => {
 app.get("/job_report/:id", async (req, res) => {
   const id = req.params.id;
   const query = { _id: id };
-  const candidate = await JobReport.findOne(query).populate([ 
-    { path: "jobid",select: "", populate: [{ path: "company", select: "" }, { path: "userid", select: "" }, "education", "jobtype" ]  },
-  ], );;
+  const candidate = await JobReport.findOne(query).populate([
+    { path: "jobid", select: "", populate: [{ path: "company", select: "" }, { path: "userid", select: "" }, "education", "jobtype"] },
+  ],);;
   res.send(candidate);
 });
 
@@ -875,5 +879,20 @@ app.post("/experience", async (req, res) => {
     res.send(error);
   }
 });
+
+
+
+
+app.post("/admin_default_skill", async (req, res) => {
+  var skilldata = await DefaultSkill.findOne({ skill: req.body.skill })
+
+  if (skilldata == null) {
+    var skilldata = await DefaultSkill({ skill: req.body.skill });
+    skilldata.save();
+    res.status(200).json({ message: "skill add successfull data" })
+  } else {
+    res.status(400).json({ message: "skill allready added" })
+  }
+})
 
 module.exports = app;

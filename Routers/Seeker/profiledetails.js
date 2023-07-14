@@ -354,10 +354,10 @@ app.post("/default_skill", tokenverify, async (req, res) => {
         res.json({ message: "invalid token" })
       } else {
         var id = authdata._id;
-        var skilldata = await DefaultSkill.findOne({ skill: req.body.skill })
+        var skilldata = await DefaultSkill.findOne({ skill: req.body.skill,userid: id })
 
         if (skilldata == null) {
-          var skilldata = await DefaultSkill({ skill: req.body.skill });
+          var skilldata = await DefaultSkill({ skill: req.body.skill , userid: id});
           skilldata.save();
           // var profiledata = await Profiledata.findOneAndUpdate({ userid: id }, { $push: { skill: skilldata._id } })
           // if (profiledata == null) {
@@ -431,9 +431,13 @@ app.get("/seeker_skill", tokenverify, async (req, res) => {
         res.json({ message: "invalid token" })
       } else {
         var id = authdata._id;
+        var defaults = [];
         var skilldata = await Skill.findOne({ userid: id }).populate("skill")
-        var defaultskill = await DefaultSkill.find()
-        res.status(200).json({ skill: skilldata, default: defaultskill })
+        var defaultskill = await DefaultSkill.find({userid: null})
+        var defaultskill2 = await DefaultSkill.find({userid: id})
+        defaults.push(...defaultskill)
+        defaults.push(...defaultskill2)
+        res.status(200).json({ skill: skilldata, default: defaults })
       }
     })
 
