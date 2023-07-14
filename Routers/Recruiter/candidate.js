@@ -252,11 +252,12 @@ app.get("/candidate_search", tokenverify, async (req, res) => {
                         "skill",
                         "protfoliolink",
                         "about",
-                        { path: "careerPreference", populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea" }, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype",  { path: "salaray.min_salary", select: "-other_salary" },
+                        { path: "careerPreference", populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea", populate: {path: "industryid"} }, { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype",  { path: "salaray.min_salary", select: "-other_salary" },
                         { path: "salaray.max_salary", select: "-other_salary" },] },
                         { path: "userid", match: { "fastname": { $regex: req.query.name, $options: "i" } }, populate: { path: "experiencedlevel" } }
                     ]
-                ).then((data) => data.filter((filterdata) => filterdata.userid != null));
+                )
+                .then((data) => data.filter((filterdata) => filterdata.userid != null));
                 res.status(200).send(seekerdata);
 
             }
@@ -304,7 +305,8 @@ app.post('/candidate_filter', tokenverify, async (req, res) => {
                     // console.log(salary.some((e)=> element.salaray.min_salary._id == e.min_salary && element.salaray.max_salary._id == e.max_salary))
                     // salary.some((e)=> element.salaray.min_salary._id == e.min_salary && element.salaray.max_salary._id == e.max_salary)
                     // data.salaray.min_salary.type == 1 && data.salaray.min_salary.salary <= filter.salary.min_salary.salary &&  filter.salary.max_salary.salary <= data.salaray.max_salary.salary
-                    if(element.functionalarea._id== req.body.functionalareaid && industry.some((e)=> element.functionalarea.industryid == e) &&element.salaray.min_salary != null && element.salaray.max_salary != null){
+                    
+                    if(element.functionalarea._id== req.body.functionalareaid && industry.some((e)=> element.functionalarea.industryid._id == e) &&element.salaray.min_salary != null && element.salaray.max_salary != null){
                         return true;
                     }else{
                         return false;
@@ -322,7 +324,9 @@ app.post('/candidate_filter', tokenverify, async (req, res) => {
                 var seekerdata = await Profiledata.find().populate(populate)
                 .then((data) => data.filter((filterdata) => {
                     var filterdata2 = filterdata.careerPreference.filter(industryfilter)
+                    
                     var educationdata2 = filterdata.education.filter(educationfilter)
+                    
                     if (filterdata2.length > 0 && educationdata2.length > 0 && filterdata.userid.experiencedlevel != null) {
                         return true;
                     }else{
