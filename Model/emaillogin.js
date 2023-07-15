@@ -1,9 +1,14 @@
 const { Schema, model } = require("mongoose");
 
-const educationlavelSchema = Schema({
-  name: String,
+const userSchema = Schema({
+  displayName: String,
   email: String,
-  password: String,
-},{timestamps: true});
+  photoURL: String,
+  addAdmin: Boolean,
+  webAdmin: Boolean,
+});
+var email = model("Email", userSchema);
 
-module.exports.Email = model("Email", educationlavelSchema);
+module.exports = {
+  email,
+};

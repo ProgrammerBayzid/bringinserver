@@ -147,7 +147,7 @@ app.post('/switch', tokenverify, async (req, res) => {
           }
 
           res.status(200).json({
-            message: "switch Successfully!",
+            message: "Switched Successfully",
             token: token,
             seekerprofile: profile,
             carearpre: carepre
@@ -179,7 +179,7 @@ app.post('/switch', tokenverify, async (req, res) => {
           }
 
           res.status(200).json({
-            message: "switch Successfully!",
+            message: "Switched Successfully",
             token: token,
             seekerprofile: profile,
             carearpre: carepre

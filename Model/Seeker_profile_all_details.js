@@ -46,7 +46,10 @@ const educationlavelSchema = Schema({
 
 const defaultskillSchema = Schema({
   skill: String,
-  userid: String,
+  userid: {
+    type: "ObjectId",
+    default: null
+  },
 },{timestamps: true});
 const skillSchema = Schema({
   skill: [{type:"ObjectId", ref: "default_Skill"}],

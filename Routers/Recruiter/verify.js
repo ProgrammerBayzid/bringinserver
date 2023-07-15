@@ -10,11 +10,10 @@ const smtppool = require("nodemailer")
 const { CompanyVerify } = require("../../Model/Recruiter/Verify/company_verify.js")
 const { ProfileVerify } = require("../../Model/Recruiter/Verify/profile_verify.js")
 const transportar = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port:  465,
+    service: "gmail",
     auth: {
-        "user": "hello@bringin.io",
-        "pass": "@Rony.1995"
+        "user": "bringin.sdk@gmail.com",
+        "pass": "ovzkmudorqbzttju"
     }
 })
 
@@ -106,11 +105,11 @@ app.post("/profile_verify", tokenverify, upload.single("image"), async (req, res
                     otp.otp = await bcrypt.hash(otp.otp, salt);
                     await otp.save();
                     const mailoption = {
-                        from: "bringin.sdk@gmail.com",
+                        from: "notifications@bringin.io",
                         to: req.body.email,
                         subject: "Otp verify",
                         text: `Otp is ${OTP}`,
-                        html: "<p>HTML version of the message</p>"
+                        // html: "<p>HTML version of the message</p>"
                     }
                     transportar.sendMail(mailoption, async (err, info) => {
                         if (err) {
@@ -228,7 +227,7 @@ app.post("/email_code_verify", tokenverify, (req, res)=> {
                     });
                     await Recruiters.findByIdAndUpdate({ _id: _id }, { $set: { "other.profile_verify": true } })
                     return res.status(200).json({
-                      message: "verification Successfully!",
+                      message: "Verified Succefully",
                     });
                   } else {
                     return res.status(400).send("Your OTP was wrong!");

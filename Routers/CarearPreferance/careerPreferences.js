@@ -6,6 +6,8 @@ const {
   Expertisearea,
   Category,
   Functionarea,
+  Expertisearea2,
+  Category2
 } = require("../../Model/industry.js");
 const { City, Division } = require("../../Model/alllocation.js");
 const { Jobtype } = require("../../Model/jobtype");
@@ -81,9 +83,9 @@ app.get("/job_industrylist", tokenverify, async (req, res) => {
         res.json({ message: "invalid token" });
       } else {
         const _id = authdata._id;
-        var categorydata = await Category.find().select("-functionarea");
-        var industry = await Expertisearea.find().populate([
-          { path: "category", select: "-functionarea" },
+        var categorydata = await Category2.find();
+        var industry = await Expertisearea2.find().populate([
+          {path: "category"},
         ]);
         // .populate(["category"]);
         res.status(200).json({
