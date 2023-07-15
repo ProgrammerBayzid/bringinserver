@@ -14,7 +14,6 @@ const JobReport = require("../../Model/job_report.js");
 const { City, Division } = require("../../Model/alllocation.js");
 const { Jobtype } = require("../../Model/jobtype.js");
 const { Salirietype } = require("../../Model/salarie.js");
-const {} = require("../../Model/Seeker_profile_all_details.js");
 const Experince = require("../../Model/experience.js");
 const Profiledata = require("../../Model/Seeker_profile_all_details.js");
 const {
@@ -52,7 +51,16 @@ app.get("/candidate_report/:id", async (req, res) => {
 app.get("/job_report", async (req, res) => {
   try {
     var data = await JobReport.find().populate([
-      { path: "jobid",select: "", populate: [{ path: "company", select: "" }, { path: "userid", select: "" },"education" ,"jobtype" ]  },
+      {
+        path: "jobid",
+        select: "",
+        populate: [
+          { path: "company", select: "" },
+          { path: "userid", select: "" },
+          "education",
+          "jobtype",
+        ],
+      },
     ]);
     res.status(200).json(data);
   } catch (error) {
@@ -62,20 +70,20 @@ app.get("/job_report", async (req, res) => {
 app.get("/job_report/:id", async (req, res) => {
   const id = req.params.id;
   const query = { _id: id };
-  const candidate = await JobReport.findOne(query).populate([ 
-    { path: "jobid",select: "", populate: [{ path: "company", select: "" }, { path: "userid", select: "" }, "education", "jobtype" ]  },
-  ], );;
+  const candidate = await JobReport.findOne(query).populate([
+    {
+      path: "jobid",
+      select: "",
+      populate: [
+        { path: "company", select: "" },
+        { path: "userid", select: "" },
+        "education",
+        "jobtype",
+      ],
+    },
+  ]);
   res.send(candidate);
 });
-
-
-app.get("/job_report_by_candidate", async (req, res) => {
-  const _id = req.query._id;
-  const candidate = { _id: _id };
-  const date = await Profiledata.findOne(candidate);
-  res.send(date);
-});
-
 
 app.get("/premium_user", async (req, res) => {
   const premium = req.query.premium;
@@ -601,7 +609,12 @@ app.patch("/city_update/:_id", async (req, res) => {
 // # post salarietype
 app.get("/admin/salarie", async (req, res) => {
   try {
-    var data = await Salirietype.find();
+    const data = await Salirietype.find(
+      {},
+      { other_salary: { $slice: 6 } }
+    ).populate({ path: "other_salary", select: "-other_salary" });
+
+    // var data = await Salirietype.find();
     res.json(data);
   } catch (error) {
     res.send(error);
@@ -647,7 +660,6 @@ app.post("/salarietype", async (req, res) => {
   }
 });
 
-
 app.post("/edit_salarietype/:_id", async (req, res) => {
   try {
     const _id = req.params._id;
@@ -657,6 +669,7 @@ app.post("/edit_salarietype/:_id", async (req, res) => {
         $set: {
           salary: req.body.salary,
           simbol: req.body.simbol,
+          type: req.body.type,
           currency: req.body.currency,
         },
       },

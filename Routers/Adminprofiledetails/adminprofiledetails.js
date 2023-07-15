@@ -1,19 +1,26 @@
 const express = require("express");
 const app = express();
 const multer = require("multer");
+const Profiledata = require("../../Model/Seeker_profile_all_details.js");
 
 const {
-  AdminCompanySize, AdminSkill,  JobTitle,Department,SeekeraddCompany, Image,Cv
+  AdminCompanySize,
+  AdminSkill,
+  JobTitle,
+  Department,
+  SeekeraddCompany,
+  Image,
+  Cv,
 } = require("../../Model/adminprofiledetails");
 const { City, Division } = require("../../Model/alllocation.js");
 const Experince = require("../../Model/experience.js");
-const { Company, Companysize } = require("../../Model/Recruiter/Company/company.js")
-
+const {
+  Company,
+  Companysize,
+} = require("../../Model/Recruiter/Company/company.js");
 
 const tokenverify = require("../../MiddleWare/tokenverify.js");
 const jwt = require("jsonwebtoken");
-
-
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -26,18 +33,15 @@ const storage = multer.diskStorage({
 });
 const image = multer({ storage: storage });
 
-
-
 app.post("/admin_exprience", async (req, res) => {
   try {
     const Data = await Experince(req.body);
-    const ex = await Data.save()
+    const ex = await Data.save();
     res.status(200).send(ex);
   } catch (error) {
     res.status(400).send(error);
   }
 });
-
 
 app.get("/admin_exprience", async (req, res) => {
   try {
@@ -48,16 +52,14 @@ app.get("/admin_exprience", async (req, res) => {
   }
 });
 
-
 app.patch("/experince_update/:_id", async (req, res) => {
   try {
     const _id = req.params._id;
     await Experince.findByIdAndUpdate(
-     _id,
+      _id,
       {
         $set: {
           name: req.body.name,
-          
         },
       },
       {
@@ -83,132 +85,118 @@ app.delete("/admin_exprience/:id", async (req, res) => {
   }
 });
 
- // # post designation data 
+// # post designation data
 
 app.post("/jobtitle", async (req, res) => {
-    try {
-      const designationData = await JobTitle(req.body);
-      const data = await designationData.save()
-      res.status(200).send(data);
-    } catch (error) {
-      res.status(400).send(error);
-    }
-  });
-  
-  // # get designation data 
-  
-  app.get("/jobtitle", async (req, res) => {
-    try {
-      const data = await JobTitle.find();
-      res.send(data);
-    } catch (error) {
-      res.send(error);
-    }
-  });
+  try {
+    const designationData = await JobTitle(req.body);
+    const data = await designationData.save();
+    res.status(200).send(data);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
 
+// # get designation data
 
+app.get("/jobtitle", async (req, res) => {
+  try {
+    const data = await JobTitle.find();
+    res.send(data);
+  } catch (error) {
+    res.send(error);
+  }
+});
 
-
-
-  app.patch("/jobtitle_update/:_id", async (req, res) => {
-    try {
-      const _id = req.params._id;
-      await JobTitle.findByIdAndUpdate(
-       _id,
-        {
-          $set: {
-            name: req.body.name,
-            
-          },
+app.patch("/jobtitle_update/:_id", async (req, res) => {
+  try {
+    const _id = req.params._id;
+    await JobTitle.findByIdAndUpdate(
+      _id,
+      {
+        $set: {
+          name: req.body.name,
         },
-        {
-          new: true,
-        }
-      );
-  
-      res.status(200).json({ message: "update successfull" });
-    } catch (error) {
-      res.status(404).send(error);
-    }
-  });
-
-
-
-
-  app.delete("/jobtitle/:id", async (req, res) => {
-    try {
-      const result = await JobTitle.findByIdAndDelete(req.params.id);
-      if (!req.params.id) {
-        return res.status(404).send();
+      },
+      {
+        new: true,
       }
-      res.send(result);
-    } catch (error) {
-      res.send(error);
+    );
+
+    res.status(200).json({ message: "update successfull" });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+});
+
+app.delete("/jobtitle/:id", async (req, res) => {
+  try {
+    const result = await JobTitle.findByIdAndDelete(req.params.id);
+    if (!req.params.id) {
+      return res.status(404).send();
     }
-  });
+    res.send(result);
+  } catch (error) {
+    res.send(error);
+  }
+});
 
+// # post department data
 
-
-  
- // # post department data 
- 
 app.post("/department", async (req, res) => {
-    try {
-      const departmentData = await Department(req.body);
-      const data = await departmentData.save()
-      res.status(200).send(data);
-    } catch (error) {
-      res.status(400).send(error);
-    }
-  });
-  
-  app.patch("/department_update/:_id", async (req, res) => {
-    try {
-      const _id = req.params._id;
-      await Department.findByIdAndUpdate(
-       _id,
-        {
-          $set: {
-            name: req.body.name,
-            
-          },
+  try {
+    const departmentData = await Department(req.body);
+    const data = await departmentData.save();
+    res.status(200).send(data);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+app.patch("/department_update/:_id", async (req, res) => {
+  try {
+    const _id = req.params._id;
+    await Department.findByIdAndUpdate(
+      _id,
+      {
+        $set: {
+          name: req.body.name,
         },
-        {
-          new: true,
-        }
-      );
-  
-      res.status(200).json({ message: "update successfull" });
-    } catch (error) {
-      res.status(404).send(error);
-    }
-  });
-  // # get department data 
-  
-  app.get("/department", async (req, res) => {
-    try {
-      const data = await Department.find();
-      res.send(data);
-    } catch (error) {
-      res.send(error);
-    }
-  });
-  app.delete("/department/:id", async (req, res) => {
-    try {
-      const result = await Department.findByIdAndDelete(req.params.id);
-      if (!req.params.id) {
-        return res.status(404).send();
+      },
+      {
+        new: true,
       }
-      res.send(result);
-    } catch (error) {
-      res.send(error);
+    );
+
+    res.status(200).json({ message: "update successfull" });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+});
+// # get department data
+
+app.get("/department", async (req, res) => {
+  try {
+    const data = await Department.find();
+    res.send(data);
+  } catch (error) {
+    res.send(error);
+  }
+});
+app.delete("/department/:id", async (req, res) => {
+  try {
+    const result = await Department.findByIdAndDelete(req.params.id);
+    if (!req.params.id) {
+      return res.status(404).send();
     }
-  });
+    res.send(result);
+  } catch (error) {
+    res.send(error);
+  }
+});
 
+// # post institutename data
 
-  
- // # post institutename data 
- 
 // app.post("/admincompanysize", async (req, res) => {
 //     try {
 //       const admincompanysizeData = await Companysize(req.body);
@@ -218,72 +206,64 @@ app.post("/department", async (req, res) => {
 //       res.status(400).send(error);
 //     }
 //   });
-  
-  // # get Institutename data 
-  
-  app.get("/admincompanysize", async (req, res) => {
-    try {
-      const admincompanysizeData = await Companysize.find();
-      res.send(admincompanysizeData);
-    } catch (error) {
-      res.send(error);
-    }
-  });
 
-  app.patch("/company_size_update/:_id", async (req, res) => {
-    try {
-      const _id = req.params._id;
-      await Companysize.findByIdAndUpdate(
-       _id,
-        {
-          $set: {
-            size: req.body.size,
-            
-          },
+// # get Institutename data
+
+app.get("/admincompanysize", async (req, res) => {
+  try {
+    const admincompanysizeData = await Companysize.find();
+    res.send(admincompanysizeData);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+app.patch("/company_size_update/:_id", async (req, res) => {
+  try {
+    const _id = req.params._id;
+    await Companysize.findByIdAndUpdate(
+      _id,
+      {
+        $set: {
+          size: req.body.size,
         },
-        {
-          new: true,
-        }
-      );
-  
-      res.status(200).json({ message: "update successfull" });
-    } catch (error) {
-      res.status(404).send(error);
-    }
-  });
-
-
-  app.delete("/admincompanysize/:id", async (req, res) => {
-    try {
-      const result = await AdminCompanySize.Companysize(req.params.id);
-      if (!req.params.id) {
-        return res.status(404).send();
+      },
+      {
+        new: true,
       }
-      res.send(result);
-    } catch (error) {
-      res.send(error);
+    );
+
+    res.status(200).json({ message: "update successfull" });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+});
+
+app.delete("/admincompanysize/:id", async (req, res) => {
+  try {
+    const result = await AdminCompanySize.Companysize(req.params.id);
+    if (!req.params.id) {
+      return res.status(404).send();
     }
-  });
-  
+    res.send(result);
+  } catch (error) {
+    res.send(error);
+  }
+});
 
+// # post company data
 
-  
-
-
-  
- // # post company data 
- 
- app.post("/seekercompany", async (req, res) => {
+app.post("/seekercompany", async (req, res) => {
   try {
     const companyData = await SeekeraddCompany(req.body);
-    const data = await companyData.save()
+    const data = await companyData.save();
     res.status(200).send(data);
   } catch (error) {
     res.status(400).send(error);
   }
 });
 
-// # get company data 
+// # get company data
 
 app.get("/seekercompany", async (req, res) => {
   try {
@@ -294,16 +274,14 @@ app.get("/seekercompany", async (req, res) => {
   }
 });
 
-
 app.patch("/company_name_update/:_id", async (req, res) => {
   try {
     const _id = req.params._id;
     await SeekeraddCompany.findByIdAndUpdate(
-     _id,
+      _id,
       {
         $set: {
           name: req.body.name,
-          
         },
       },
       {
@@ -329,7 +307,7 @@ app.delete("/seekercompany/:id", async (req, res) => {
   }
 });
 
-// image post api 
+// image post api
 
 app.post("/image", tokenverify, image.single("image"), async (req, res) => {
   try {
@@ -353,7 +331,6 @@ app.post("/image", tokenverify, image.single("image"), async (req, res) => {
 
 // image get api
 
-
 app.get("/image/:_id", tokenverify, async (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
@@ -370,18 +347,17 @@ app.get("/image/:_id", tokenverify, async (req, res) => {
   }
 });
 
-
 app.post("/admin/skill", async (req, res) => {
   try {
     const skillData = await AdminSkill(req.body);
-    const data = await skillData.save()
+    const data = await skillData.save();
     res.status(200).send(data);
   } catch (error) {
     res.status(400).send(error);
   }
 });
 
-// # get skill data 
+// # get skill data
 
 app.get("/admin/skill", async (req, res) => {
   try {
@@ -396,11 +372,10 @@ app.patch("/skill_update/:_id", async (req, res) => {
   try {
     const _id = req.params._id;
     await AdminSkill.findByIdAndUpdate(
-     _id,
+      _id,
       {
         $set: {
           name: req.body.name,
-          
         },
       },
       {
@@ -426,8 +401,19 @@ app.delete("/admin/skill/:id", async (req, res) => {
   }
 });
 
-
-
-
+app.get("/job/report/candidate", async (req, res) => {
+  const _id = req.query._id;
+  const candidate = { _id: _id };
+  try {
+    const data = await Profiledata.findOne(candidate);
+    res.send(data);
+  } catch (error) {
+    // Handle any errors that occur during the database query
+    console.error(error);
+    res
+      .status(500)
+      .send("An error occurred while retrieving the profile data.");
+  }
+});
 
 module.exports = app;
