@@ -11,7 +11,7 @@ const JobReport = require("../../Model/job_report.js");
 const { EducationLavel } = require("../../Model/education_lavel.js");
 const { Salirietype } = require("../../Model/salarie");
 const Experince = require("../../Model/experience.js");
-const { Expertisearea } = require('../../Model/industry')
+const { Expertisearea2,Category2 } = require('../../Model/industry')
 const ViewJob = require('../../Model/viewjob')
 const Seekeruser = require('../../Model/userModel.js')
 const { Chat, Message } = require("../../Model/Chat/chat")
@@ -118,15 +118,13 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
                // , match: { _id: { $in: jobtype } } 
                 if (req.query.functionalarea == 0) {
                     var company = await JobPost.find({expertice_area: {$in: functionarea}}).populate(populate).then((data) => data.filter((filterdata) => {
-                    //     var salary = salaryfilter(filterdata, careardata);
-                    //     var location = locationfilter(filterdata, careardata)
-                       
-                    //    if (salary.length > 0 && location.length > 0 && filterdata.expertice_area != null && filterdata.jobtype != null &&  filterdata.userid.other.profile_verify == true) {
-                    //         return true;
-                    //     } else {
-                    //         return false
-                    //     }
-                    return true;
+                        var salary = salaryfilter(filterdata, careardata);
+                        var location = locationfilter(filterdata, careardata)
+                       if (salary.length > 0 && location.length > 0 && filterdata.expertice_area != null && filterdata.jobtype != null &&  filterdata.userid.other.profile_verify == true) {
+                            return true;
+                        } else {
+                            return false
+                        }
                     }));
                     // .exec().then((data) => data.filter((filterdata) => filterdata.userid.other.profile_verify == true &&  filterdata.company != null && filterdata.expertice_area != null && filterdata.salary != null && filterdata.jobtype != null))
 
@@ -288,7 +286,7 @@ app.get("/job_filter", tokenverify, async (req, res) => {
                 var experience = await Experince.find()
                 experience.forEach((e) => { allexperience.push(e._id) })
                 let allindustry = [];
-                var industry = await Expertisearea.find().select("industryname")
+                var industry = await Category2.find().limit(18)
                 industry.forEach((e) => allindustry.push(e._id))
                 let allcompanysize = [];
                 var companysize = await Companysize.find()
@@ -352,18 +350,19 @@ app.post('/job_filter', tokenverify, async (req, res) => {
                
 
                 var populate = [
-                    { path: "userid" },
-                    { path: "expertice_area", match: { industryid: { $in: industry } } },
+                    { path: "userid"},
+                    { path: "expertice_area" },
                     { path: "experience", match: { _id: { $in: experience } } },
-                    { path: "education", match: { _id: { $in: education } } },
-                    { path: "company", populate: [{ path: "c_size", match: { _id: { $in: companysize } } }, { path: "industry", select: "-category" }] },
+                    { path: "education", match: { _id: { $in: education } } , select: "-digree"},
+                    { path: "company", populate: [{ path: "c_size", match: { _id: { $in: companysize } } }, { path: "industry",  match: {_id: {$in: industry}} ,select: "-category" }] },
                     { path: "salary.min_salary", select: "-other_salary", match: {_id: {$in: minsalary}}},
                     { path: "salary.max_salary", select: "-other_salary" , match: {_id: {$in: maxsalary}}},
                     { path: "skill" },
                     { path: "jobtype" }
 
                 ]
-                var joblist = await JobPost.find({ expertice_area: req.body.functionalareaid, remote: { $in: workplace } }).populate(populate).then((data) => data.filter((filterdata) =>  filterdata.expertice_area != null && filterdata.experience != null && filterdata.education != null && filterdata.company.c_size != null && filterdata.salary.min_salary != null && filterdata.salary.max_salary != null))
+                var joblist = await JobPost.find({ expertice_area: req.body.functionalareaid, remote: { $in: workplace } }).populate(populate)
+                .then((data) => data.filter((filterdata) =>  filterdata.expertice_area != null && filterdata.experience != null && filterdata.education != null && filterdata.company.c_size != null && filterdata.company.industry != null && filterdata.salary.min_salary != null && filterdata.salary.max_salary != null))
 
                 res.status(200).json(joblist)
 

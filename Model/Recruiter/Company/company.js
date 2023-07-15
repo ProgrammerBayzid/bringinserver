@@ -7,7 +7,7 @@ const companySchema = Schema(
         sort_name: String,
         industry: {
             type: "ObjectId",
-            ref: "industries"
+            ref: "Category_2"
         },
         c_size: {
             type: "ObjectId",

@@ -306,7 +306,7 @@ app.post('/candidate_filter', tokenverify, async (req, res) => {
                     // salary.some((e)=> element.salaray.min_salary._id == e.min_salary && element.salaray.max_salary._id == e.max_salary)
                     // data.salaray.min_salary.type == 1 && data.salaray.min_salary.salary <= filter.salary.min_salary.salary &&  filter.salary.max_salary.salary <= data.salaray.max_salary.salary
                     
-                    if(element.functionalarea._id== req.body.functionalareaid && industry.some((e)=> element.functionalarea.industryid._id == e) &&element.salaray.min_salary != null && element.salaray.max_salary != null){
+                    if(element.functionalarea._id== req.body.functionalareaid && industry.some((e)=> element.category.some((b)=> b._id == e) == true) &&element.salaray.min_salary != null && element.salaray.max_salary != null){
                         return true;
                     }else{
                         return false;
@@ -326,7 +326,7 @@ app.post('/candidate_filter', tokenverify, async (req, res) => {
                     var filterdata2 = filterdata.careerPreference.filter(industryfilter)
                     
                     var educationdata2 = filterdata.education.filter(educationfilter)
-                    
+                   console.log(educationdata2.length > 0)
                     if (filterdata2.length > 0 && educationdata2.length > 0 && filterdata.userid.experiencedlevel != null) {
                         return true;
                     }else{

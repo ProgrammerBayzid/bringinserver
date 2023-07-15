@@ -8,7 +8,7 @@ const career_preferencesSchema = Schema(
         },
         category: [{
             type: "ObjectId",
-            ref: "Category"
+            ref: "Category_2"
         }],
         functionalarea: {
             type: "ObjectId",
