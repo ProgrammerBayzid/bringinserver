@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const bcrypt = require("bcrypt");
 
-const email = require("../../Model/emaillogin.js");
+const {email} = require("../../Model/emaillogin.js");
 
 // app.post("/signup", (req, res) => {
 //   let { name, email, password } = req.body;
@@ -150,8 +150,8 @@ app.post("/emailsingup", async (req, res) => {
 
 // context user
 app.get("/user", async (req, res) => {
-  const email = req.query.email;
-  const query = { email: email };
+  const emaild = req.query.email;
+  const query = { email: emaild };
   const users = await email.findOne(query);
   res.send(users);
   console.log(users);
