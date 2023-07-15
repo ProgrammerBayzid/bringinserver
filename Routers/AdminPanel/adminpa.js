@@ -5,6 +5,8 @@ const {
   Expertisearea,
   Category,
   Functionarea,
+  Category2,
+  Expertisearea2
 } = require("../../Model/industry.js");
 const recruiters = require("../../Model/Recruiter/recruiters");
 const tokenverify = require("../../MiddleWare/tokenverify.js");
@@ -43,6 +45,7 @@ app.get("/candidate_report", async (req, res) => {
     res.status(400).send(error);
   }
 });
+
 app.get("/candidate_report/:id", async (req, res) => {
   const id = req.params.id;
   const query = { _id: id };
@@ -211,6 +214,35 @@ app.post("/industryadd", async (req, res) => {
   }
 });
 
+// industry 2 add
+app.post("/industry2add", async (req, res) => {
+  try {
+    var industrydata = await Expertisearea2.findOne({
+      industryname: req.body.industryname,
+    });
+    if (industrydata == null) {
+      await Expertisearea2({ industryname: req.body.industryname }).save();
+      res.json({ message: "industry add successfull" });
+    } else {
+      res.status(400).json({ message: "industry already added" });
+    }
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+// industry 2 get
+
+app.get("/admin/industry2", async (req, res) => {
+  try {
+    var industrydata = await Expertisearea2.find().populate("category");
+    res.status(200).json(industrydata);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+
 app.post("/industry_update/:_id", async (req, res) => {
   try {
     const _id = req.params._id;
@@ -286,6 +318,68 @@ app.post("/categoryadd", async (req, res) => {
     res.send(error);
   }
 });
+
+// category 2 add
+
+app.post("/category2add", async (req, res) => {
+  try {
+    var categorydata = await Category2.findOne({
+      categoryname: req.body.categoryname,
+    });
+    if (categorydata == null || categorydata !== null) {
+      var catdata = await Category2({
+        categoryname: req.body.categoryname,
+        industryid: req.body.industryid,
+      });
+      catdata.save();
+      await Expertisearea2.findByIdAndUpdate(req.body.industryid, {
+        $push: { category: catdata._id },
+      });
+      res.json({ message: "Categor add successfull" });
+    } else {
+      res.status(400).json({ message: "Category already added" });
+    }
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+// category 2 update
+
+app.patch("/category2_update/:_id", async (req, res) => {
+  try {
+    const _id = req.params._id;
+    await Category2.findByIdAndUpdate(
+      _id,
+      {
+        $set: {
+          categoryname: req.body.categoryname,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    res.status(200).json({ message: "update successfull" });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+});
+
+
+// category 2 get
+
+app.get("/admin/category2", async (req, res) => {
+  try {
+    var data = await Category2.find().populate([{path: "industryid", select: "-category"}]);
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+
 
 app.delete("/admin/industry/:id", async (req, res) => {
   try {

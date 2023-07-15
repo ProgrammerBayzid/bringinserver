@@ -192,11 +192,11 @@ app.post("/job_save", tokenverify, async (req, res) => {
                 if (data == null) {
                     await JobSave({ userid: _id, jobid: req.body.jobid, jobpostuserid: jobdata._id }).save()
                     await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.savejob": 1 } })
-                    res.status(200).json({ message: "job save successfull" })
+                    res.status(200).json({ message: "Job saved successfully" })
                 } else {
                     await JobSave.findOneAndDelete({ _id: data._id })
                     await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.savejob": -1 } })
-                    res.status(200).json({ message: "job unsave successfull" })
+                    res.status(200).json({ message: "Job unsaved successfully" })
                 }
             }
         })
