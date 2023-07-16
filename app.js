@@ -28,6 +28,7 @@ const education = require("./Routers/Seeker/education")
 app.use(express.json());
 app.use(cors())
 app.use('/uploads', express.static('uploads'))
+app.use('/resumes', express.static('resumes'))
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(bringinRouter)
