@@ -136,7 +136,7 @@ app.get("/company_varify", async (req, res) => {
 
 app.get("/verifyProfile", async (req, res) => {
   try {
-    var data = await ProfileVerify.find();
+    var data = await ProfileVerify.find().populate("userid");
     res.status(200).json(data);
   } catch (error) {
     res.status(400).send(error);

@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const bcrypt = require("bcrypt");
 
-const {email} = require("../../Model/emaillogin.js");
+const { email } = require("../../Model/emaillogin.js");
 
 // app.post("/signup", (req, res) => {
 //   let { name, email, password } = req.body;
@@ -139,7 +139,7 @@ const {email} = require("../../Model/emaillogin.js");
 //   }
 // });
 
-app.post("/emailsingup", async (req, res) => {
+app.post("/email_singup", async (req, res) => {
   const adminUser = await email(req.body);
   const data = await adminUser.save();
   res.json(data);
@@ -155,6 +155,120 @@ app.get("/user", async (req, res) => {
   const users = await email.findOne(query);
   res.send(users);
   console.log(users);
+});
+
+app.post("/appadmin/:_id", async (req, res) => {
+  try {
+    const _id = req.params._id;
+    await email.findByIdAndUpdate(
+      _id,
+      {
+        $set: {
+          addAdmin: false,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    res.status(200).json({ message: "update successfull" });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+});
+
+app.post("/v_appadmin/:_id", async (req, res) => {
+  try {
+    const _id = req.params._id;
+    await email.findByIdAndUpdate(
+      _id,
+      {
+        $set: {
+          addAdmin: true,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    res.status(200).json({ message: "update successfull" });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+});
+
+app.post("/webadmin/:_id", async (req, res) => {
+  try {
+    const _id = req.params._id;
+    await email.findByIdAndUpdate(
+      _id,
+      {
+        $set: {
+          webAdmin: false,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    res.status(200).json({ message: "update successfull" });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+});
+
+app.post("/v_webadmin/:_id", async (req, res) => {
+  try {
+    const _id = req.params._id;
+    await email.findByIdAndUpdate(
+      _id,
+      {
+        $set: {
+          webAdmin: true,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    res.status(200).json({ message: "update successfull" });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+});
+
+app.get("/all_admin_user", async (req, res) => {
+  try {
+    var all_admin_user = await email.find();
+    res.status(200).json(all_admin_user);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+app.get("/user_app/:email", async (req, res) => {
+  const emailid = req.params.email;
+  const query = { email: emailid };
+  const appPerson = await email.findOne(query);
+  res.send({ isApp: appPerson?.addAdmin === true });
+});
+
+app.get("/user_web/:email", async (req, res) => {
+  const emailid = req.params.email;
+  const query = { email: emailid };
+  const webPerson = await email.findOne(query);
+  res.send({ isWeb: webPerson?.webAdmin === true });
+});
+
+app.get("/user_main/:email", async (req, res) => {
+  const emailid = req.params.email;
+  const query = { email: emailid };
+  const mainperson = await email.findOne(query);
+  res.send({ isAdmin: mainperson?.admin === true });
 });
 
 module.exports = app;

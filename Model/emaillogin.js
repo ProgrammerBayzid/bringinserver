@@ -6,6 +6,7 @@ const userSchema = Schema({
   photoURL: String,
   addAdmin: Boolean,
   webAdmin: Boolean,
+  admin: Boolean,
 });
 var email = model("Email", userSchema);
 
