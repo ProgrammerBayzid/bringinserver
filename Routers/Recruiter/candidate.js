@@ -161,11 +161,11 @@ app.post("/candidate_save", tokenverify, async (req, res) => {
                 if (data == null) {
                     await candidatesave({ userid: _id, candidateid: req.body.candidateid, candidatefullprofile: req.body.candidatefullprofile }).save()
                     await Recruiters.findOneAndUpdate({_id: _id}, {$inc: {"other.savecandidate": 1}})
-                    res.status(200).json({ message: "candidate save successfull" })
+                    res.status(200).json({ message: "Candidate saved successfully" })
                 } else {
                     await candidatesave.findOneAndDelete({ _id: data._id })
                     await Recruiters.findOneAndUpdate({_id: _id}, {$inc: {"other.savecandidate": -1}})
-                    res.status(200).json({ message: "candidate unsave successfull" })
+                    res.status(200).json({ message: "Candidate unsaved successfully" })
                 }
             }
         })
