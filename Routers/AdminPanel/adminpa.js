@@ -125,8 +125,8 @@ app.get("/verifyCompny", async (req, res) => {
 });
 
 app.get("/company_varify", async (req, res) => {
-  const userid = req.query.userid;
-  const query = { userid: userid };
+  const useridd = req.query.userid;
+  const query = { userid: useridd };
   // console.log(query);
 
   const date = await CompanyVerify.findOne(query);
@@ -158,13 +158,13 @@ app.get("/verifyRecruterCompny", async (req, res) => {
   const id = req.query._id;
   const query = { _id: id };
   // console.log(query);
-  const date = await recruiters.findOne(query).populate("Company");
+  const date = await recruiters.findOne(query).populate("");
   res.send(date);
 });
 
 app.patch("/verifyRecruterCompny/:_id", async (req, res) => {
-  const _id = req.params._id;
-  const filter = { _id: _id };
+  const id = req.params._id;
+  const filter = { _id: id };
   // const options = { upsert: true };
   const updateDoc = {
     $set: { "other.company_verify": true },
@@ -173,8 +173,8 @@ app.patch("/verifyRecruterCompny/:_id", async (req, res) => {
   res.send(result);
 });
 app.patch("/verifyRecruterProfile/:_id", async (req, res) => {
-  const _id = req.params._id;
-  const filter = { _id: _id };
+  const id = req.params._id;
+  const filter = { _id: id };
   // const options = { upsert: true };
   const updateDoc = {
     $set: { "other.profile_verify": true },
@@ -187,7 +187,17 @@ app.get("/verifyRecruterProfile", async (req, res) => {
   const id = req.query._id;
   const query = { _id: id };
   // console.log(query);
-  const date = await recruiters.findOne(query).populate("companyname");
+  const date = await recruiters.findOne(query).populate([
+    {
+      path: "companyname",
+      select: "",
+      populate: [
+        // { path: "company", select: "" },
+        // { path: "userid", select: "" },
+        "c_size",
+      ],
+    },
+  ]);
   res.send(date);
 });
 
