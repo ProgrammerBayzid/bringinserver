@@ -22,8 +22,8 @@ const transportar = nodemailer.createTransport({
   host: "mail.bringin.io",
   port: 465,
   auth: {
-    user: "tanvir@bringin.io",
-    pass: "@Tanvir.1995",
+    user: "notifications@bringin.io",
+    pass: "@Notifications.1995",
   },
 });
 

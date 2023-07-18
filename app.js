@@ -24,6 +24,7 @@ const adminPanel =  require('./Routers/AdminPanel/adminpa')
 const chatrestapi = require('./Routers/Chat/chat_restapi')
 const clintsiteapi = require('./Routers/ClintSiteApi/clintsiteapi.js')
 const education = require("./Routers/Seeker/education")
+const {apps} = require("./Routers/Notification/notification")
 
 app.use(express.json());
 app.use(cors())
@@ -52,6 +53,7 @@ app.use(jobSearchingStatus)
 app.use(chatrestapi)
 app.use(clintsiteapi)
 app.use(education)
+app.use(apps)
 
 
 

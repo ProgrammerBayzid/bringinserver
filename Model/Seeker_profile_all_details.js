@@ -4,7 +4,7 @@ const workexperienceSchema = Schema({
   companyname: String,
   category: {
     type: "ObjectId",
-    ref: "Category"
+    ref: "Category_2"
   },
   startdate: Date,
   enddate: Date,

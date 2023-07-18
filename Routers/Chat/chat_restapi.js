@@ -241,4 +241,11 @@ app.get("/cv_send_count",tokenverify ,async (req, res)=>{
 
 })
 
+
+
+app.get("/single_channelinfo", tokenverify, async (req, res)=> {
+ var data =  await Chat.findOne({ _id: req.query.channelid }).populate([{ path: "seekerid" }, { path: "recruiterid" , populate: {path: "companyname",  populate: {path: "industry"}}}, {path: "lastmessage"}])
+ res.status(200).send(data)
+})
+
 module.exports = app
