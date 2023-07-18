@@ -17,7 +17,7 @@ const { City, Division } = require("../../Model/alllocation.js");
 const { Jobtype } = require("../../Model/jobtype.js");
 const { Salirietype } = require("../../Model/salarie.js");
 const Experince = require("../../Model/experience.js");
-const Profiledata = require("../../Model/Seeker_profile_all_details.js");
+const { Profiledata } = require("../../Model/Seeker_profile_all_details.js");
 const {
   EducationLavel,
   Digree,
@@ -87,6 +87,14 @@ app.get("/job_report/:id", async (req, res) => {
     },
   ]);
   res.send(candidate);
+});
+
+app.get("/jobreportbyseeker", async (req, res) => {
+  const seeker = req.query.userid;
+  const query = { userid: seeker };
+  console.log(query);
+  const date = await Profiledata.findOne(query);
+  res.send(date);
 });
 
 app.get("/premium_user", async (req, res) => {

@@ -14,10 +14,16 @@ const {
   ProfileVerify,
 } = require("../../Model/Recruiter/Verify/profile_verify.js");
 const transportar = nodemailer.createTransport({
-  service: "gmail",
+  // service: "gmail",
+  // auth: {
+  //     "user": "bringin.sdk@gmail.com",
+  //     "pass": "ovzkmudorqbzttju"
+  // }
+  host: "mail.bringin.io",
+  port: 465,
   auth: {
-    user: "bringin.sdk@gmail.com",
-    pass: "ovzkmudorqbzttju",
+    user: "tanvir@bringin.io",
+    pass: "@Tanvir.1995",
   },
 });
 
@@ -114,7 +120,119 @@ app.post(
               to: req.body.email,
               subject: "Otp verify",
               text: `Otp is ${OTP}`,
-              html: "<p>HTML version of the message</p>",
+              html: `
+              <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <section class="flex justify-center">
+      <div class="w-[600px]">
+        <header>
+          <div class="flex justify-between items-center my-3">
+            <div><img src="image/bringinlogo.svg" /></div>
+            <div>
+              <h1 class="text-[#0077B5] text-[20px] font-bold">
+                Instant Chat - Hire Direct
+              </h1>
+            </div>
+          </div>
+          <div class="px-7">
+            <hr />
+          </div>
+        </header>
+        <div>
+          <div class="text-center my-5">
+            <h1 class="text-[24px] font-semibold">Confirm your work email</h1>
+          </div>
+        </div>
+
+        <div>
+          <p class="text-[18px] text-[#564E4E]">
+            Hi <span class="text-[18px] font-semibold">${to},</span>
+          </p>
+          <p class="text-[18px] text-[#564E4E]">
+            To verify your email address for Bringin Recruiter Account,<br />
+            enter the following code:
+          </p>
+        </div>
+
+        <div class="flex justify-center my-10">
+          <div class="bg-[#0077B5] w-[120px] h-[40px] rounded">
+            <p class="text-[22px] font-semibold text-white text-center pt-1">
+              ${OTP}
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <p class="text-[18px] text-[#564E4E] mb-2">
+            If you didn't request this code, you can ignore this mail!
+          </p>
+          <p class="text-[18px] text-[#564E4E]">
+            This is an automatically generated email. Please note that this
+            email address is not actively monitored, and any responses may not
+            be received or reviewed promptly.
+          </p>
+
+          <div class="my-5">
+            <p class="text-[16px] text-[#564E4E]">Have a question?</p>
+            <p class="text-[16px] text-[#564E4E]">
+              Check out our help center or contact us in the app using
+            </p>
+
+            <a href="https://wa.me/+8801756175141?text=Hii..." target="_blank">
+            <p class="text-[#0077B5]"> Profile > Contact Us   </p>   
+            </a>
+          </div>
+        </div>
+
+<div class="my-7 px-24">
+    <div class="bg-[#DBDBDB] h-[1px]"></div>
+
+</div>
+
+<div>
+
+<div class="text-center">
+    <p class="text-[14px] font-semibold">Bringin <a href="https://bringin.io/privacypolicy" target="_blank">
+        <span class="text-[#0077B5]"> Privacy Policy   </span>   
+        </a></p>
+    <p class="text-[14px] font-semibold">Plot 25, Road 04, Sector 10, Uttara, Dhaka – 1230.</p>
+</div>
+
+<div class="flex justify-center gap-2 my-3">
+    <a href="https://wa.me/+8801756175141?text=Hii..." target="_blank">
+        <img alt="bringin image" className="w-[55px] h-[55px] w-[24px] " src='/image/09.whatsapp.svg'></img>
+      </a>
+    <a href="https://www.facebook.com/bringin.io" target="_blank">
+        <img alt="bringin image" className="w-[55px] h-[55px]  "src='/image/Vector.svg'></img>
+      </a>
+    <a href="https://www.instagram.com/bringin.io/" target="_blank">
+        <img alt="bringin image" className="w-[55px] h-[55px]  " src='/image/Group.svg' ></img>
+      </a>
+    <a href="https://www.linkedin.com/company/bringinapp" target="_blank">
+        <img alt="bringin image" className="w-[55px] h-[55px]  "  src='/image/Group (1).svg'></img>
+      </a>
+    <a href="https://www.youtube.com/@Bringinapp" target="_blank">
+        <img alt="bringin image" className="w-[55px] h-[55px]  "  src='/image/Group 28.svg'></img>
+      </a>
+    <a href="https://twitter.com/bringinapp" target="_blank">
+        <img alt="bringin image" className="w-[55px] h-[55px]  " src='/image/Group (2).svg'></img>
+      </a>
+</div>
+
+</div>
+
+
+      </div>
+    </section>
+  </body>
+</html> 
+              `,
             };
             transportar.sendMail(mailoption, async (err, info) => {
               if (err) {

@@ -239,44 +239,6 @@ app.get("/candidatelist_clint", async (req, res) => {
       return false;
     }
   }
-
-  // var populate2 = [
-  //   {
-  //     path: "workexperience",
-  //     populate: [
-  //       { path: "category", select: "-functionarea",  },
-  //       "expertisearea" ,
-  //     ],
-  //   },
-  //   {
-  //     path: "education",
-  //     populate: [
-  //       {
-  //         path: "digree",
-  //         select: "-subject",
-  //         populate: { path: "education", select: "-digree" },
-  //       },
-  //       "subject",
-  //     ],
-  //   },
-  //   "skill",
-  //   "protfoliolink",
-  //   "about",
-  //   {
-  //     path: "careerPreference",
-  //     populate: [
-  //       { path: "category", select: "-functionarea" },
-  //       { path: "functionalarea", populate:{path: "industryid"} },
-  //       {
-  //         path: "division",
-  //         populate: { path: "cityid", select: "-divisionid" },
-  //       },
-  //       "jobtype",
-  //       "salaray",
-  //     ],
-  //   },
-  //   { path: "userid", populate: { path: "experiencedlevel" } },
-  // ];
   var populate2 = [
     {
       path: "workexperience",

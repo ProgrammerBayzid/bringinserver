@@ -70,7 +70,7 @@ app.post("/users", tokenverify, upload.single("image"), async (req, res) => {
           }
         );
 
-        res.status(200).json({ message: "update successull" });
+        res.status(200).json({ message: "Successfully Updated" });
       }
     });
   } catch (error) {
@@ -122,7 +122,7 @@ app.post("/notification", tokenverify, async (req, res) => {
               "other.notification.job_recommandation": req.body.job,
             }
           });
-          res.status(200).json({message: "update successfull"});
+          res.status(200).json({message: "Successfully Updated"});
         }
         
       }
@@ -147,7 +147,7 @@ app.post("/job_hunting", tokenverify, (req, res)=>{
             "other.job_right_now": req.body.job_right_now
           }
         });
-        res.status(200).json({message: "update successfull"});
+        res.status(200).json({message: "Successfully Updated"});
       }
     });
   } catch (error) {
@@ -167,7 +167,7 @@ app.post("/push_notification",tokenverify, async (req, res)=> {
          await Recruiters.findOneAndUpdate({_id: _id}, {$set: {
           "other.pushnotification": req.body.pushnotification,
           }})
-          res.status(200).json({message: "update successfull"});
+          res.status(200).json({message: "Successfully Updated"});
         }else{
           const singalUser = await User.findOneAndUpdate({ _id: _id }, {
             $set: {

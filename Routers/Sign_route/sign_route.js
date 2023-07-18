@@ -29,7 +29,7 @@ app.post("/singup", async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   otp.otp = await bcrypt.hash(otp.otp, salt);
   const result = await otp.save();
-  return res.status(200).json({message: "Otp send successfully"});
+  return res.status(200).json({message: "OTP Sent Successfully"});
 });
 
 
