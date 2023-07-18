@@ -8,6 +8,7 @@ const Skill = require('../../Model/Recruiter/Skill/skill.js')
 const JobPost = require('../../Model/Recruiter/Job_Post/job_post.js')
 const RecruiterFunctionarea = require("../../Model/Recruiter/Recruiter_Functionarea/recruiter_functionarea.js")
 const {Functionarea} = require("../../Model/industry.js")
+const {notificaton_send_by_job} = require("../../Routers/Notification/notification")
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, "uploads");
@@ -117,9 +118,12 @@ app.post('/job_post', tokenverify, async (req, res) => {
                     if (functiondata == null) {
                         await RecruiterFunctionarea({ userid: id, expertice_area: req.body.expertice_area, jobid: jobdata._id }).save()
                     }
+                    Promise.all([
+                        notificaton_send_by_job(req.body.expertice_area, id, {"type": 2, "jobid": jobdata._id})
+                    ])
                     res.status(200).json({ jobid: jobdata._id })
                 } else {
-                    res.status(400).json({ message: "Job Post Allready Submit" })
+                    res.status(400).json({ message: "Job Post Allready Submited" })
                 }
             }
         })
