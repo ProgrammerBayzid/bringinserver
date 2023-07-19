@@ -120,119 +120,7 @@ app.post(
               to: req.body.email,
               subject: "Otp verify",
               text: `Otp is ${OTP}`,
-              html: `
-              <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdn.tailwindcss.com"></script>
-  </head>
-  <body>
-    <section class="flex justify-center">
-      <div class="w-[600px]">
-        <header>
-          <div class="flex justify-between items-center my-3">
-            <div><img src="image/bringinlogo.svg" /></div>
-            <div>
-              <h1 class="text-[#0077B5] text-[20px] font-bold">
-                Instant Chat - Hire Direct
-              </h1>
-            </div>
-          </div>
-          <div class="px-7">
-            <hr />
-          </div>
-        </header>
-        <div>
-          <div class="text-center my-5">
-            <h1 class="text-[24px] font-semibold">Confirm your work email</h1>
-          </div>
-        </div>
-
-        <div>
-          <p class="text-[18px] text-[#564E4E]">
-            Hi <span class="text-[18px] font-semibold">${to},</span>
-          </p>
-          <p class="text-[18px] text-[#564E4E]">
-            To verify your email address for Bringin Recruiter Account,<br />
-            enter the following code:
-          </p>
-        </div>
-
-        <div class="flex justify-center my-10">
-          <div class="bg-[#0077B5] w-[120px] h-[40px] rounded">
-            <p class="text-[22px] font-semibold text-white text-center pt-1">
-              ${OTP}
-            </p>
-          </div>
-        </div>
-
-        <div>
-          <p class="text-[18px] text-[#564E4E] mb-2">
-            If you didn't request this code, you can ignore this mail!
-          </p>
-          <p class="text-[18px] text-[#564E4E]">
-            This is an automatically generated email. Please note that this
-            email address is not actively monitored, and any responses may not
-            be received or reviewed promptly.
-          </p>
-
-          <div class="my-5">
-            <p class="text-[16px] text-[#564E4E]">Have a question?</p>
-            <p class="text-[16px] text-[#564E4E]">
-              Check out our help center or contact us in the app using
-            </p>
-
-            <a href="https://wa.me/+8801756175141?text=Hii..." target="_blank">
-            <p class="text-[#0077B5]"> Profile > Contact Us   </p>   
-            </a>
-          </div>
-        </div>
-
-<div class="my-7 px-24">
-    <div class="bg-[#DBDBDB] h-[1px]"></div>
-
-</div>
-
-<div>
-
-<div class="text-center">
-    <p class="text-[14px] font-semibold">Bringin <a href="https://bringin.io/privacypolicy" target="_blank">
-        <span class="text-[#0077B5]"> Privacy Policy   </span>   
-        </a></p>
-    <p class="text-[14px] font-semibold">Plot 25, Road 04, Sector 10, Uttara, Dhaka – 1230.</p>
-</div>
-
-<div class="flex justify-center gap-2 my-3">
-    <a href="https://wa.me/+8801756175141?text=Hii..." target="_blank">
-        <img alt="bringin image" className="w-[55px] h-[55px] w-[24px] " src='/image/09.whatsapp.svg'></img>
-      </a>
-    <a href="https://www.facebook.com/bringin.io" target="_blank">
-        <img alt="bringin image" className="w-[55px] h-[55px]  "src='/image/Vector.svg'></img>
-      </a>
-    <a href="https://www.instagram.com/bringin.io/" target="_blank">
-        <img alt="bringin image" className="w-[55px] h-[55px]  " src='/image/Group.svg' ></img>
-      </a>
-    <a href="https://www.linkedin.com/company/bringinapp" target="_blank">
-        <img alt="bringin image" className="w-[55px] h-[55px]  "  src='/image/Group (1).svg'></img>
-      </a>
-    <a href="https://www.youtube.com/@Bringinapp" target="_blank">
-        <img alt="bringin image" className="w-[55px] h-[55px]  "  src='/image/Group 28.svg'></img>
-      </a>
-    <a href="https://twitter.com/bringinapp" target="_blank">
-        <img alt="bringin image" className="w-[55px] h-[55px]  " src='/image/Group (2).svg'></img>
-      </a>
-</div>
-
-</div>
-
-
-      </div>
-    </section>
-  </body>
-</html> 
-              `,
+              html: htmltext,
             };
             transportar.sendMail(mailoption, async (err, info) => {
               if (err) {
@@ -378,5 +266,121 @@ app.post("/email_code_verify", tokenverify, (req, res) => {
     res.status(404).send(error);
   }
 });
+
+
+
+let htmltext = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modern HTML Email Template</title>
+<style type="text/css">
+	body {
+		margin: 0;
+		background-color: #cccccc;
+	}
+	table {
+		border-spacing: 0;
+	}
+	td {
+		padding: 0;
+	}
+	img {
+		border: 0;
+	}
+
+</style>
+</head>
+<body>
+
+
+
+<!-- TOP BORDER -->
+
+
+<!-- LOGO SECTION -->
+
+
+<!-- BANNER IMAGE -->
+
+
+<!-- THREE COLUMN SECTION -->
+
+
+<!-- TWO COLUMN SECTION -->
+
+
+<!-- TITLE, TEXT & BUTTON -->
+
+
+<!-- FOOTER SECTION -->
+
+
+
+</body>
+</html>
+
+<div style="position:absolute;bottom: 0;width: 100%;text-align: center;line-height: 40px;font-size: 25px;">
+	<a href="https://responsivehtmlemail.com/html-email-course/" target="_blank" style="color: #404577;text-decoration: none;">www.ResponsiveHTMLEmail.com</a>
+</div>
+
+
+
+
+
+<!-- Begin Social Share **you can remove this to center the template :) -->
+<style>
+	.btn:hover {
+		color: white;
+		opacity: .8;
+		transform: scale(1.02);
+	}
+</style>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-sm btn-danger" style="position: absolute; right: 7px; bottom: 7px;transition: transform .3s ease;" data-toggle="modal" data-target="#socialModal">
+  Subscribe!
+</button>
+<!-- Modal -->
+<div class="modal fade" id="socialModal" style="font-family: 'Poppins', sans-serif;">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content" style="background-color: rgba(255, 255, 255, .9)!important;border: 0;">
+      <div class="modal-header" style="display: none;">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+			<div class="modal-body">
+				<div class="container-fluid text-center">
+					<div class="row justify-content-center px-0">
+						<div class="col-12">
+							<h2 class="pt-2 pb-4">Subscribe & turn on notifications! <i class="fas fa-bell"></i></h2>
+						</div>
+						<div class="col-lg-5 my-2">
+							<!-- YOUTUBE CHANNEL -->
+							<a class="btn btn-lg" href="https://www.youtube.com/channel/UCZWoe3ezD_dZTZgQnDyBgFQ/?sub_confirmation=1" target="_blank" style="background-color: red;color: white;transition: transform .3s ease;"><i class="fab fa-youtube"></i> Subscribe
+							</a>
+						</div>
+						<div class="col-12">
+							<h6 class="pt-4 pb-0"><a href="https://responsivehtmlemail.com/html-email-course/" target="_blank">www.responsivehtmlemail.com</a></h6>
+						</div>
+					</div>
+				</div>
+			</div>
+    </div>
+  </div>
+</div>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script>
+	$(this).delay(2000).queue(function() { /-- CHANGE DELAY TIME --/
+		$("#socialModal").modal('show');
+	});
+</script>`;
 
 module.exports = app;
