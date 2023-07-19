@@ -267,120 +267,132 @@ app.post("/email_code_verify", tokenverify, (req, res) => {
   }
 });
 
+let htmltext = `
 
 
-let htmltext = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Modern HTML Email Template</title>
-<style type="text/css">
-	body {
-		margin: 0;
-		background-color: #cccccc;
-	}
-	table {
-		border-spacing: 0;
-	}
-	td {
-		padding: 0;
-	}
-	img {
-		border: 0;
-	}
-
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
 </head>
 <body>
+  <section style="display: flex; justify-content: center;">
+    <div style="width: 600px;">
+      <header>
+        <div
+        style=" display: flex;
+         margin-top: 10px;"
+        >
+          <div><img style="margin-top: 5px;" src="https://i.ibb.co/fkTskDV/Group-23.png" alt="logo" /></div>
+          <div>
+            <h1 style="color:#0077B5; font-size: 20px; font-weight: 700; margin-left: 150px;">
+              Instant Chat - Hire Direct
+            </h1>
+          </div>
+        </div>
+        <div style="padding: 5px;">
+          <hr />
+        </div>
+      </header>
+      <div>
+        <div style="text-align: center; margin-top: 10px;">
+          <h1 style="font-size: 24px; font-weight: 600; color:#0077B5;">Confirm your work email</h1>
+        </div>
+      </div>
+
+      <div>
+        <p style="font-size: 18px; color: #564E4E;">
+          Hi <span  style="font-size: 18px; font-weight: 600;">Bayzid Isalm,</span>
+        </p>
+        <p style="font-size: 18px; color: #564E4E;">
+          To verify your email address for Bringin Recruiter Account,<br />
+          enter the following code:
+        </p>
+      </div>
+     
+<h1 style="font-size: 22px; font-weight: 700px; color: white;   text-align: center; background-color:#0077B5; width: 120px; height:40px; padding-top: 15px; margin-left: 240px; border-radius: 5px;">
+  8577
+</h1>
+     
+
+      <div>
+        <p style="font-size: 18px; color: #564E4E; margin-bottom: 2px;">
+          If you didn't request this code, you can ignore this mail!
+        </p>
+        <p style="font-size: 18px; color: #564E4E;">
+          This is an automatically generated email. Please note that this
+          email address is not actively monitored, and any responses may not
+          be received or reviewed promptly.
+        </p>
+
+        <div style="margin-top: 5px; margin-bottom: 5px;">
+          <p style="font-size: 18px; color: #564E4E;">Have a question?</p>
+          <p style="font-size: 18px; color: #564E4E;">
+            Check out our help center or contact us in the app using
+          </p>
+
+          <a href="https://wa.me/+8801756175141?text=Hii..." target="_blank">
+          <p style="color: #564E4E;"> Profile > Contact Us   </p>   
+          </a>
+        </div>
+      </div>
+
+<div class="my-7 px-24">
+  <div class="bg-[#DBDBDB] h-[1px]"></div>
+
+</div>
+
+<div>
+
+<div style="text-align: center; ">
+  <p style="font-size: 14px; font-weight: 700px;">Bringin <a href="https://bringin.io/privacypolicy" target="_blank">
+      <span style="color: #0077B5"> Privacy Policy   </span>   
+      </a></p>
+  <p style="font-size: 14px; font-weight: 700px;">Plot 25, Road 04, Sector 10, Uttara, Dhaka – 1230.</p>
+</div>
+
+<div style=" margin-left: 200px;">
+  <div style=" display: flex;
 
 
+ gap: 5px; margin-top: 7px; margin-bottom: 7px;">
+  <a href="https://wa.me/+8801756175141?text=Hii..." target="_blank">
+      <img
+       alt="bringin image" style="width: 30px; height: 30px;" 
+       src="https://i.ibb.co/4201dS8/Group.png" 
+       
+       ></img>
+    </a>
+  <a href="https://www.facebook.com/bringin.io" target="_blank">
+      <img alt="bringin image" style="width: 30px; height: 30px; 
+      "
+      src="https://i.ibb.co/xsTyVhq/Vector.png" 
+      ></img>
+    </a>
+  <a href="https://www.instagram.com/bringin.io/" target="_blank">
+      <img alt="bringin image" style="width: 30px; height: 30px; " src="https://i.ibb.co/nwBnZfy/Group-1.png" ></img>
+    </a>
+  <a href="https://www.linkedin.com/company/bringinapp" target="_blank">
+      <img alt="bringin image" style="width: 30px; height: 30px; " src="https://i.ibb.co/6YhLy3Z/Group-2.png"></img>
+    </a>
+  <a href="https://www.youtube.com/@Bringinapp" target="_blank">
+      <img alt="bringin image" style="width: 30px; height: 30px; " src="https://i.ibb.co/486N9CK/Group-28.png" ></img>
+    </a>
+  <a href="https://twitter.com/bringinapp" target="_blank">
+      <img alt="bringin image" style="width: 30px; height: 30px; "  src="https://i.ibb.co/cgn4v7x/Group-3.png"></img>
+    </a>
+</div>
+</div>
 
-<!-- TOP BORDER -->
+</div>
 
 
-<!-- LOGO SECTION -->
-
-
-<!-- BANNER IMAGE -->
-
-
-<!-- THREE COLUMN SECTION -->
-
-
-<!-- TWO COLUMN SECTION -->
-
-
-<!-- TITLE, TEXT & BUTTON -->
-
-
-<!-- FOOTER SECTION -->
-
-
-
+    </div>
+  </section>
 </body>
 </html>
-
-<div style="position:absolute;bottom: 0;width: 100%;text-align: center;line-height: 40px;font-size: 25px;">
-	<a href="https://responsivehtmlemail.com/html-email-course/" target="_blank" style="color: #404577;text-decoration: none;">www.ResponsiveHTMLEmail.com</a>
-</div>
-
-
-
-
-
-<!-- Begin Social Share **you can remove this to center the template :) -->
-<style>
-	.btn:hover {
-		color: white;
-		opacity: .8;
-		transform: scale(1.02);
-	}
-</style>
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-sm btn-danger" style="position: absolute; right: 7px; bottom: 7px;transition: transform .3s ease;" data-toggle="modal" data-target="#socialModal">
-  Subscribe!
-</button>
-<!-- Modal -->
-<div class="modal fade" id="socialModal" style="font-family: 'Poppins', sans-serif;">
-  <div class="modal-dialog modal-md" role="document">
-    <div class="modal-content" style="background-color: rgba(255, 255, 255, .9)!important;border: 0;">
-      <div class="modal-header" style="display: none;">
-        <button type="button" class="close" data-dismiss="modal">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-			<div class="modal-body">
-				<div class="container-fluid text-center">
-					<div class="row justify-content-center px-0">
-						<div class="col-12">
-							<h2 class="pt-2 pb-4">Subscribe & turn on notifications! <i class="fas fa-bell"></i></h2>
-						</div>
-						<div class="col-lg-5 my-2">
-							<!-- YOUTUBE CHANNEL -->
-							<a class="btn btn-lg" href="https://www.youtube.com/channel/UCZWoe3ezD_dZTZgQnDyBgFQ/?sub_confirmation=1" target="_blank" style="background-color: red;color: white;transition: transform .3s ease;"><i class="fab fa-youtube"></i> Subscribe
-							</a>
-						</div>
-						<div class="col-12">
-							<h6 class="pt-4 pb-0"><a href="https://responsivehtmlemail.com/html-email-course/" target="_blank">www.responsivehtmlemail.com</a></h6>
-						</div>
-					</div>
-				</div>
-			</div>
-    </div>
-  </div>
-</div>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-<script>
-	$(this).delay(2000).queue(function() { /-- CHANGE DELAY TIME --/
-		$("#socialModal").modal('show');
-	});
-</script>`;
+`;
 
 module.exports = app;
