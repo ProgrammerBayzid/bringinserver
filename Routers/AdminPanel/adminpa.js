@@ -181,12 +181,24 @@ app.patch("/verifyRecruterCompny/:_id", async (req, res) => {
   const result = await recruiters.findByIdAndUpdate(filter, updateDoc);
   res.send(result);
 });
+
+app.get("/profile_verify", async (req, res) => {
+  const profile_verify = req.query.profile_verify;
+  const filter = { "other.profile_verify": profile_verify };
+  var data = await recruiters.find(filter);
+  res.status(200).json(data);
+  // console.log(filter);
+});
+
 app.patch("/verifyRecruterProfile/:_id", async (req, res) => {
   const id = req.params._id;
   const filter = { _id: id };
   // const options = { upsert: true };
   const updateDoc = {
-    $set: { "other.profile_verify": true },
+    $set: {
+      "other.profile_verify": true,
+      "other.company_verify": true,
+    },
   };
   const result = await recruiters.findByIdAndUpdate(filter, updateDoc);
   res.send(result);
