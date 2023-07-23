@@ -188,7 +188,7 @@ app.post("/job_save", tokenverify, async (req, res) => {
                 var jobdata = await JobPost.findOne({ _id: req.body.jobid })
                 var data = await JobSave.findOne({ userid: _id, jobid: req.body.jobid })
                 if (data == null) {
-                    await JobSave({ userid: _id, jobid: req.body.jobid, jobpostuserid: jobdata._id }).save()
+                    await JobSave({ userid: _id, jobid: req.body.jobid, jobpostuserid: jobdata.userid }).save()
                     await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.savejob": 1 } })
                     res.status(200).json({ message: "Job saved successfully" })
                 } else {

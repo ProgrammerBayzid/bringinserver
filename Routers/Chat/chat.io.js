@@ -1,10 +1,12 @@
 const express = require("express");
 const app = express();
 const User = require("../../Model/userModel");
+const Recruiter = require("../../Model/Recruiter/recruiters");
 const tokenverify = require("../../MiddleWare/tokenverify.js");
 const jwt = require("jsonwebtoken");
 const Experince = require("../../Model/experience.js");
 const { Chat, Message } = require("../../Model/Chat/chat")
+const {single_msg_notifiation} = require("../../Routers/Notification/notification")
 const multer = require("multer");
 const fs = require("fs");
 const storage = multer.diskStorage({
@@ -19,6 +21,13 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 
+async function singlemessage(message) {
+    var data = await Message({ channel: message.channelid, message: message.message })
+    data.save()
+    await Chat.findOneAndUpdate({ _id: message.channelid }, { $set: { lastmessage: data } })
+    single_msg_notifiation(message.channelid, message.message.user.customProperties)
+
+}
 
 async function SocketRoute(io) {
     io.on('connection', (socket) => {
@@ -36,19 +45,6 @@ async function SocketRoute(io) {
                 io.emit("channeldata", data)
             }
         })
-
-        // socket.on("channelid", async (channelid) => {
-        //     console.log(channelid)
-        //     socket.on(channelid.toString(), (message) => {
-        //         messagesend(message, io, channelid)
-        //     })
-        //     var oldmessage = await Message.find({ channel: channelid })
-        //     io.emit(`oldmessage${channelid}`, oldmessage)
-
-        //     socket.on('disconnect', (data)=>{
-        //         console.log("1 room disconnect")
-        //     })
-        // })
 
         socket.on("channellistroom", (currentid)=>{
             socket.join(currentid)
@@ -82,9 +78,7 @@ async function SocketRoute(io) {
 
 
         socket.on("message", async (message) => {
-            var data = await Message({ channel: message.channelid, message: message.message })
-            data.save()
-            await Chat.findOneAndUpdate({ _id: message.channelid }, { $set: { lastmessage: data } })
+            Promise.all([singlemessage(message)])
             io.to(message.channelid).emit("singlemsg", message)
         })
 
@@ -98,11 +92,15 @@ async function SocketRoute(io) {
         })
 
         socket.on("file_upload", async (filedata)=> {
+            
+            
             fs.writeFileSync(`./uploads/${filedata.name}`, filedata.base64, { encoding: 'base64' });
             var data = await Message({ channel: filedata.channelid, message: filedata.message })
             data.save()
             await Chat.findOneAndUpdate({ _id: filedata.channelid }, { $set: { lastmessage: data } })
-            io.to(filedata.channelid).emit("singlemsg", data)
+            io.to(filedata.channelid).emit("imageupload", data)
+            // io.to(filedata.channelid).emit("singlemsg", data)
+            // single_msg_notifiation(filedata.channelid, filedata.message.user.customProperties)
         })
 
 
@@ -110,6 +108,22 @@ async function SocketRoute(io) {
             await Chat.findOneAndUpdate({ _id: blockdata.channelid}, {$set: {seekerblock: blockdata.seekerblock ,
                 recruiterblock: blockdata.recruiterblock}});
             io.to(blockdata.channelid).emit("block_user", blockdata)
+        })
+
+        socket.on("active", async (data)=>{
+            if(data['isrecruiter'] == true){
+                Promise.all([Recruiter.findOneAndUpdate({_id:data['userid']}, {$set: {"other.online": true}})])
+            }else{
+                Promise.all([User.findOneAndUpdate({_id:data['userid']}, {$set: {"other.online": true}})])
+            }
+        })
+
+        socket.on("inactive", async (data)=>{
+            if(data['isrecruiter'] == true){
+                Promise.all([Recruiter.findOneAndUpdate({_id:data['userid']}, {$set: {"other.online": false}})])
+            }else{
+                Promise.all([User.findOneAndUpdate({_id:data['userid']}, {$set: {"other.online": false}})])
+            }
         })
     })
 

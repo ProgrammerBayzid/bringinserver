@@ -17,6 +17,11 @@ const recruitersSchema = Schema(
         email: String,
         image: String,
         other: {
+          latestjobid: {
+            type: "ObjectId",
+            ref: "job_post",
+            default: null
+          },
           company_verify: {
             type: Boolean,
             default: false
@@ -56,6 +61,7 @@ const recruitersSchema = Schema(
         total_step: { type: Number, default: 6 },
         incomplete: { type: Number, default: 1 },
         complete: { type: Number, default: 5 },
+        online: {type : Boolean, default: false},
         pushnotification: String,
         notification: {
           push_notification: {

@@ -8,6 +8,8 @@ const multer = require("multer");
 const JobPost = require('../../Model/Recruiter/Job_Post/job_post.js')
 const candidatesave = require("../../Model/Recruiter/Candidate_Save/candidate_save")
 const candidateReport = require("../../Model/Recruiter/Candidate_Report/candidate_report")
+const candidateview = require("../../Model/Recruiter/Candidate_View/candidate_view")
+
 const {
     Profiledata,
 } = require("../../Model/Seeker_profile_all_details.js");
@@ -340,6 +342,30 @@ app.post('/candidate_filter', tokenverify, async (req, res) => {
         res.status(400).send(error);
     }
 })
+
+
+app.post('/candidate_view', tokenverify, async (req, res) => {
+    try {
+        jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+            if (err) {
+                res.json({ message: "invalid token" })
+            } else {
+                const _id = authdata._id;
+                const candidate = await candidateview.findOne({userid: _id, candidate_profileid: req.body.candidate_profileid})
+                 if(candidate == null) {
+                    await candidateview({userid: _id, candidate_profileid: req.body.candidate_profileid, candidate_id: req.body.candidate_id}).save()
+                   res.status(200).json({message: "candidate view"})
+                }else{
+                    res.status(200).json({message: "candidate Allready view"})
+                }                
+            }
+        })
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
+
+
 
 
 module.exports = app;

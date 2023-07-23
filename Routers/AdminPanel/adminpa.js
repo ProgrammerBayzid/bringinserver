@@ -31,6 +31,7 @@ const {
   ProfileVerify,
 } = require("../../Model/Recruiter/Verify/profile_verify.js");
 const { DefaultSkill } = require("../../Model/Seeker_profile_all_details.js");
+const Package = require('../../Model/Package/package.js')
 
 // repoted candidate get
 app.get("/candidate_report", async (req, res) => {
@@ -1057,5 +1058,33 @@ app.post("/admin_default_skill", async (req, res) => {
     res.status(400).json({ message: "skill allready added" });
   }
 });
+
+
+app.post("/package", async (req, res)=>{
+   var data = await Package.findOne({name: req.body.name})
+   if(data == null){
+    await Package({name: req.body.name,
+      suggestname: req.body.suggestname,
+      chat: req.body.chat,
+      amount: req.body.amount,
+      currency: req.body.currency,
+      duration_time: req.body.duration_time}).save()
+      res.status(200).json({message: "add successfull"})
+   }else{
+    res.status(400).json({message: "Allready added"})
+   }
+
+})
+
+
+app.get("/package", async (req, res)=>{
+  var data = await Package.find()
+  
+   res.status(400).send(data)
+  
+
+})
+
+
 
 module.exports = app;
