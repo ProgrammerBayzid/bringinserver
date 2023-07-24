@@ -142,9 +142,12 @@ app.get("/company_varify", async (req, res) => {
   res.send(date);
 });
 
-app.get("/verifyProfile", async (req, res) => {
+app.get("/verifyProfiledocument", async (req, res) => {
   try {
-    var data = await ProfileVerify.find().populate("userid");
+    const useridd = req.query.userid;
+    const query = { userid: useridd };
+    var data = await ProfileVerify.findOne(query).populate("userid");
+    console.log(query);
     res.status(200).json(data);
   } catch (error) {
     res.status(400).send(error);
@@ -181,13 +184,22 @@ app.patch("/verifyRecruterCompny/:_id", async (req, res) => {
   res.send(result);
 });
 
-app.get("/profile_verify", async (req, res) => {
+//
+app.get("/profile_verifys", async (req, res) => {
   const profile_verify = req.query.profile_verify;
   const filter = { "other.profile_verify": profile_verify };
-  var data = await recruiters.find(filter);
+  var data = await recruiters.find(filter).populate("companyname");
   res.status(200).json(data);
   // console.log(filter);
 });
+app.get("/profile_varifys/:id", async (req, res) => {
+  const id = req.params.id;
+  const query = { _id: id };
+  const date = await recruiters.findOne(query).populate("companyname");
+  res.send(date);
+});
+
+//
 
 app.patch("/verifyRecruterProfile/:_id", async (req, res) => {
   const id = req.params._id;
@@ -220,6 +232,100 @@ app.get("/verifyRecruterProfile", async (req, res) => {
   ]);
   res.send(date);
 });
+
+// candidate list
+
+app.get("/candidatelist", async (req, res) => {
+  try {
+    var populate2 = [
+      {
+        path: "workexperience",
+        populate: [
+          { path: "category", select: "-functionarea" },
+          "expertisearea",
+        ],
+      },
+      {
+        path: "education",
+        populate: [
+          {
+            path: "digree",
+            select: "-subject",
+            populate: { path: "education", select: "-digree" },
+          },
+          "subject",
+        ],
+      },
+      "skill",
+      "protfoliolink",
+      "about",
+      {
+        path: "careerPreference",
+        populate: [
+          { path: "salaray", populate: ["max_salary", "min_salary"] },
+          { path: "category", select: "-functionarea" },
+          { path: "functionalarea", populate: [{ path: "industryid" }] },
+          {
+            path: "division",
+            populate: { path: "cityid", select: "-divisionid" },
+          },
+          "jobtype",
+        ],
+      },
+      { path: "userid", populate: { path: "experiencedlevel" } },
+    ];
+    var data = await Profiledata.find().populate(populate2);
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+app.get("/candidate/:id", async (req, res) => {
+  var populate2 = [
+    {
+      path: "workexperience",
+      populate: [
+        { path: "category", select: "-functionarea" },
+        "expertisearea",
+      ],
+    },
+    {
+      path: "education",
+      populate: [
+        {
+          path: "digree",
+          select: "-subject",
+          populate: { path: "education", select: "-digree" },
+        },
+        "subject",
+      ],
+    },
+    "skill",
+    "protfoliolink",
+    "about",
+    {
+      path: "careerPreference",
+      populate: [
+        { path: "salaray", populate: ["max_salary", "min_salary"] },
+        { path: "category", select: "-functionarea" },
+        { path: "functionalarea", populate: [{ path: "industryid" }] },
+        {
+          path: "division",
+          populate: { path: "cityid", select: "-divisionid" },
+        },
+        "jobtype",
+      ],
+    },
+    { path: "userid", populate: { path: "experiencedlevel" } },
+  ];
+  const id = req.params.id;
+  const query = { _id: id };
+  const date = await Profiledata.findOne(query).populate(populate2);
+  res.send(date);
+});
+
+//
 
 // industry list
 
