@@ -4,15 +4,14 @@ const User = require("../../Model/userModel");
 const { Otp } = require("../../Model/otpModel");
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
-const Recruiterprofile = require("../../Model/Recruiter/recruiters.js")
-const tokenverify = require("../../MiddleWare/tokenverify.js")
+const Recruiterprofile = require("../../Model/Recruiter/recruiters.js");
+const tokenverify = require("../../MiddleWare/tokenverify.js");
 const jwt = require("jsonwebtoken");
 const app = express();
 
-
 function getRandomInt(max) {
   return Math.floor(Math.random() * 9000 + 1000);
-};
+}
 
 app.post("/singup", async (req, res) => {
   const OTP = getRandomInt(4);
@@ -25,19 +24,16 @@ app.post("/singup", async (req, res) => {
     .then((response) => {
       console.log(response.data);
     });
-  const otp = await Otp({ number: number, otp: OTP, });
+  const otp = await Otp({ number: number, otp: OTP });
   const salt = await bcrypt.genSalt(10);
   otp.otp = await bcrypt.hash(otp.otp, salt);
   const result = await otp.save();
-  return res.status(200).json({message: "OTP Sent Successfully"});
+  return res.status(200).json({ message: "OTP Sent Successfully" });
 });
 
+// # post verify code
 
-
-
-// # post verify code 
-
-app.post('/verify', async (req, res) => {
+app.post("/verify", async (req, res) => {
   const otpHolder = await Otp.find({
     number: req.body.number,
   });
@@ -45,7 +41,7 @@ app.post('/verify', async (req, res) => {
     return res.status(400).send("You use an Expired OTP!");
   const rightOtpFind = otpHolder[otpHolder.length - 1];
   const validUser = await bcrypt.compare(req.body.otp, rightOtpFind.otp);
-  if(req.body.number == "01932331718"){
+  if (req.body.number == "01932331718") {
     var token;
     var carepre = 0;
     var profile = false;
@@ -55,27 +51,26 @@ app.post('/verify', async (req, res) => {
       });
       if (user == null) {
         const user2 = await User({
-          number: req.body.number, 
-          fastname: null, 
-          lastname: null, 
-          gender: null, 
-          experiencedlevel: null, 
-          startedworking: null, 
-          deatofbirth: null, 
-          email: null, 
-          image: null, 
+          number: req.body.number,
+          fastname: null,
+          lastname: null,
+          gender: null,
+          experiencedlevel: null,
+          startedworking: null,
+          deatofbirth: null,
+          email: null,
+          image: null,
           secoundnumber: req.body.number,
         });
-        token = user2.generateJWT()
+        token = user2.generateJWT();
         await user2.save();
         profile = false;
         carepre = 0;
       } else {
-        token = user.generateJWT()
+        token = user.generateJWT();
         profile = true;
-        carepre = user.other.carearpre
+        carepre = user.other.carearpre;
       }
-
     } else {
       const recruiter = await Recruiterprofile.findOne({
         number: req.body.number,
@@ -93,14 +88,13 @@ app.post('/verify', async (req, res) => {
           profile_verify: false,
           company_docupload: false,
           profile_docupload: false,
-          premium: false
+          premium: false,
         });
-        token = recruiter2.generateJWT()
+        token = recruiter2.generateJWT();
         await recruiter2.save();
       } else {
-        token = recruiter.generateJWT()
+        token = recruiter.generateJWT();
       }
-
     }
     const OTPDelete = await Otp.deleteMany({
       number: rightOtpFind.number,
@@ -109,10 +103,9 @@ app.post('/verify', async (req, res) => {
       message: "User Registration Successfully!",
       token: token,
       seekerprofile: profile,
-      carearpre: carepre
+      carearpre: carepre,
     });
-  }
-  else if (rightOtpFind.number === req.body.number && validUser) {
+  } else if (rightOtpFind.number === req.body.number && validUser) {
     var token;
     var carepre = 0;
     var profile = false;
@@ -122,27 +115,26 @@ app.post('/verify', async (req, res) => {
       });
       if (user == null) {
         const user2 = await User({
-          number: req.body.number, 
-          fastname: null, 
-          lastname: null, 
-          gender: null, 
-          experiencedlevel: null, 
-          startedworking: null, 
-          deatofbirth: null, 
-          email: null, 
-          image: null, 
+          number: req.body.number,
+          fastname: null,
+          lastname: null,
+          gender: null,
+          experiencedlevel: null,
+          startedworking: null,
+          deatofbirth: null,
+          email: null,
+          image: null,
           secoundnumber: req.body.number,
         });
-        token = user2.generateJWT()
+        token = user2.generateJWT();
         await user2.save();
         profile = false;
         carepre = 0;
       } else {
-        token = user.generateJWT()
+        token = user.generateJWT();
         profile = true;
-        carepre = user.other.carearpre
+        carepre = user.other.carearpre;
       }
-
     } else {
       const recruiter = await Recruiterprofile.findOne({
         number: req.body.number,
@@ -160,14 +152,13 @@ app.post('/verify', async (req, res) => {
           profile_verify: false,
           company_docupload: false,
           profile_docupload: false,
-          premium: false
+          premium: false,
         });
-        token = recruiter2.generateJWT()
+        token = recruiter2.generateJWT();
         await recruiter2.save();
       } else {
-        token = recruiter.generateJWT()
+        token = recruiter.generateJWT();
       }
-
     }
     // const OTPDelete = await Otp.deleteMany({
     //   number: rightOtpFind.number,
@@ -176,20 +167,18 @@ app.post('/verify', async (req, res) => {
       message: "User Registration Successfully!",
       token: token,
       seekerprofile: profile,
-      carearpre: carepre
+      carearpre: carepre,
     });
   } else {
     return res.status(400).send("Your OTP was wrong!");
   }
-})
+});
 
-
-
-app.post('/switch', tokenverify, async (req, res) => {
+app.post("/switch", tokenverify, async (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
       if (err) {
-        res.json({ message: "invalid token" })
+        res.json({ message: "invalid token" });
       } else {
         var token;
         var carepre = 0;
@@ -201,25 +190,33 @@ app.post('/switch', tokenverify, async (req, res) => {
           });
           if (user == null) {
             const user2 = await User({
-              number: authdata.number,  secoundnumber: authdata.number,  fastname: null, lastname: null, gender: null, experiencedlevel: null, startedworking: null, deatofbirth: null, email: null, image: null
+              number: authdata.number,
+              secoundnumber: authdata.number,
+              fastname: null,
+              lastname: null,
+              gender: null,
+              experiencedlevel: null,
+              startedworking: null,
+              deatofbirth: null,
+              email: null,
+              image: null,
             });
-            token = user2.generateJWT()
+            token = user2.generateJWT();
             await user2.save();
             profile = false;
             carepre = 0;
           } else {
-            token = user.generateJWT()
+            token = user.generateJWT();
             profile = true;
-            carepre = user.carearpre
+            carepre = user.carearpre;
           }
 
           res.status(200).json({
             message: "Switched Successfully",
             token: token,
             seekerprofile: profile,
-            carearpre: carepre
-          })
-
+            carearpre: carepre,
+          });
         } else {
           const recruiter = await Recruiterprofile.findOne({
             number: authdata.number,
@@ -237,32 +234,26 @@ app.post('/switch', tokenverify, async (req, res) => {
               profile_verify: false,
               company_docupload: false,
               profile_docupload: false,
-              premium: false
+              premium: false,
             });
-            token = recruiter2.generateJWT()
+            token = recruiter2.generateJWT();
             await recruiter2.save();
           } else {
-            token = recruiter.generateJWT()
+            token = recruiter.generateJWT();
           }
 
           res.status(200).json({
             message: "Switched Successfully",
             token: token,
             seekerprofile: profile,
-            carearpre: carepre
-          })
+            carearpre: carepre,
+          });
         }
-
-
       }
-    })
+    });
   } catch (error) {
     res.status(400).send(error);
   }
-})
-
-
-
-
+});
 
 module.exports = app;
