@@ -31,6 +31,7 @@ const {
   ProfileVerify,
 } = require("../../Model/Recruiter/Verify/profile_verify.js");
 const { DefaultSkill } = require("../../Model/Seeker_profile_all_details.js");
+const { populate } = require("dotenv");
 
 // repoted candidate get
 app.get("/candidate_report", async (req, res) => {
@@ -188,14 +189,35 @@ app.patch("/verifyRecruterCompny/:_id", async (req, res) => {
 app.get("/profile_verifys", async (req, res) => {
   const profile_verify = req.query.profile_verify;
   const filter = { "other.profile_verify": profile_verify };
-  var data = await recruiters.find(filter).populate("companyname");
+  var data = await recruiters.find(filter).populate([
+    {
+      path: "companyname",
+      select: "",
+      populate: [
+        // { path: "company", select: "" },
+        { path: "industry", select: "", populate: ["industryid"] },
+        "c_size",
+      ],
+    },
+  ]);
   res.status(200).json(data);
   // console.log(filter);
 });
 app.get("/profile_varifys/:id", async (req, res) => {
   const id = req.params.id;
   const query = { _id: id };
-  const date = await recruiters.findOne(query).populate("companyname");
+  const date = await recruiters.findOne(query).populate([
+    {
+      path: "companyname",
+      select: "",
+      populate: [
+        // { path: "company", select: "" },
+        // { path: "userid", select: "" },
+        "c_size",
+        "industry",
+      ],
+    },
+  ]);
   res.send(date);
 });
 
@@ -214,6 +236,19 @@ app.patch("/verifyRecruterProfile/:_id", async (req, res) => {
   const result = await recruiters.findByIdAndUpdate(filter, updateDoc);
   res.send(result);
 });
+app.patch("/unverifyRecruterProfile/:_id", async (req, res) => {
+  const id = req.params._id;
+  const filter = { _id: id };
+  // const options = { upsert: true };
+  const updateDoc = {
+    $set: {
+      "other.profile_verify": false,
+      "other.company_verify": false,
+    },
+  };
+  const result = await recruiters.findByIdAndUpdate(filter, updateDoc);
+  res.send(result);
+});
 
 app.get("/verifyRecruterProfile", async (req, res) => {
   const id = req.query._id;
@@ -227,6 +262,7 @@ app.get("/verifyRecruterProfile", async (req, res) => {
         // { path: "company", select: "" },
         // { path: "userid", select: "" },
         "c_size",
+        "industry",
       ],
     },
   ]);
