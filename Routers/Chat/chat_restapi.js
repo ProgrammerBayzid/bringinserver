@@ -30,9 +30,9 @@ const upload = multer({ storage: storage });
 app.get("/channellist", tokenverify, async (req, res) => {
   var data;
   if (req.query.seeker == "false") {
-    data = await Chat.find({ seekerid: req.query.userid }).sort({ updatedAt: -1 }).populate([{ path: "seekerid", select: ["other.online", "other.pushnotification", "fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"] }, { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "email"], populate: { path: "companyname", populate: { path: "industry" } } }, { path: "lastmessage" }])
+    data = await Chat.find({ seekerid: req.query.userid }).sort({ updatedAt: -1 }).populate([{ path: "seekerid", select: ["other.online", "other.pushnotification", "fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"] }, { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email"], populate: { path: "companyname", populate: { path: "industry" } } }, { path: "lastmessage" }])
   } else {
-    data = await Chat.find({ recruiterid: req.query.userid }).sort({ updatedAt: -1 }).populate([{ path: "seekerid", select: ["other.online", "other.pushnotification", "fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"] }, { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "email"], populate: { path: "companyname", populate: { path: "industry" } } }, { path: "lastmessage" }])
+    data = await Chat.find({ recruiterid: req.query.userid }).sort({ updatedAt: -1 }).populate([{ path: "seekerid", select: ["other.online", "other.pushnotification", "fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"] }, { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification","other.premium", "email"], populate: { path: "companyname", populate: { path: "industry" } } }, { path: "lastmessage" }])
   }
   res.status(200).send(data)
 

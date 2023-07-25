@@ -15,7 +15,7 @@ app.use(socketroute);
 
 socketroute(io);
 
-const port = 3003;
+const port = 3002;
 server.listen(port, () => {
   console.log(`bringin  server is running port ${port}`);
 });

@@ -1091,10 +1091,7 @@ app.post("/package", async (req, res)=>{
 
 app.get("/package", async (req, res)=>{
   var data = await Package.find()
-  
    res.status(400).send(data)
-  
-
 })
 
 
