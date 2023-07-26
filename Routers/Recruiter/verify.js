@@ -14,11 +14,6 @@ const {
   ProfileVerify,
 } = require("../../Model/Recruiter/Verify/profile_verify.js");
 const transportar = nodemailer.createTransport({
-  // service: "gmail",
-  // auth: {
-  //     "user": "bringin.sdk@gmail.com",
-  //     "pass": "ovzkmudorqbzttju"
-  // }
   host: "mail.bringin.io",
   port: 465,
   auth: {
