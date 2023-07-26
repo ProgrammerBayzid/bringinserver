@@ -31,6 +31,9 @@ const {
   ProfileVerify,
 } = require("../../Model/Recruiter/Verify/profile_verify.js");
 const { DefaultSkill } = require("../../Model/Seeker_profile_all_details.js");
+const Package = require('../../Model/Package/package.js')
+const { populate } = require("dotenv");
+
 
 // repoted candidate get
 app.get("/candidate_report", async (req, res) => {
