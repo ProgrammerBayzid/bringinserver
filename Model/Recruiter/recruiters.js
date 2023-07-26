@@ -30,6 +30,14 @@ const recruitersSchema = Schema(
             type: Boolean,
             default: false
           },
+          profile_verify_type: {
+            type: Number,
+            default: 0
+          },
+          company_verify_type: {
+            type: Number,
+            default: 0
+          },
           company_docupload:  {
             type: Boolean,
             default: false

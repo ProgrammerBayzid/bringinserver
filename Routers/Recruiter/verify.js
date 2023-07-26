@@ -118,7 +118,7 @@ app.post(
             otp.otp = await bcrypt.hash(otp.otp, salt);
             await otp.save();
             var recruiter = await Recruiters.findOne({ _id: _id });
-            console.log(recruiter)
+            
             let recruitername = `${recruiter.firstname} ${recruiter.lastname}`;
             const mailoption = {
               from: "notifications@bringin.io",
@@ -404,7 +404,7 @@ app.post("/email_code_verify", tokenverify, (req, res) => {
           });
           await Recruiters.findByIdAndUpdate(
             { _id: _id },
-            { $set: { "other.profile_verify": true } }
+            { $set: { "other.profile_verify": true ,"other.profile_verify_type": 1} }
           );
 
           const mailoption = {

@@ -130,7 +130,7 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
 
                     res.status(200).send(company)
                 } else {
-                    var company = await JobPost.find({ expertice_area: req.query.functionalarea }).populate(populate).then((data) => data.filter((filterdata) => {
+                    var company = await JobPost.find({expertice_area: req.query.functionalarea }).populate(populate).then((data) => data.filter((filterdata) => {
                         var salary = salaryfilter(filterdata, careardata);
                         var location = locationfilter(filterdata, careardata)
                         if (salary.length > 0 && location.length > 0 && filterdata.userid.other.profile_verify == true) {
@@ -138,7 +138,6 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
                         } else {
                             return false
                         }
-                    
                     }))
                     res.status(200).send(company);
                 }
