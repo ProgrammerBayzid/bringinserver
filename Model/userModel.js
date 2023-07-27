@@ -47,8 +47,13 @@ const userSchema = Schema(
       total_step: { type: Number, default: 7 },
       incomplete: { type: Number, default: 5 },
       complete: { type: Number, default: 2 },
-
+      online: {type : Boolean, default: false},
       pushnotification: String,
+      full_profile: {
+        type: "ObjectId",
+        ref: "seeker_profiledata",
+        default: null
+      },
       notification: {
         push_notification: {
           type: Boolean,

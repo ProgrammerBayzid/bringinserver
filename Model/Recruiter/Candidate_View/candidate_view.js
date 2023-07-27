@@ -1,25 +1,26 @@
 const { Schema, model, } = require("mongoose");
 
-
-
-const candidateSaveSchema = Schema(
+const candidateSchema = Schema(
     {
         userid: {
             type: "ObjectId",
             ref: "Recruiters_profile"
         },
-        candidateid: "ObjectId",
-        candidatefullprofile: {
+        candidate_profileid: {
             type: "ObjectId",
             ref: "seeker_profiledata"
+        },
+        candidate_id: {
+            type: "ObjectId",
+            ref: "User"
         }
     },{timestamps: true}
+
 );
 
 
-var SandidateSave = model("Candidate_Save", candidateSaveSchema)
 
 
+var CandidateView = model("Candidate_View", candidateSchema)
 
-
-module.exports = SandidateSave
+module.exports = CandidateView

@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
-
+const nodemailer = require("nodemailer");
+const smtppool = require("nodemailer");
 const {
   Expertisearea,
   Category,
@@ -31,8 +32,21 @@ const {
   ProfileVerify,
 } = require("../../Model/Recruiter/Verify/profile_verify.js");
 const { DefaultSkill } = require("../../Model/Seeker_profile_all_details.js");
+const Package = require("../../Model/Package/package.js");
 const { populate } = require("dotenv");
-
+const transportar = nodemailer.createTransport({
+  // service: "gmail",
+  // auth: {
+  //     "user": "bringin.sdk@gmail.com",
+  //     "pass": "ovzkmudorqbzttju"
+  // }
+  host: "mail.bringin.io",
+  port: 465,
+  auth: {
+    user: "notifications@bringin.io",
+    pass: "@Notifications.1995",
+  },
+});
 // repoted candidate get
 app.get("/candidate_report", async (req, res) => {
   try {
@@ -236,6 +250,19 @@ app.patch("/verifyRecruterProfile/:_id", async (req, res) => {
   const result = await recruiters.findByIdAndUpdate(filter, updateDoc);
   res.send(result);
 });
+app.patch("/rejectRecruterProfile/:_id", async (req, res) => {
+  const id = req.params._id;
+  const filter = { _id: id };
+  // const options = { upsert: true };
+  const updateDoc = {
+    $set: {
+      "other.profile_verify": "rejact",
+      "other.company_verify": "rejact",
+    },
+  };
+  const result = await recruiters.findByIdAndUpdate(filter, updateDoc);
+  res.send(result);
+});
 app.patch("/unverifyRecruterProfile/:_id", async (req, res) => {
   const id = req.params._id;
   const filter = { _id: id };
@@ -248,6 +275,50 @@ app.patch("/unverifyRecruterProfile/:_id", async (req, res) => {
   };
   const result = await recruiters.findByIdAndUpdate(filter, updateDoc);
   res.send(result);
+});
+
+// app.delete("/rejectRecruterProfiledelete/:id", async (req, res) => {
+//   try {
+//     var data = await recruiters.findOneAndDelete({
+//       _id: req.params.id,
+//     });
+//     if (data == null) {
+//       res.status(400).json({ message: "iteam not found" });
+//     } else {
+//       await ProfileVerify.findManyAndUpdate({
+//         $pull: { ProfileVerify: data._id },
+//       });
+//       await CompanyVerify.findManyAndUpdate({
+//         $pull: { CompanyVerify: data._id },
+//       });
+//       res.status(200).json({ message: "Delete Sucessfull" });
+//     }
+
+//     res.send(result);
+//   } catch (error) {
+//     res.send(error);
+//   }
+// });
+
+app.delete("/rejectRecruterProfiledelete/:id", async (req, res) => {
+  try {
+    var data = await recruiters.findOneAndDelete({
+      _id: req.params.id,
+    });
+    if (data !== null) {
+      // Delete from ProfileVerify collection
+      await ProfileVerify.findOneAndDelete({ ProfileVerify: data._id });
+
+      // Delete from CompanyVerify collection
+      await CompanyVerify.findOneAndDelete({ CompanyVerify: data._id });
+
+      res.status(200).json({ message: "Delete Successful" });
+    } else {
+      res.status(400).json({ message: "item not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 });
 
 app.get("/verifyRecruterProfile", async (req, res) => {
@@ -1210,6 +1281,28 @@ app.post("/admin_default_skill", async (req, res) => {
   } else {
     res.status(400).json({ message: "skill allready added" });
   }
+});
+
+app.post("/package", async (req, res) => {
+  var data = await Package.findOne({ name: req.body.name });
+  if (data == null) {
+    await Package({
+      name: req.body.name,
+      suggestname: req.body.suggestname,
+      chat: req.body.chat,
+      amount: req.body.amount,
+      currency: req.body.currency,
+      duration_time: req.body.duration_time,
+    }).save();
+    res.status(200).json({ message: "add successfull" });
+  } else {
+    res.status(400).json({ message: "Allready added" });
+  }
+});
+
+app.get("/package", async (req, res) => {
+  var data = await Package.find();
+  res.status(400).send(data);
 });
 
 module.exports = app;

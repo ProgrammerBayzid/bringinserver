@@ -182,17 +182,16 @@ app.post("/career_preferences", tokenverify, async (req, res) => {
             salaray: req.body.salaray,
           });
           carearpre.save();
-          var profiledata = await Profiledata.findOneAndUpdate(
-            { userid: id },
-            { $push: { careerPreference: carearpre._id } }
-          );
+          var profiledata;
+          profiledata = await Profiledata.findOneAndUpdate({ userid: id },{ $push: { careerPreference: carearpre._id } });
           if (profiledata == null) {
-            await Profiledata({
+            profiledata = await Profiledata({
               userid: id,
               careerPreference: carearpre._id,
-            }).save();
+            });
+            profiledata.save()
           }
-          await Seekerprofile.findOneAndUpdate({_id: id}, {$inc: { "other.carearpre": 1} })
+          await Seekerprofile.findOneAndUpdate({_id: id}, {$inc: { "other.carearpre": 1}, $set: {"other.full_profile": profiledata._id} })
           res.status(200).json({ message: "add successfull" });
         } else {
           res.status(400).json({ message: "allready added" });

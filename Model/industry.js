@@ -38,7 +38,6 @@ const categorySchema  =  Schema(
         }]
         
     },{timestamps: true}
-   
 );
 
 const category2Schema  =  Schema(
