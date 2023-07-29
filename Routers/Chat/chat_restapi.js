@@ -340,6 +340,7 @@ app.get('/who_save_me', tokenverify, async (req, res) => {
             recruiterjob.push(job[index].userid.other.latestjobid)
           }
           res.status(200).send(recruiterjob)
+        
         } else {
           let candidate = [];
           var populate = [
