@@ -11,6 +11,14 @@ const chatSchema  =  Schema(
             ref: "Recruiters_profile"
         },
         date: Date,
+        recruiter_unseen: {
+            type: Number,
+            default: 0
+        },
+        seeker_unseen: {
+            type: Number,
+            default: 0
+        },
         lastmessage: {
             type: "ObjectId",
             ref: "messagelist"

@@ -25,6 +25,7 @@ const clintsiteapi = require("./Routers/ClintSiteApi/clintsiteapi.js");
 const education = require("./Routers/Seeker/education");
 const emailtest = require("./Routers/Emailtest/emailtest");
 const { apps } = require("./Routers/Notification/notification");
+const admin_recriter = require("./Routers/AdminPanel/recruiter")
 
 app.use(express.json());
 app.use(cors());
@@ -55,6 +56,7 @@ app.use(clintsiteapi);
 app.use(education);
 app.use(emailtest);
 app.use(apps);
+app.use(admin_recriter)
 
 app.get("/", (req, res) => {
   res.send(req.headers);

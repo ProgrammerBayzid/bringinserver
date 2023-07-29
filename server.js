@@ -5,7 +5,7 @@ const http = require("http");
 const socketroute = require("./Routers/Chat/chat.io");
 
 mongoose
-  .connect(process.env.MONGODB_URL_TEST)
+  .connect(process.env.MONGODB_URL)
   .then(() => console.log("Connected to Databes"))
   .catch((err) => console.log("connection faild"));
 const server = http.createServer(app);
