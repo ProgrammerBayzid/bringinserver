@@ -199,6 +199,24 @@ app.patch("/verifyRecruterCompny/:_id", async (req, res) => {
   res.send(result);
 });
 
+app.get("/profile_verifys_type", async (req, res) => {
+  const profile_verify_type = req.query.profile_verify_type;
+  const filter = { "other.profile_verify_type": profile_verify_type };
+  var data = await recruiters.find(filter).populate([
+    {
+      path: "companyname",
+      select: "",
+      populate: [
+        // { path: "company", select: "" },
+        { path: "industry", select: "", populate: ["industryid"] },
+        "c_size",
+      ],
+    },
+  ]);
+  res.status(200).json(data);
+  // console.log(filter);
+});
+
 //
 app.get("/profile_verifys", async (req, res) => {
   const profile_verify = req.query.profile_verify;
