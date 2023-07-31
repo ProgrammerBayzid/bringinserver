@@ -1,5 +1,3 @@
-
-
 const { Schema, model } = require("mongoose");
 const jwt = require("jsonwebtoken");
 
@@ -11,87 +9,86 @@ const userSchema = Schema(
     },
     secoundnumber: {
       type: String,
-      default: null
+      default: null,
     },
     fastname: {
       type: String,
-      default: ""
+      default: "",
     },
     lastname: {
       type: String,
-      default: ""
+      default: "",
     },
     gender: {
       type: String,
-      default: ""
+      default: "",
     },
-    experiencedlevel:{
+    experiencedlevel: {
       type: "ObjectId",
-      ref: "Experience"
-      
+      ref: "Experience",
     },
     startedworking: {
       type: Date,
-      default: new Date()
+      default: new Date(),
     },
     deatofbirth: {
       type: Date,
-      default: new Date()
+      default: new Date(),
     },
     other: {
       viewjob: { type: Number, default: 0 },
-      cvsend:{ type: Number, default: 0 },
+      cvsend: { type: Number, default: 0 },
       totalchat: { type: Number, default: 0 },
       savejob: { type: Number, default: 0 },
       carearpre: { type: Number, default: 0 },
       total_step: { type: Number, default: 7 },
       incomplete: { type: Number, default: 5 },
       complete: { type: Number, default: 2 },
-      online: {type : Boolean, default: false},
+      online: { type: Boolean, default: false },
       pushnotification: String,
       full_profile: {
         type: "ObjectId",
         ref: "seeker_profiledata",
-        default: null
+        default: null,
       },
       notification: {
         push_notification: {
           type: Boolean,
-          default: true
+          default: true,
         },
         whatsapp_notification: {
           type: Boolean,
-          default: false
+          default: false,
         },
         sms_notification: {
           type: Boolean,
-          default: false
+          default: false,
         },
         job_recommandation: {
           type: Boolean,
-          default: true
-        }
+          default: true,
+        },
       },
       job_hunting: {
         type: String,
-        default: null
+        default: null,
       },
       more_status: {
         type: String,
-        default: null
+        default: null,
       },
       job_right_now: {
         type: Boolean,
-        default: false
+        default: false,
       },
     },
     email: {
       type: String,
-      default: null
+      default: null,
     },
     image: {
       type: String,
-      default: null
+      default: null,
     },
   },
   { timestamps: true }

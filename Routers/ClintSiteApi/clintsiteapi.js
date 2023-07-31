@@ -87,14 +87,22 @@ app.get("/single_profile/:_id", async (req, res) => {
       {
         path: "careerPreference",
         populate: [
-          { path: "category", select: "-functionarea" },
+          {
+            path: "category",
+            select: "-functionarea",
+            populate: [{ path: "industryid" }],
+          },
           { path: "functionalarea", populate: [{ path: "industryid" }] },
           {
             path: "division",
             populate: { path: "cityid", select: "-divisionid" },
           },
           "jobtype",
-          "salaray",
+
+          {
+            path: "salaray",
+            populate: [{ path: "max_salary" }, { path: "min_salary" }],
+          },
         ],
       },
       { path: "userid", populate: { path: "experiencedlevel" } },
