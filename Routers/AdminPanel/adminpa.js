@@ -1398,13 +1398,19 @@ app.post("/package", async (req, res) => {
       chat: req.body.chat,
       amount: req.body.amount,
       currency: req.body.currency,
-      duration_time: req.body.duration_time,
-    }).save();
-    res.status(200).json({ message: "add successfull" });
-  } else {
-    res.status(400).json({ message: "Allready added" });
-  }
-});
+      duration_time: req.body.duration_time}).save()
+      res.status(200).json({message: "add successfull"})
+   }else{
+    res.status(400).json({message: "Allready added"})
+   }
+})
+
+
+app.get("/package", async (req, res)=>{
+  var data = await Package.find()
+   res.status(400).send(data)
+})
+
 
 app.get("/package", async (req, res) => {
   var data = await Package.find();
