@@ -30,9 +30,10 @@ const upload = multer({ storage: storage });
 app.get("/channellist", tokenverify, async (req, res) => {
   var data;
   if (req.query.seeker == "false") {
-    data = await Chat.find({ seekerid: req.query.userid }).sort({ updatedAt: -1 }).populate([{ path: "seekerid", select: ["other.online", "other.pushnotification", "fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"] }, { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email"], populate: { path: "companyname", populate: { path: "industry" } } }, { path: "lastmessage" }])
+    data = await Chat.find({ seekerid: req.query.userid }).sort({ updatedAt: -1 })
+    .populate([{ path: "seekerid", select: ["other.online", "other.pushnotification", "other.lastfunctionalarea", "other.offlinedate" ,"fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"], populate: {path: "other.lastfunctionalarea"} }, { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email","other.offlinedate"], populate: { path: "companyname", populate: { path: "industry" } } }, { path: "lastmessage" }])
   } else {
-    data = await Chat.find({ recruiterid: req.query.userid }).sort({ updatedAt: -1 }).populate([{ path: "seekerid", select: ["other.online", "other.pushnotification", "fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"] }, { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification","other.premium", "email"], populate: { path: "companyname", populate: { path: "industry" } } }, { path: "lastmessage" }])
+    data = await Chat.find({ recruiterid: req.query.userid }).sort({ updatedAt: -1 }).populate([{ path: "seekerid", select: ["other.online", "other.pushnotification", "other.lastfunctionalarea" , "other.offlinedate" ,"fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"], populate: {path: "other.lastfunctionalarea"} }, { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification","other.premium", "email","other.offlinedate"], populate: { path: "companyname", populate: { path: "industry" } } }, { path: "lastmessage" }])
   }
   res.status(200).send(data)
 
@@ -200,19 +201,13 @@ app.post("/channelcreate", tokenverify, async (req, res) => {
         res.json({ message: "invalid token" });
       } else {
         const _id = authdata._id;
-        var data = await Chat.findOne({ seekerid: req.body.seekerid, recruiterid: req.body.recruiterid }).populate([{ path: "seekerid" }, { path: "recruiterid", populate: { path: "companyname", populate: { path: "industry" } } }, { path: "lastmessage" }])
+        var data = await Chat.findOne({ seekerid: req.body.seekerid, recruiterid: req.body.recruiterid }).populate([{ path: "seekerid", select: ["other.online", "other.pushnotification", "other.lastfunctionalarea", "other.offlinedate" ,"fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"], populate: {path: "other.lastfunctionalarea"} }, { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email"], populate: { path: "companyname", populate: { path: "industry" } } }, { path: "lastmessage" }])
         if (data == null) {
           var channeldata = await Chat({ seekerid: req.body.seekerid, recruiterid: req.body.recruiterid, date: new Date() });
           await channeldata.save();
-          var channelinfo = await Chat.findOne({ _id: channeldata._id }).populate([{ path: "seekerid" }, { path: "recruiterid", populate: { path: "companyname", populate: { path: "industry" } } }, { path: "lastmessage" }])
+          var channelinfo = await Chat.findOne({ _id: channeldata._id }).populate([{ path: "seekerid", select: ["other.online", "other.pushnotification", "other.lastfunctionalarea", "other.offlinedate" ,"fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"], populate: {path: "other.lastfunctionalarea"} }, { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email"], populate: { path: "companyname", populate: { path: "industry" } } }, { path: "lastmessage" }])
           await Recruiters.findOneAndUpdate({ _id: req.body.recruiterid }, { $inc: { "other.total_chat": 1 } })
           await User.findOneAndUpdate({ _id: req.body.seekerid }, { $inc: { "other.totalchat": 1 } })
-          // if(_id == req.body.recruiterid) {
-
-          // }else{
-
-          // }
-
           res.status(200).send(channelinfo)
         } else {
           res.status(200).send(data)

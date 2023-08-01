@@ -43,6 +43,12 @@ const jobpostSchema = Schema(
             type: "ObjectId",
             ref: "Jobtype"
         },
+        job_location: {
+            lat: Schema.Types.Mixed,
+            lon: Schema.Types.Mixed,
+            formet_address: String,
+            city: String
+        },
         remote: Boolean,
         job_status_type: Number,
         job_status: String,

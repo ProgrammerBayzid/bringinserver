@@ -110,6 +110,7 @@ app.post('/job_post', tokenverify, async (req, res) => {
                         skill: req.body.skill,
                         jobtype: req.body.jobtype,
                         remote: req.body.remote,
+                        job_location: req.body.job_location,
                         job_status_type: 1,
                         job_status: "Open",
                         postdate: new Date()
@@ -196,6 +197,7 @@ app.post('/job_post_update', tokenverify, async (req, res) => {
                             skill: req.body.skill,
                             jobtype: req.body.jobtype,
                             remote: req.body.remote,
+                            job_location: req.body.job_location,
                             job_status_type: req.body.job_status_type ?? 1,
                             job_status: req.body.job_status_type == 2 ? "Close" : "Open",
                             postdate: new Date()

@@ -571,7 +571,7 @@ app.patch("/protfolio/:_id", tokenverify, async (req, res) => {
       } else {
         const _id = authdata._id;
         const updateprotfolio = await Protfoliolink.findOneAndUpdate(
-          { userid: _id },
+          {_id: req.params._id ,userid: _id },
           {
             $set: {
               protfoliolink: req.body.protfoliolink,

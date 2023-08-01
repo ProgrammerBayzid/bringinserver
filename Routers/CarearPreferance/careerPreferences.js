@@ -191,7 +191,7 @@ app.post("/career_preferences", tokenverify, async (req, res) => {
             });
             profiledata.save()
           }
-          await Seekerprofile.findOneAndUpdate({_id: id}, {$inc: { "other.carearpre": 1}, $set: {"other.full_profile": profiledata._id} })
+          await Seekerprofile.findOneAndUpdate({_id: id}, {$inc: { "other.carearpre": 1}, $set: {"other.full_profile": profiledata._id, "other.lastfunctionalarea": req.body.functionalarea} })
           res.status(200).json({ message: "add successfull" });
         } else {
           res.status(400).json({ message: "allready added" });
@@ -225,7 +225,7 @@ app.post("/career_preferences_update", tokenverify, async (req, res) => {
         if (data == null) {
           res.status(400).json({ message: "iteam not found" });
         } else {
-
+          await Seekerprofile.findOneAndUpdate({_id: id}, {$set: { "other.lastfunctionalarea": req.body.functionalarea}})
           res.status(200).json({ message: "Update Sucessfull" });
         }
       }
