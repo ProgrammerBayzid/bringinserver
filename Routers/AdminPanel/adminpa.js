@@ -334,6 +334,8 @@ app.patch("/verifyRecruterProfile/:_id", async (req, res) => {
     $set: {
       "other.profile_verify_type": 1,
       "other.company_verify_type": 1,
+      "other.profile_verify": true,
+      "other.company_verify": true,
     },
   };
   const result = await recruiters.findByIdAndUpdate(filter, updateDoc);
@@ -347,6 +349,8 @@ app.patch("/rejectRecruterProfile/:_id", async (req, res) => {
     $set: {
       "other.profile_verify_type": 2,
       "other.company_verify_type": 2,
+      "other.profile_verify": false,
+      "other.company_verify": false,
     },
   };
   const result = await recruiters.findByIdAndUpdate(filter, updateDoc);
@@ -360,6 +364,8 @@ app.patch("/unverifyRecruterProfile/:_id", async (req, res) => {
     $set: {
       "other.profile_verify_type": 0,
       "other.company_verify_type": 0,
+      "other.profile_verify": false,
+      "other.company_verify": false,
     },
   };
   const result = await recruiters.findByIdAndUpdate(filter, updateDoc);
@@ -1398,19 +1404,18 @@ app.post("/package", async (req, res) => {
       chat: req.body.chat,
       amount: req.body.amount,
       currency: req.body.currency,
-      duration_time: req.body.duration_time}).save()
-      res.status(200).json({message: "add successfull"})
-   }else{
-    res.status(400).json({message: "Allready added"})
-   }
-})
+      duration_time: req.body.duration_time,
+    }).save();
+    res.status(200).json({ message: "add successfull" });
+  } else {
+    res.status(400).json({ message: "Allready added" });
+  }
+});
 
-
-app.get("/package", async (req, res)=>{
-  var data = await Package.find()
-   res.status(400).send(data)
-})
-
+app.get("/package", async (req, res) => {
+  var data = await Package.find();
+  res.status(400).send(data);
+});
 
 app.get("/package", async (req, res) => {
   var data = await Package.find();
