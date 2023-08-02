@@ -37,6 +37,11 @@ const chatSchema  =  Schema(
         recruiterblock: {
             type: Boolean,
             default: false
+        },
+        jobid: {
+            type: "ObjectId",
+            default: null,
+            ref: "job_post"
         }
     },{timestamps: true},
    
