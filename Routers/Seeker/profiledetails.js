@@ -11,15 +11,10 @@ const {
   CareerPreference,
   Profiledata,
 } = require("../../Model/Seeker_profile_all_details.js");
-const Seekeruser = require('../../Model/userModel.js')
+const Seekeruser = require("../../Model/userModel.js");
 
 const tokenverify = require("../../MiddleWare/tokenverify.js");
 const jwt = require("jsonwebtoken");
-
-
-
-
-
 
 // about api
 
@@ -30,7 +25,10 @@ app.post("/about", tokenverify, async (req, res) => {
         res.json({ message: "invalid token" });
       } else {
         const _id = authdata._id;
-        const aboutdata = await About.findOneAndUpdate({ userid: _id }, { $set: { about: req.body.about } })
+        const aboutdata = await About.findOneAndUpdate(
+          { userid: _id },
+          { $set: { about: req.body.about } }
+        );
         if (aboutdata == null) {
           const about = await About({
             about: req.body.about,
@@ -38,24 +36,33 @@ app.post("/about", tokenverify, async (req, res) => {
           });
           await about.save();
           console.log(about._id);
-          var profiledata = await Profiledata.findOneAndUpdate({ userid: _id }, { $set: { about: about._id } })
+          var profiledata = await Profiledata.findOneAndUpdate(
+            { userid: _id },
+            { $set: { about: about._id } }
+          );
 
           if (profiledata == null) {
             await Profiledata({
               userid: _id,
-              aboutid: about._id
-            }).save()
+              aboutid: about._id,
+            }).save();
           }
-          await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.incomplete": -1, "other.complete": 1 }, })
+          await Seekeruser.findOneAndUpdate(
+            { _id: _id },
+            { $inc: { "other.incomplete": -1, "other.complete": 1 } }
+          );
           res.status(200).json({ message: "add successfull" });
         } else {
-          console.log(aboutdata._id)
-          var profiledata = await Profiledata.findOneAndUpdate({ userid: _id }, { $set: { about: aboutdata._id } })
+          console.log(aboutdata._id);
+          var profiledata = await Profiledata.findOneAndUpdate(
+            { userid: _id },
+            { $set: { about: aboutdata._id } }
+          );
           if (profiledata == null) {
             await Profiledata({
               userid: _id,
-              about: aboutdata._id
-            }).save()
+              about: aboutdata._id,
+            }).save();
           }
           res.status(200).json({ message: "update successfull" });
         }
@@ -66,10 +73,6 @@ app.post("/about", tokenverify, async (req, res) => {
   }
 });
 
-
-
-
-
 // work exprience api
 
 app.post("/workexperience", tokenverify, async (req, res) => {
@@ -79,7 +82,10 @@ app.post("/workexperience", tokenverify, async (req, res) => {
     } else {
       const _id = authdata._id;
 
-      var workdata = await Workexperience.findOne({ userid: _id, companyname: req.body.companyname })
+      var workdata = await Workexperience.findOne({
+        userid: _id,
+        companyname: req.body.companyname,
+      });
 
       if (workdata == null) {
         const workexperiencedata = await Workexperience({
@@ -97,22 +103,31 @@ app.post("/workexperience", tokenverify, async (req, res) => {
           userid: _id,
         });
         await workexperiencedata.save();
-        var profiledata = await Profiledata.findOneAndUpdate({ userid: _id }, { $push: { workexperience: workexperiencedata._id } })
+        var profiledata = await Profiledata.findOneAndUpdate(
+          { userid: _id },
+          { $push: { workexperience: workexperiencedata._id } }
+        );
         if (profiledata == null) {
           await Profiledata({
             userid: _id,
-            aboutid: workexperiencedata._id
-          }).save()
-          await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.incomplete": -1, "other.complete": 1 } })
-        }else{
-          if(profiledata.workexperience.length == 0){
-            await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.incomplete": -1, "other.complete": 1 } })
+            aboutid: workexperiencedata._id,
+          }).save();
+          await Seekeruser.findOneAndUpdate(
+            { _id: _id },
+            { $inc: { "other.incomplete": -1, "other.complete": 1 } }
+          );
+        } else {
+          if (profiledata.workexperience.length == 0) {
+            await Seekeruser.findOneAndUpdate(
+              { _id: _id },
+              { $inc: { "other.incomplete": -1, "other.complete": 1 } }
+            );
           }
         }
-         
+
         res.status(200).json({ message: "Add Successfull" });
       } else {
-        res.status(400).json({ message: "All ready Added" })
+        res.status(400).json({ message: "All ready Added" });
       }
     }
   });
@@ -126,7 +141,7 @@ app.get("/workexperience", tokenverify, async (req, res) => {
       } else {
         const _id = authdata._id;
         const workexperiencedata = await Workexperience.find({
-          userid: _id
+          userid: _id,
         }).populate(["category", "expertisearea"]);
         res.send(workexperiencedata);
       }
@@ -143,20 +158,28 @@ app.delete("/workexperience", tokenverify, async (req, res) => {
         res.json({ message: "invalid token" });
       } else {
         const user = authdata._id;
-        var data = await Workexperience.findOneAndDelete({ userid: user, _id: req.query.id });
+        var data = await Workexperience.findOneAndDelete({
+          userid: user,
+          _id: req.query.id,
+        });
         //  await Profiledata.findOneAndUpdate({ userid: user }, { $pull: { "workexperience": req.query.id } })
 
         if (data == null) {
           res.status(400).json({ message: "iteam not found" });
         } else {
-          await Profiledata.findOneAndUpdate({ userid: user }, { $pull: { "workexperience": req.query.id } })
-          var workdata = await Workexperience.find({userid: user})
+          await Profiledata.findOneAndUpdate(
+            { userid: user },
+            { $pull: { workexperience: req.query.id } }
+          );
+          var workdata = await Workexperience.find({ userid: user });
           if (workdata.length == 0) {
-            await Seekeruser.findOneAndUpdate({ _id: user }, { $inc: { "other.incomplete": 1, "other.complete": -1 } })
+            await Seekeruser.findOneAndUpdate(
+              { _id: user },
+              { $inc: { "other.incomplete": 1, "other.complete": -1 } }
+            );
           }
           res.status(200).json({ message: "delete successfull" });
         }
-
       }
     });
   } catch (error) {
@@ -201,11 +224,6 @@ app.post("/workexperience_update", tokenverify, async (req, res) => {
   }
 });
 
-
-
-
-
-
 // education api
 
 app.post("/education", tokenverify, async (req, res) => {
@@ -216,7 +234,10 @@ app.post("/education", tokenverify, async (req, res) => {
       } else {
         const _id = authdata._id;
 
-        const edudata = await Education.findOne({ userid: _id, digree: req.body.digree })
+        const edudata = await Education.findOne({
+          userid: _id,
+          digree: req.body.digree,
+        });
         if (edudata == null) {
           const educationdata = await Education({
             institutename: req.body.institutename,
@@ -233,22 +254,31 @@ app.post("/education", tokenverify, async (req, res) => {
             userid: _id,
           });
           educationdata.save();
-          var profiledata = await Profiledata.findOneAndUpdate({ userid: _id }, { $push: { education: educationdata._id } })
+          var profiledata = await Profiledata.findOneAndUpdate(
+            { userid: _id },
+            { $push: { education: educationdata._id } }
+          );
           if (profiledata == null) {
             await Profiledata({
               userid: _id,
-              education: educationdata._id
-            }).save()
-            await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.incomplete": -1, "other.complete": 1 } })
-          }else{
-            if(profiledata.education.length == 0){
-              await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.incomplete": -1, "other.complete": 1 } })
+              education: educationdata._id,
+            }).save();
+            await Seekeruser.findOneAndUpdate(
+              { _id: _id },
+              { $inc: { "other.incomplete": -1, "other.complete": 1 } }
+            );
+          } else {
+            if (profiledata.education.length == 0) {
+              await Seekeruser.findOneAndUpdate(
+                { _id: _id },
+                { $inc: { "other.incomplete": -1, "other.complete": 1 } }
+              );
             }
           }
-          
-          res.status(200).json({ message: "Education Add Successfull" })
+
+          res.status(200).json({ message: "Education Add Successfull" });
         } else {
-          res.status(400).json({ message: "already added" })
+          res.status(400).json({ message: "already added" });
         }
       }
     });
@@ -264,7 +294,9 @@ app.get("/education", tokenverify, async (req, res) => {
         res.json({ message: "invalid token" });
       } else {
         const _id = authdata._id;
-        const singleeducationdata = await Education.find({ userid: _id }).populate([{ path: "digree", select: "-subject" }, "subject"]);
+        const singleeducationdata = await Education.find({
+          userid: _id,
+        }).populate([{ path: "digree", select: "-subject" }, "subject"]);
         res.status(200).send(singleeducationdata);
       }
     });
@@ -282,11 +314,17 @@ app.delete("/education", tokenverify, async (req, res) => {
         const _id = authdata._id;
 
         await Education.findOneAndDelete({ _id: req.query.id });
-        await Profiledata.findOneAndUpdate({ userid: _id }, { $pull: { "education": req.query.id } })
-        var edudata = await Education.find({userid: _id})
-          if (edudata.length == 0) {
-            await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.incomplete": 1, "other.complete": -1 } })
-          }
+        await Profiledata.findOneAndUpdate(
+          { userid: _id },
+          { $pull: { education: req.query.id } }
+        );
+        var edudata = await Education.find({ userid: _id });
+        if (edudata.length == 0) {
+          await Seekeruser.findOneAndUpdate(
+            { _id: _id },
+            { $inc: { "other.incomplete": 1, "other.complete": -1 } }
+          );
+        }
 
         res.status(200).json({ message: "Delete Successfull" });
       }
@@ -328,8 +366,6 @@ app.post("/education_update", tokenverify, async (req, res) => {
         } else {
           res.status(400).json({ message: "not found" });
         }
-
-
       }
     });
   } catch (error) {
@@ -337,27 +373,25 @@ app.post("/education_update", tokenverify, async (req, res) => {
   }
 });
 
-
-
-
-
-
-
 // skill api
-
-
 
 app.post("/default_skill", tokenverify, async (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
       if (err) {
-        res.json({ message: "invalid token" })
+        res.json({ message: "invalid token" });
       } else {
         var id = authdata._id;
-        var skilldata = await DefaultSkill.findOne({ skill: req.body.skill,userid: id })
+        var skilldata = await DefaultSkill.findOne({
+          skill: req.body.skill,
+          userid: id,
+        });
 
         if (skilldata == null) {
-          var skilldata = await DefaultSkill({ skill: req.body.skill , userid: id});
+          var skilldata = await DefaultSkill({
+            skill: req.body.skill,
+            userid: id,
+          });
           skilldata.save();
           // var profiledata = await Profiledata.findOneAndUpdate({ userid: id }, { $push: { skill: skilldata._id } })
           // if (profiledata == null) {
@@ -366,116 +400,129 @@ app.post("/default_skill", tokenverify, async (req, res) => {
           //     skill: skilldata._id
           //   }).save()
           // }
-          res.status(200).json({ message: "skill add successfull data" })
+          res.status(200).json({ message: "skill add successfull data" });
         } else {
-          res.status(400).json({ message: "skill allready added" })
+          res.status(400).json({ message: "skill allready added" });
         }
-
       }
-    })
-
+    });
   } catch (error) {
     res.send(error);
   }
-})
+});
 
 app.post("/seeker_skill", tokenverify, async (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
       if (err) {
-        res.json({ message: "invalid token" })
+        res.json({ message: "invalid token" });
       } else {
         var id = authdata._id;
-        var skilldata = await Skill.findOneAndUpdate({ userid: id }, { $addToSet: { skill: req.body.skill, } })
+        var skilldata = await Skill.findOneAndUpdate(
+          { userid: id },
+          { $addToSet: { skill: req.body.skill } }
+        );
         if (skilldata == null) {
           var skilldata = await Skill({ skill: req.body.skill, userid: id });
           skilldata.save();
-          var profiledata = await Profiledata.findOneAndUpdate({ userid: id }, { $addToSet: { skill: req.body.skill } })
+          var profiledata = await Profiledata.findOneAndUpdate(
+            { userid: id },
+            { $addToSet: { skill: req.body.skill } }
+          );
           if (profiledata == null) {
             await Profiledata({
               userid: id,
-              skill: req.body.skill
-            }).save()
-            await Seekeruser.findOneAndUpdate({ _id: id }, { $inc: { "other.incomplete": -1, "other.complete": 1 } })
-          }else{
-            if(profiledata.skill.length == 0){
-              await Seekeruser.findOneAndUpdate({ _id: id }, { $inc: { "other.incomplete": -1, "other.complete": 1 } })
+              skill: req.body.skill,
+            }).save();
+            await Seekeruser.findOneAndUpdate(
+              { _id: id },
+              { $inc: { "other.incomplete": -1, "other.complete": 1 } }
+            );
+          } else {
+            if (profiledata.skill.length == 0) {
+              await Seekeruser.findOneAndUpdate(
+                { _id: id },
+                { $inc: { "other.incomplete": -1, "other.complete": 1 } }
+              );
             }
           }
-          
-          res.status(200).json({ message: "skill add successfull data" })
+
+          res.status(200).json({ message: "skill add successfull data" });
         } else {
-          var profiledata = await Profiledata.findOneAndUpdate({ userid: id }, { $addToSet: { skill: req.body.skill } })
+          var profiledata = await Profiledata.findOneAndUpdate(
+            { userid: id },
+            { $addToSet: { skill: req.body.skill } }
+          );
           if (profiledata == null) {
             await Profiledata({
               userid: id,
-              skill: req.body.skill
-            }).save()
+              skill: req.body.skill,
+            }).save();
           }
-          res.status(400).json({ message: "skill update" })
+          res.status(400).json({ message: "skill update" });
         }
-
       }
-    })
-
+    });
   } catch (error) {
     res.send(error);
   }
-})
-
+});
 
 app.get("/seeker_skill", tokenverify, async (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
       if (err) {
-        res.json({ message: "invalid token" })
+        res.json({ message: "invalid token" });
       } else {
         var id = authdata._id;
         var defaults = [];
-        var skilldata = await Skill.findOne({ userid: id }).populate("skill")
-        var defaultskill = await DefaultSkill.find({userid: null})
-        var defaultskill2 = await DefaultSkill.find({userid: id})
-        defaults.push(...defaultskill)
-        defaults.push(...defaultskill2)
-        res.status(200).json({ skill: skilldata, default: defaults })
+        var skilldata = await Skill.findOne({ userid: id }).populate("skill");
+        var defaultskill = await DefaultSkill.find({ userid: null });
+        var defaultskill2 = await DefaultSkill.find({ userid: id });
+        defaults.push(...defaultskill);
+        defaults.push(...defaultskill2);
+        res.status(200).json({ skill: skilldata, default: defaults });
       }
-    })
-
+    });
   } catch (error) {
     res.send(error);
   }
-})
-
+});
 
 app.delete("/seeker_skill", tokenverify, async (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
       if (err) {
-        res.json({ message: "invalid token" })
+        res.json({ message: "invalid token" });
       } else {
         var id = authdata._id;
-        var skilldata = await Skill.findOneAndDelete({ userid: id, _id: req.query.id })
+        var skilldata = await Skill.findOneAndDelete({
+          userid: id,
+          _id: req.query.id,
+        });
 
         if (skilldata == null) {
-          res.status(400).json({ message: "iteam not found" })
+          res.status(400).json({ message: "iteam not found" });
         } else {
-          await Profiledata.findOneAndUpdate({ userid: id }, { $pull: { skill: req.query.id } })
-          var skilldata = await Skill.find({userid: id})
+          await Profiledata.findOneAndUpdate(
+            { userid: id },
+            { $pull: { skill: req.query.id } }
+          );
+          var skilldata = await Skill.find({ userid: id });
           if (skilldata.length == 0) {
-            await Seekeruser.findOneAndUpdate({ _id: id }, { $inc: { "other.incomplete": 1, "other.complete": -1 } })
+            await Seekeruser.findOneAndUpdate(
+              { _id: id },
+              { $inc: { "other.incomplete": 1, "other.complete": -1 } }
+            );
           }
-          res.status(200).json({ message: "delete successfull" })
+          res.status(200).json({ message: "delete successfull" });
         }
-
       }
-    })
-
+    });
   } catch (error) {
     res.send(error);
   }
-})
-
-
+});
 
 // protfolio api
 
@@ -487,7 +534,10 @@ app.post("/protfolio", tokenverify, async (req, res) => {
       } else {
         const _id = authdata._id;
 
-        var protfolio = await Protfoliolink.findOne({ userid: _id, protfoliolink: req.body.protfoliolink })
+        var protfolio = await Protfoliolink.findOne({
+          userid: _id,
+          protfoliolink: req.body.protfoliolink,
+        });
 
         if (protfolio == null) {
           const protfoliodata = await Protfoliolink({
@@ -495,23 +545,31 @@ app.post("/protfolio", tokenverify, async (req, res) => {
             userid: _id,
           });
           await protfoliodata.save();
-          var profiledata = await Profiledata.findOneAndUpdate({ userid: _id }, { $push: { protfoliolink: protfoliodata._id } })
+          var profiledata = await Profiledata.findOneAndUpdate(
+            { userid: _id },
+            { $push: { protfoliolink: protfoliodata._id } }
+          );
           if (profiledata == null) {
             await Profiledata({
               userid: _id,
-              protfoliolink: protfoliodata._id
-            }).save()
-            await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.incomplete": -1, "other.complete": 1 } })
-          }else{
-            if(profiledata.protfoliolink.length == 0){
-              await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.incomplete": -1, "other.complete": 1 } })
+              protfoliolink: protfoliodata._id,
+            }).save();
+            await Seekeruser.findOneAndUpdate(
+              { _id: _id },
+              { $inc: { "other.incomplete": -1, "other.complete": 1 } }
+            );
+          } else {
+            if (profiledata.protfoliolink.length == 0) {
+              await Seekeruser.findOneAndUpdate(
+                { _id: _id },
+                { $inc: { "other.incomplete": -1, "other.complete": 1 } }
+              );
             }
           }
-          
-          
-          res.status(200).json(profiledata)
+
+          res.status(200).json(profiledata);
         } else {
-          res.status(400).json({ message: "allready added" })
+          res.status(400).json({ message: "allready added" });
         }
       }
     });
@@ -544,18 +602,26 @@ app.delete("/protfolio", tokenverify, async (req, res) => {
       } else {
         const _id = authdata._id;
 
-        const deleteData = await Protfoliolink.findOneAndDelete({ userid: _id, _id: req.query.id });
+        const deleteData = await Protfoliolink.findOneAndDelete({
+          userid: _id,
+          _id: req.query.id,
+        });
 
         if (deleteData == null) {
-          res.status(400).json({ message: "iteam not found" })
+          res.status(400).json({ message: "iteam not found" });
         } else {
-          await Profiledata.findOneAndUpdate({ userid: _id }, { $pull: { protfoliolink: req.query.id } })
-          var skilldata = await Protfoliolink.find({userid: _id})
+          await Profiledata.findOneAndUpdate(
+            { userid: _id },
+            { $pull: { protfoliolink: req.query.id } }
+          );
+          var skilldata = await Protfoliolink.find({ userid: _id });
           if (skilldata.length == 0) {
-            await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.incomplete": 1, "other.complete": -1 } })
+            await Seekeruser.findOneAndUpdate(
+              { _id: _id },
+              { $inc: { "other.incomplete": 1, "other.complete": -1 } }
+            );
           }
-          res.status(200).json({ message: "delete successfull" })
-
+          res.status(200).json({ message: "delete successfull" });
         }
       }
     });
@@ -563,6 +629,7 @@ app.delete("/protfolio", tokenverify, async (req, res) => {
     res.send(error);
   }
 });
+
 app.patch("/protfolio/:_id", tokenverify, async (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
@@ -590,9 +657,7 @@ app.patch("/protfolio/:_id", tokenverify, async (req, res) => {
   }
 });
 
-
 // careerpreference api
-
 
 // get profile data
 
@@ -604,32 +669,50 @@ app.get("/profiledetails", tokenverify, async (req, res) => {
       } else {
         const _id = authdata._id;
 
-        var data = await Profiledata.findOne({ userid: _id }).populate(
-          [
-            { path: "workexperience", populate: [{ path: "category", select: "-functionarea" }, "expertisearea"] },
-            { path: "education", populate: [{ path: "digree", select: "-subject", populate: { path: "education", select: "-digree" } }, "subject"] },
-            "skill",
-            "protfoliolink",
-            "about",
-            {
-              path: "careerPreference", populate: [
-              { path: "category", select: "-functionarea" }, "functionalarea", { path: "division", populate: { path: "cityid", select: "-divisionid" } }, "jobtype",
+        var data = await Profiledata.findOne({ userid: _id }).populate([
+          {
+            path: "workexperience",
+            populate: [
+              { path: "category", select: "-functionarea" },
+              "expertisearea",
+            ],
+          },
+          {
+            path: "education",
+            populate: [
+              {
+                path: "digree",
+                select: "-subject",
+                populate: { path: "education", select: "-digree" },
+              },
+              "subject",
+            ],
+          },
+          "skill",
+          "protfoliolink",
+          "about",
+          {
+            path: "careerPreference",
+            populate: [
+              { path: "category", select: "-functionarea" },
+              "functionalarea",
+              {
+                path: "division",
+                populate: { path: "cityid", select: "-divisionid" },
+              },
+              "jobtype",
               { path: "salaray.min_salary", select: "-other_salary" },
               { path: "salaray.max_salary", select: "-other_salary" },
-            ]
-            },
-            { path: "userid", populate: { path: "experiencedlevel" } }
-          ]
-        );
-        res.status(200).send(data)
+            ],
+          },
+          { path: "userid", populate: { path: "experiencedlevel" } },
+        ]);
+        res.status(200).send(data);
       }
     });
   } catch (error) {
     res.send(error);
   }
-
-
-
 });
 
 module.exports = app;

@@ -50,7 +50,18 @@ const transportar = nodemailer.createTransport({
 // repoted candidate get
 app.get("/candidate_report", async (req, res) => {
   try {
-    var data = await candidateReport.find().populate(["candidateid"]);
+    var data = await candidateReport.find().populate([
+      {
+        path: "candidateid",
+        select: "",
+        populate: [
+          // { path: "company", select: "" },
+          // { path: "userid", select: "" },
+          "experiencedlevel",
+          // "jobtype",
+        ],
+      },
+    ]);
     res.status(200).json(data);
   } catch (error) {
     res.status(400).send(error);
@@ -60,9 +71,18 @@ app.get("/candidate_report", async (req, res) => {
 app.get("/candidate_report/:id", async (req, res) => {
   const id = req.params.id;
   const query = { _id: id };
-  const candidate = await candidateReport
-    .findOne(query)
-    .populate("candidateid");
+  const candidate = await candidateReport.findOne(query).populate([
+    {
+      path: "candidateid",
+      select: "",
+      populate: [
+        // { path: "company", select: "" },
+        // { path: "userid", select: "" },
+        "experiencedlevel",
+        // "jobtype",
+      ],
+    },
+  ]);
   res.send(candidate);
 });
 
@@ -74,11 +94,26 @@ app.get("/job_report", async (req, res) => {
         path: "jobid",
         select: "",
         populate: [
-          { path: "company", select: "" },
+          {
+            path: "company",
+            select: "",
+            populate: [
+              {
+                path: "industry",
+                select: "",
+                populate: ["industryid"],
+              },
+            ],
+          },
           { path: "userid", select: "" },
           "education",
           "jobtype",
         ],
+      },
+      {
+        path: "userid",
+        select: "",
+        populate: [],
       },
     ]);
     res.status(200).json(data);
@@ -108,7 +143,44 @@ app.get("/jobreportbyseeker", async (req, res) => {
   const seeker = req.query.userid;
   const query = { userid: seeker };
   console.log(query);
-  const date = await Profiledata.findOne(query);
+  var populate2 = [
+    {
+      path: "workexperience",
+      populate: [
+        { path: "category", select: "-functionarea" },
+        "expertisearea",
+      ],
+    },
+    {
+      path: "education",
+      populate: [
+        {
+          path: "digree",
+          select: "-subject",
+          populate: { path: "education", select: "-digree" },
+        },
+        "subject",
+      ],
+    },
+    "skill",
+    "protfoliolink",
+    "about",
+    {
+      path: "careerPreference",
+      populate: [
+        { path: "salaray", populate: ["max_salary", "min_salary"] },
+        { path: "category", select: "-functionarea" },
+        { path: "functionalarea", populate: [{ path: "industryid" }] },
+        {
+          path: "division",
+          populate: { path: "cityid", select: "-divisionid" },
+        },
+        "jobtype",
+      ],
+    },
+    { path: "userid", populate: { path: "experiencedlevel" } },
+  ];
+  const date = await Profiledata.findOne(query).populate(populate2);
   res.send(date);
 });
 
@@ -219,8 +291,8 @@ app.get("/profile_verifys_type", async (req, res) => {
 
 //
 app.get("/profile_verifys", async (req, res) => {
-  const profile_verify = req.query.profile_verify;
-  const filter = { "other.profile_verify": profile_verify };
+  const profile_verify_type = req.query.profile_verify_type;
+  const filter = { "other.profile_verify_type": profile_verify_type };
   var data = await recruiters.find(filter).populate([
     {
       path: "companyname",
@@ -258,9 +330,10 @@ app.get("/profile_varifys/:id", async (req, res) => {
 app.patch("/verifyRecruterProfile/:_id", async (req, res) => {
   const id = req.params._id;
   const filter = { _id: id };
-  // const options = { upsert: true };
   const updateDoc = {
     $set: {
+      "other.profile_verify_type": 1,
+      "other.company_verify_type": 1,
       "other.profile_verify": true,
       "other.company_verify": true,
     },
@@ -274,8 +347,10 @@ app.patch("/rejectRecruterProfile/:_id", async (req, res) => {
   // const options = { upsert: true };
   const updateDoc = {
     $set: {
-      "other.profile_verify": "rejact",
-      "other.company_verify": "rejact",
+      "other.profile_verify_type": 2,
+      "other.company_verify_type": 2,
+      "other.profile_verify": false,
+      "other.company_verify": false,
     },
   };
   const result = await recruiters.findByIdAndUpdate(filter, updateDoc);
@@ -287,6 +362,8 @@ app.patch("/unverifyRecruterProfile/:_id", async (req, res) => {
   // const options = { upsert: true };
   const updateDoc = {
     $set: {
+      "other.profile_verify_type": 0,
+      "other.company_verify_type": 0,
       "other.profile_verify": false,
       "other.company_verify": false,
     },
@@ -323,12 +400,29 @@ app.delete("/rejectRecruterProfiledelete/:id", async (req, res) => {
     var data = await recruiters.findOneAndDelete({
       _id: req.params.id,
     });
-    if (data !== null) {
+    if (data == null) {
       // Delete from ProfileVerify collection
       await ProfileVerify.findOneAndDelete({ ProfileVerify: data._id });
 
       // Delete from CompanyVerify collection
       await CompanyVerify.findOneAndDelete({ CompanyVerify: data._id });
+
+      res.status(200).json({ message: "Delete Successful" });
+    } else {
+      res.status(400).json({ message: "item not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+app.delete("/seekerProfiledelete/:id", async (req, res) => {
+  try {
+    var data = await Profiledata.findOneAndDelete({
+      _id: req.params.id,
+    });
+    if (data == null) {
+      // Delete from ProfileVerify collection
+      await User.findOneAndDelete({ User: data._id });
 
       res.status(200).json({ message: "Delete Successful" });
     } else {
@@ -1310,19 +1404,18 @@ app.post("/package", async (req, res) => {
       chat: req.body.chat,
       amount: req.body.amount,
       currency: req.body.currency,
-      duration_time: req.body.duration_time}).save()
-      res.status(200).json({message: "add successfull"})
-   }else{
-    res.status(400).json({message: "Allready added"})
-   }
-})
+      duration_time: req.body.duration_time,
+    }).save();
+    res.status(200).json({ message: "add successfull" });
+  } else {
+    res.status(400).json({ message: "Allready added" });
+  }
+});
 
-
-app.get("/package", async (req, res)=>{
-  var data = await Package.find()
-   res.status(400).send(data)
-})
-
+app.get("/package", async (req, res) => {
+  var data = await Package.find();
+  res.status(400).send(data);
+});
 
 app.get("/package", async (req, res) => {
   var data = await Package.find();
