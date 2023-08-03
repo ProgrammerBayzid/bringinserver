@@ -42,6 +42,11 @@ const chatSchema  =  Schema(
             type: "ObjectId",
             default: null,
             ref: "job_post"
+        },
+        candidate_fullprofile: {
+            type: "ObjectId",
+            default: null,
+            ref: "seeker_profiledata"
         }
     },{timestamps: true},
    

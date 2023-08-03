@@ -29,7 +29,6 @@ const jobpostSchema = Schema(
                 type: "ObjectId",
                 ref: "Salary"
             }
-            
         },
         company: {
           type: "ObjectId",
@@ -53,9 +52,7 @@ const jobpostSchema = Schema(
         job_status_type: Number,
         job_status: String,
         postdate: Date
-
     },{timestamps: true}
-
 );
 
 

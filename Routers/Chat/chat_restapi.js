@@ -203,7 +203,7 @@ app.post("/channelcreate", tokenverify, async (req, res) => {
         const _id = authdata._id;
         var data = await Chat.findOne({ seekerid: req.body.seekerid, recruiterid: req.body.recruiterid }).populate([{ path: "seekerid", select: ["other.online", "other.pushnotification", "other.lastfunctionalarea", "other.offlinedate" ,"fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"], populate: {path: "other.lastfunctionalarea"} }, { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email"], populate: { path: "companyname", populate: { path: "industry" } } }, { path: "lastmessage" }])
         if (data == null) {
-          var channeldata = await Chat({ seekerid: req.body.seekerid, recruiterid: req.body.recruiterid, date: new Date() , jobid: req.body.jobid});
+          var channeldata = await Chat({seekerid: req.body.seekerid, recruiterid: req.body.recruiterid, date: new Date() , jobid: req.body.jobid, candidate_fullprofile: req.body.candidate_fullprofile});
           await channeldata.save();
           var channelinfo = await Chat.findOne({ _id: channeldata._id }).populate([{ path: "seekerid", select: ["other.online", "other.pushnotification", "other.lastfunctionalarea", "other.offlinedate" ,"fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"], populate: {path: "other.lastfunctionalarea"} }, { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email"], populate: { path: "companyname", populate: { path: "industry" } } }, { path: "lastmessage" }])
           await Recruiters.findOneAndUpdate({ _id: req.body.recruiterid }, { $inc: { "other.total_chat": 1 } })
@@ -212,7 +212,6 @@ app.post("/channelcreate", tokenverify, async (req, res) => {
         } else {
           res.status(200).send(data)
         }
-
       }
     });
   } catch (error) {
