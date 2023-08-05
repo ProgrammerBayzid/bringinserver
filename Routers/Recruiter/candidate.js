@@ -10,6 +10,7 @@ const candidatesave = require("../../Model/Recruiter/Candidate_Save/candidate_sa
 const candidateReport = require("../../Model/Recruiter/Candidate_Report/candidate_report");
 const { Profiledata } = require("../../Model/Seeker_profile_all_details.js");
 const candidateview = require("../../Model/Recruiter/Candidate_View/candidate_view")
+const { Chat, Message } = require("../../Model/Chat/chat")
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads");
@@ -594,6 +595,10 @@ app.post("/candidate_view" , tokenverify, async (req, res) => {
             { _id: _id },
             { $inc: { "other.candidate_view": 1 } }
           );
+          var chatchannel = await Chat.findOneAndUpdate({recruiterid: _id, "who_view_me.title": "Who viewed me"}, {$push : {recruiterview:req.body.candidate_id}, $inc: {totalview: 1, newview: 1}})
+                   if(chatchannel == null){
+                    await Chat({type: 3, recruiterid: _id, seekerid: null, who_view_me: {title: "Who viewed me", totalview: 1,newview: 1, recruiterview:[req.body.candidate_id],seekerviewid: []}}).save()
+                   } 
           res.status(200).json({ message: "Candidate view successfully" });
         } else {
           

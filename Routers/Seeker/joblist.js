@@ -53,7 +53,7 @@ app.get("/seeker_expertise", tokenverify, async (req, res) => {
 
 function salaryfilter(filter, careardata) {
     return careardata.filter((data) => {
-        // console.log(filter.salary.max_salary.salary <= data.salaray.max_salary.salary)
+      
         if (data.salaray.min_salary.type == 1  && data.salaray.max_salary.type == 1) {
             if(data.salaray.min_salary.salary <= filter.salary.min_salary.salary &&  filter.salary.max_salary.salary <= data.salaray.max_salary.salary){
                 return true;
@@ -74,7 +74,8 @@ function salaryfilter(filter, careardata) {
 
 function locationfilter(filter, careardata) {
     return careardata.filter((data) => {
-        if ((new RegExp(data.division.cityid.name.toLowerCase())).test(filter.company.c_location.formet_address.toLowerCase()) == true) {
+        
+        if ((new RegExp(data.division.cityid.name.toLowerCase())).test(filter.job_location.formet_address.toLowerCase()) == true || (new RegExp(data.division.divisionname.toLowerCase())).test(filter.job_location.formet_address.toLowerCase()) == true) {
             return true;
         } else {
             return false;
@@ -127,7 +128,7 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
                         }
                     }));
                     // .exec().then((data) => data.filter((filterdata) => filterdata.userid.other.profile_verify == true &&  filterdata.company != null && filterdata.expertice_area != null && filterdata.salary != null && filterdata.jobtype != null))
-
+                    
                     res.status(200).send(company)
                 } else {
                     var company = await JobPost.find({expertice_area: req.query.functionalarea }).populate(populate).then((data) => data.filter((filterdata) => {
@@ -149,6 +150,7 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
 })
 
 
+
 app.get("/job_search", tokenverify, async (req, res) => {
     try {
         jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
@@ -157,16 +159,16 @@ app.get("/job_search", tokenverify, async (req, res) => {
             } else {
                 const _id = authdata._id;
                 var term = new RegExp(req.query.city, 'i');
-                var company = await JobPost.find({ job_title: { $regex: req.query.search, $options: "i" } }).populate(
+                var company = await JobPost.find({ job_title: { $regex: req.query.search, $options: "i" }, $or: [{"job_location.formet_address": {$regex: term}}, {"job_location.city": {$regex: term}}] }).populate(
                     [{path: "userid"},
                     "expertice_area",
                     "experience",
                     "education",
                     { path: "salary.min_salary", select: "-other_salary" },
                     { path: "salary.max_salary", select: "-other_salary" },
-                    { path: "company", match:  { "c_location.formet_address": { $regex: term} }, populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
+                    { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
                     "skill",
-                    "jobtype"]).then((data) => data.filter((filterdata) => filterdata.userid.other.profile_verify== true &&  filterdata.company != null))
+                    "jobtype"]).then((data) => data.filter((filterdata) => filterdata.userid.other.profile_verify== true))
                 res.status(200).send(company);
 // req.query.city ??
             }
@@ -386,6 +388,10 @@ app.post("/view_job_count", tokenverify, async (req, res) => {
                 if (viewjobdata == null) {
                     await ViewJob({ jobid: req.body.jobid, userid: _id, jobpost_userid: req.body.jobpost_userid }).save();
                     await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.viewjob": 1 } })
+                   var chatchannel = await Chat.findOneAndUpdate({seekerid: _id, "who_view_me.title": "Who viewed me"}, {$push : {seekerviewid: req.body.jobpost_userid}, $inc: {totalview: 1, newview: 1}})
+                   if(chatchannel == null){
+                    await Chat({type: 3, seekerid: _id, recruiterid: null, who_view_me: {title: "Who viewed me", totalview: 1,newview: 1, seekerviewid:[req.body.jobpost_userid],recruiterview: []}}).save()
+                   } 
                 }
                 res.status(200).json({ message: "successfull view" })
             }
