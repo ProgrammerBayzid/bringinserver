@@ -393,13 +393,6 @@ app.post("/default_skill", tokenverify, async (req, res) => {
             userid: id,
           });
           skilldata.save();
-          // var profiledata = await Profiledata.findOneAndUpdate({ userid: id }, { $push: { skill: skilldata._id } })
-          // if (profiledata == null) {
-          //   await Profiledata({
-          //     userid: id,
-          //     skill: skilldata._id
-          //   }).save()
-          // }
           res.status(200).json({ message: "skill add successfull data" });
         } else {
           res.status(400).json({ message: "skill allready added" });
@@ -481,6 +474,7 @@ app.get("/seeker_skill", tokenverify, async (req, res) => {
         var defaultskill2 = await DefaultSkill.find({ userid: id });
         defaults.push(...defaultskill);
         defaults.push(...defaultskill2);
+        console.log(defaultskill)
         res.status(200).json({ skill: skilldata, default: defaults });
       }
     });

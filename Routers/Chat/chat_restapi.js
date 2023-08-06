@@ -115,7 +115,7 @@ app.get("/channellist", tokenverify, async (req, res) => {
   ];
 
   if (req.query.seeker == "false") {
-    data = await Chat.find({ $or: [{seekerid: req.query.userid},{recruiterid: null}] }).sort({ updatedAt: -1 })
+    data = await Chat.find({ seekerid: req.query.userid, $or: [{seekerid: req.query.userid},{recruiterid: null}] }).sort({ updatedAt: -1 })
       .populate([
         { path: "jobid", populate: populate, select: "-userid" },
         { path: "candidate_fullprofile", populate: populate2 },
@@ -131,7 +131,7 @@ app.get("/channellist", tokenverify, async (req, res) => {
         }}
       ])
   } else {
-    data = await Chat.find({ $or: [{recruiterid: req.query.userid},{seekerid: null}] }).sort({ updatedAt: -1 }).populate([
+    data = await Chat.find({ recruiterid: req.query.userid, $or: [{recruiterid: req.query.userid},{seekerid: null}] }).sort({ updatedAt: -1 }).populate([
       { path: "jobid", populate: populate, select: "-userid" },
       { path: "candidate_fullprofile", populate: populate2 },
       { path: "seekerid", select: ["other.online", "other.pushnotification", "other.lastfunctionalarea", "other.offlinedate", "fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"], populate: { path: "other.lastfunctionalarea" } },

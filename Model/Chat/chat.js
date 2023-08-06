@@ -35,6 +35,10 @@ const chatSchema  =  Schema(
             ref: "Recruiters_profile"
         },
         date: Date,
+        greating: {
+            type: Number,
+            default: 0
+        },
         bring_assis: {
             title: String,
             message1: String,

@@ -32,6 +32,12 @@ async function singlemessage(message) {
 
 }
 
+async function greatingupdate(message) {
+    await Chat.findOneAndUpdate({ _id: message.channelid }, {
+        $set: { greating: 1 },
+    })
+}
+
 function seekerincrement(message) {
     if (message.message.user.customProperties['recruiter'] == false && message.message.customProperties['seen'] == false) {
         return 1;
@@ -116,6 +122,13 @@ async function SocketRoute(io) {
             io.to(message.channelid).emit("singlemsg", message)
         })
 
+        // greating message
+        socket.on("greating", async (message) =>{
+            Promise.all([singlemessage(message),greatingupdate(message)])
+            io.to(message.channelid).emit("singlemsg", message)
+        })
+
+
         // socket.on('req_msg_update', async (data) => {
         //     console.log(data)
         //     await Message.findOneAndUpdate({ _id: data.msgid }, {
@@ -136,6 +149,7 @@ async function SocketRoute(io) {
             // io.to(filedata.channelid).emit("singlemsg", data)
             // single_msg_notifiation(filedata.channelid, filedata.message.user.customProperties)
         })
+
 
         
         // block user
