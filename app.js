@@ -59,7 +59,9 @@ app.use(apps);
 app.use(admin_recriter)
 
 app.get("/", (req, res) => {
-  res.send(req.headers);
+  let d = new Date();
+  console.log(d.getTime())
+  res.send(d);
 });
 
 module.exports = app;

@@ -393,13 +393,6 @@ app.post("/default_skill", tokenverify, async (req, res) => {
             userid: id,
           });
           skilldata.save();
-          // var profiledata = await Profiledata.findOneAndUpdate({ userid: id }, { $push: { skill: skilldata._id } })
-          // if (profiledata == null) {
-          //   await Profiledata({
-          //     userid: id,
-          //     skill: skilldata._id
-          //   }).save()
-          // }
           res.status(200).json({ message: "skill add successfull data" });
         } else {
           res.status(400).json({ message: "skill allready added" });
@@ -523,6 +516,25 @@ app.delete("/seeker_skill", tokenverify, async (req, res) => {
     res.send(error);
   }
 });
+app.delete("/default_skill", tokenverify, async (req, res) => {
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        var id = authdata._id;
+        var skilldata = await DefaultSkill.findOneAndDelete({ userid: id,_id: req.query.id});
+        if (skilldata == null) {
+          res.status(400).json({ message: "iteam not found" });
+        } else {
+          res.status(200).json({ message: "delete successfull" });
+        }
+      }
+    });
+  } catch (error) {
+    res.send(error);
+  }
+});
 
 // protfolio api
 
@@ -638,7 +650,7 @@ app.patch("/protfolio/:_id", tokenverify, async (req, res) => {
       } else {
         const _id = authdata._id;
         const updateprotfolio = await Protfoliolink.findOneAndUpdate(
-          { userid: _id },
+          {_id: req.params._id ,userid: _id },
           {
             $set: {
               protfoliolink: req.body.protfoliolink,

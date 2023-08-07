@@ -66,10 +66,18 @@ const recruitersSchema = Schema(
         type: Number,
         default: 0,
       },
+      candidate_view: {
+        type: Number,
+        default: 0
+      },
       total_step: { type: Number, default: 6 },
       incomplete: { type: Number, default: 1 },
       complete: { type: Number, default: 5 },
       online: { type: Boolean, default: false },
+      offlinedate:{
+        type: Number,
+        default: new Date().getTime()
+      },
       pushnotification: String,
       notification: {
         push_notification: {

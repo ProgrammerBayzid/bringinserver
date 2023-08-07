@@ -10,6 +10,9 @@ const RecruiterFunctionarea = require("../../Model/Recruiter/Recruiter_Functiona
 const {Functionarea} = require("../../Model/industry.js")
 const {notificaton_send_by_job} = require("../../Routers/Notification/notification")
 const Recruiters = require("../../Model/Recruiter/recruiters");
+const {
+    DefaultSkill,
+  } = require("../../Model/Seeker_profile_all_details.js");
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, "uploads");
@@ -55,13 +58,16 @@ app.get("/skill", tokenverify, async (req, res) => {
                 res.json({ message: "invalid token" })
             } else {
                 var id = authdata._id;
-                var skilldata = await Skill.find({ userid: id })
-                var data = await Skill.find().select("-userid");
-
-                res.status(200).json({ userskill: skilldata, defaultskill: data })
-
-
-
+                // var skilldata = await Skill.find({ userid: id })
+                // var data = await Skill.find().select("-userid");
+                var defaults = [];
+                var skilldata = await Skill.findOne({ userid: id }).populate("skill");
+                var defaultskill = await DefaultSkill.find({ userid: null });
+                var defaultskill2 = await DefaultSkill.find({ userid: id });
+                defaults.push(...defaultskill);
+                defaults.push(...defaultskill2);
+                console.log(defaults)
+                res.status(200).json({ userskill: skilldata, defaultskill: defaults })
             }
         })
 
@@ -110,6 +116,7 @@ app.post('/job_post', tokenverify, async (req, res) => {
                         skill: req.body.skill,
                         jobtype: req.body.jobtype,
                         remote: req.body.remote,
+                        job_location: req.body.job_location,
                         job_status_type: 1,
                         job_status: "Open",
                         postdate: new Date()
@@ -196,6 +203,7 @@ app.post('/job_post_update', tokenverify, async (req, res) => {
                             skill: req.body.skill,
                             jobtype: req.body.jobtype,
                             remote: req.body.remote,
+                            job_location: req.body.job_location,
                             job_status_type: req.body.job_status_type ?? 1,
                             job_status: req.body.job_status_type == 2 ? "Close" : "Open",
                             postdate: new Date()
