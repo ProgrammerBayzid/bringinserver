@@ -595,9 +595,9 @@ app.post("/candidate_view" , tokenverify, async (req, res) => {
             { _id: _id },
             { $inc: { "other.candidate_view": 1 } }
           );
-          var chatchannel = await Chat.findOneAndUpdate({recruiterid: _id, "who_view_me.title": "Who viewed me"}, {$push : {recruiterview:req.body.candidate_id}, $inc: {totalview: 1, newview: 1}})
+          var chatchannel = await Chat.findOneAndUpdate({seekerid: req.body.candidate_id, "who_view_me.title": "Who viewed me"}, {$set : {"who_view_me.seekerviewid":_id}, $inc: {"who_view_me.totalview": 1, "who_view_me.newview": 1}})
                    if(chatchannel == null){
-                    await Chat({type: 3, recruiterid: _id, seekerid: null, who_view_me: {title: "Who viewed me", totalview: 1,newview: 1, recruiterview:[req.body.candidate_id],seekerviewid: []}}).save()
+                    await Chat({type: 3, seekerid: req.body.candidate_id, recruiterid: null, who_view_me: {title: "Who viewed me", totalview: 1,newview: 1, seekerviewid:_id,recruiterview: null}}).save()
                    } 
           res.status(200).json({ message: "Candidate view successfully" });
         } else {

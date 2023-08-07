@@ -474,7 +474,6 @@ app.get("/seeker_skill", tokenverify, async (req, res) => {
         var defaultskill2 = await DefaultSkill.find({ userid: id });
         defaults.push(...defaultskill);
         defaults.push(...defaultskill2);
-        console.log(defaultskill)
         res.status(200).json({ skill: skilldata, default: defaults });
       }
     });
@@ -509,6 +508,25 @@ app.delete("/seeker_skill", tokenverify, async (req, res) => {
               { $inc: { "other.incomplete": 1, "other.complete": -1 } }
             );
           }
+          res.status(200).json({ message: "delete successfull" });
+        }
+      }
+    });
+  } catch (error) {
+    res.send(error);
+  }
+});
+app.delete("/default_skill", tokenverify, async (req, res) => {
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        var id = authdata._id;
+        var skilldata = await DefaultSkill.findOneAndDelete({ userid: id,_id: req.query.id});
+        if (skilldata == null) {
+          res.status(400).json({ message: "iteam not found" });
+        } else {
           res.status(200).json({ message: "delete successfull" });
         }
       }

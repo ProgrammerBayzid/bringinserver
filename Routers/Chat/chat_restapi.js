@@ -62,7 +62,6 @@ app.get("/whoviewme_reset", tokenverify, async (req, res)=> {
         res.json({ message: "invalid token" });
       } else {
         const _id = authdata._id;
-
         if(req.query.isrecruiter == "false") {
           await Chat.findOneAndUpdate({seekerid: _id, "who_view_me.title": "Who viewed me"}, {$set : { "who_view_me.newview": 0}})
           res.status(200).json({message: "date update"})
@@ -70,7 +69,6 @@ app.get("/whoviewme_reset", tokenverify, async (req, res)=> {
           await Chat.findOneAndUpdate({recruiterid: _id, "who_view_me.title": "Who viewed me"}, {$set : { "who_view_me.newview": 0}})
           res.status(200).json({message: "date update"})
         }
-        
       }
     });
   } catch (error) {
@@ -123,12 +121,8 @@ app.get("/channellist", tokenverify, async (req, res) => {
         { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email", "other.offlinedate"], populate: { path: "companyname", populate: { path: "industry" } } },
         { path: "lastmessage" },
         {path: "bring_assis.bringlastmessage"},
-        {path: "who_view_me.seekerviewid",options: {
-          limit: 1
-        }},
-        {path: "who_view_me.recruiterview",options: {
-          limit: 1
-        }}
+        {path: "who_view_me.seekerviewid"},
+        {path: "who_view_me.recruiterview"}
       ])
   } else {
     data = await Chat.find({ recruiterid: req.query.userid, $or: [{recruiterid: req.query.userid},{seekerid: null}] }).sort({ updatedAt: -1 }).populate([
@@ -137,11 +131,9 @@ app.get("/channellist", tokenverify, async (req, res) => {
       { path: "seekerid", select: ["other.online", "other.pushnotification", "other.lastfunctionalarea", "other.offlinedate", "fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"], populate: { path: "other.lastfunctionalarea" } },
       { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email", "other.offlinedate"], populate: { path: "companyname", populate: { path: "industry" } } },
       { path: "lastmessage" },{path: "bring_assis.bringlastmessage"},{path: "who_view_me.seekerviewid",options: {
-        limit: 1
+
       }},
-      {path: "who_view_me.recruiterview",options: {
-        limit: 1
-      }, select: ["fastname", "lastname"]}
+      {path: "who_view_me.recruiterview", select: ["fastname", "lastname"]}
 
     ])
       

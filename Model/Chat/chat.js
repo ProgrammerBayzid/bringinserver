@@ -13,14 +13,14 @@ const chatSchema  =  Schema(
                 type: Number,
                 default: 0
             },
-            seekerviewid: [{
+            seekerviewid: {
                 type: "ObjectId",
                 ref: "Recruiters_profile"
-            }],
-            recruiterview: [{
+            },
+            recruiterview: {
                 type: "ObjectId",
                 ref: "User"
-            }]
+            }
         },
         type: {
             type: Number,

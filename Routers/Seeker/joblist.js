@@ -383,14 +383,13 @@ app.post("/view_job_count", tokenverify, async (req, res) => {
                 res.json({ message: "invalid token" })
             } else {
                 const _id = authdata._id;
-
                 var viewjobdata = await ViewJob.findOne({ jobid: req.body.jobid, userid: _id })
                 if (viewjobdata == null) {
                     await ViewJob({ jobid: req.body.jobid, userid: _id, jobpost_userid: req.body.jobpost_userid }).save();
                     await Seekeruser.findOneAndUpdate({ _id: _id }, { $inc: { "other.viewjob": 1 } })
-                   var chatchannel = await Chat.findOneAndUpdate({seekerid: _id, "who_view_me.title": "Who viewed me"}, {$push : {seekerviewid: req.body.jobpost_userid}, $inc: {totalview: 1, newview: 1}})
+                   var chatchannel = await Chat.findOneAndUpdate({recruiterid: req.body.jobpost_userid, "who_view_me.title": "Who viewed me"}, {$set : {"who_view_me.recruiterview": _id}, $inc: {"who_view_me.totalview": 1, "who_view_me.newview": 1}})
                    if(chatchannel == null){
-                    await Chat({type: 3, seekerid: _id, recruiterid: null, who_view_me: {title: "Who viewed me", totalview: 1,newview: 1, seekerviewid:[req.body.jobpost_userid],recruiterview: []}}).save()
+                    await Chat({type: 3, recruiterid: req.body.jobpost_userid, seekerid: null, who_view_me: {title: "Who viewed me", totalview: 1,newview: 1, recruiterview:_id,seekerviewid: null}}).save()
                    } 
                 }
                 res.status(200).json({ message: "successfull view" })
