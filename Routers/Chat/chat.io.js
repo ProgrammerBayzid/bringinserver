@@ -9,6 +9,7 @@ const { Chat, Message } = require("../../Model/Chat/chat")
 const { single_msg_notifiation } = require("../../Routers/Notification/notification")
 const multer = require("multer");
 const fs = require("fs");
+const { resolve } = require("path");
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, "uploads");
@@ -64,6 +65,24 @@ async function recruiterseen(id) {
 async function seekerseen(id) {
     await Chat.findOneAndUpdate({ _id: id },{$set: {seeker_unseen: 0}})
 }
+
+ function seeker_convupdate(io, seekerid) {
+  new Promise( async (resolve, reject)=> {
+    var data2 = await channellistdata(false ,seekerid);
+    io.to(seekerid).emit("channellist", data2)
+    // var data3 = await channellistdata(true ,recruiterid);
+    // await io.to(recruiterid).emit("channellist", data3)
+  })
+}
+
+function recruiter_convupdate(io, recruiterid) {
+    new Promise( async (resolve, reject)=> {
+    //   var data2 = await channellistdata(false ,seekerid);
+    //   await io.to(seekerid).emit("channellist", data2)
+      var data3 = await channellistdata(true ,recruiterid);
+      io.to(recruiterid).emit("channellist", data3)
+    })
+  }
 
 
 async function channellistdata(isrecruiter, currentid) {
@@ -158,6 +177,7 @@ async function SocketRoute(io) {
             socket.join(channellist.currentid)
             var data = await channellistdata(channellist.isrecruiter ,channellist.currentid);
             io.to(channellist.currentid).emit("channellist", data)
+            io.to(channellist.currentid).emit("channellistloading", false)
         })
 
 
@@ -177,12 +197,21 @@ async function SocketRoute(io) {
             var message = await Message.find({ channel: channelid });
             //     io.emit(`messagelist${channel}`, message)
             io.to(channelid.toString()).emit(`messagelist`, message)
+            io.to(channelid.toString()).emit(`messagelistloading`, false)
         })
 
         //message snef
         socket.on("message", async (message) => {
             Promise.all([singlemessage(message)])
             io.to(message.channelid).emit("singlemsg", message)
+            // chaneel list update
+            // var data2 = await channellistdata(false ,message.message.user.customProperties['seekerid']);
+            // await io.to(message.message.user.customProperties['seekerid']).emit("channellist", data2)
+            // var data3 = await channellistdata(true ,message.message.user.customProperties['recruiterid']);
+            // await io.to(message.message.user.customProperties['recruiterid']).emit("channellist", data3)
+        
+            seeker_convupdate(io, message.message.user.customProperties['seekerid'])
+            recruiter_convupdate(io, message.message.user.customProperties['recruiterid'])
         })
 
         // greating message
@@ -198,8 +227,14 @@ async function SocketRoute(io) {
             data.save()
             await Chat.findOneAndUpdate({ _id: filedata.channelid }, { $set: { lastmessage: data } })
             console.log(data)
-            io.to(filedata.channelid).emit("imageupload", data)
+            // io.to(filedata.channelid).emit("imageupload", data)
             io.to(filedata.channelid).emit("singlemsg", data)
+            // chaneel list update
+            var data2 = await channellistdata(false ,data.message.user.customProperties['seekerid']);
+            io.to(data.message.user.customProperties['seekerid']).emit("channellist", data2)
+            var data3 = await channellistdata(true ,data.message.user.customProperties['recruiterid']);
+            io.to(data.message.user.customProperties['recruiterid']).emit("channellist", data3)
+            
             // single_msg_notifiation(filedata.channelid, filedata.message.user.customProperties)
         })
 
