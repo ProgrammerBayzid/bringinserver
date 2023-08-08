@@ -44,7 +44,16 @@ const userSchema = Schema(
       total_step: { type: Number, default: 7 },
       incomplete: { type: Number, default: 5 },
       complete: { type: Number, default: 2 },
-      online: { type: Boolean, default: false },
+      online: {type : Boolean, default: false},
+      offlinedate:{
+        type: Number,
+        default: new Date().getTime()
+      },
+      lastfunctionalarea: {
+        type: "ObjectId",
+        ref: "FunctionalArea",
+        default: "64a2d832e19e64570285c57b"
+      },
       pushnotification: String,
       full_profile: {
         type: "ObjectId",

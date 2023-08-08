@@ -1,7 +1,31 @@
 const { Schema, model, } = require("mongoose");
 
+
 const chatSchema  =  Schema(
     {
+        who_view_me: {
+            title: String,
+            totalview: {
+                type: Number,
+                default: 0
+            },
+            newview: {
+                type: Number,
+                default: 0
+            },
+            seekerviewid: {
+                type: "ObjectId",
+                ref: "Recruiters_profile"
+            },
+            recruiterview: {
+                type: "ObjectId",
+                ref: "User"
+            }
+        },
+        type: {
+            type: Number,
+            default: 1
+        },
         seekerid:{
             type: "ObjectId",
             ref: "User"
@@ -11,6 +35,19 @@ const chatSchema  =  Schema(
             ref: "Recruiters_profile"
         },
         date: Date,
+        greating: {
+            type: Number,
+            default: 0
+        },
+        bring_assis: {
+            title: String,
+            message1: String,
+            message2: String,
+            bringlastmessage: {
+                type: "ObjectId",
+                ref: "messagelist"
+            },
+        },
         recruiter_unseen: {
             type: Number,
             default: 0
@@ -37,6 +74,16 @@ const chatSchema  =  Schema(
         recruiterblock: {
             type: Boolean,
             default: false
+        },
+        jobid: {
+            type: "ObjectId",
+            default: null,
+            ref: "job_post"
+        },
+        candidate_fullprofile: {
+            type: "ObjectId",
+            default: null,
+            ref: "seeker_profiledata"
         }
     },{timestamps: true},
    
@@ -102,11 +149,28 @@ const candidaterejectSchema  =  Schema(
    
 );
 
+const chatFeedbackSchema  =  Schema(
+    {
+        userid: {
+            type: Schema.Types.Mixed
+        },
+        recruiterid: {
+            type: Schema.Types.Mixed
+        },
+        text: String,
+        image: String,
+        channel: "ObjectId"
+        
+    },{timestamps: true},
+   
+);
+
 
 
 var Chat  = model("Chat_channel", chatSchema)
 var Message = model("messagelist", messageSchema)
 var Chatreport = model("chat_report", chatreportSchema)
 var CandidateReject = model("candidate_reject", candidaterejectSchema)
+var ChatFeedBack = model("chatFeedbackSchema",chatFeedbackSchema)
 
-module.exports = {Chat,Message, Chatreport, CandidateReject}
+module.exports = {Chat,Message, Chatreport, CandidateReject, ChatFeedBack}
