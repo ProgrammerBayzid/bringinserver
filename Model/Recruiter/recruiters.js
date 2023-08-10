@@ -17,6 +17,11 @@ const recruitersSchema = Schema(
     email: String,
     image: String,
     other: {
+      package: {
+        type: "ObjectId",
+        ref : "Packages_buy",
+        default: null
+      },
       latestjobid: {
         type: "ObjectId",
         ref: "job_post",

@@ -161,8 +161,10 @@ async function SocketRoute(io) {
                 channeldata.save();
                 var channelinfo = await Chat.findOne({ _id: channeldata._id }).populate([{ path: "seekerid" }])
                 io.emit("channeldata", channelinfo)
+                io.to(channeldata._id).emit(`messagelistloading`, false)
             } else {
                 io.emit("channeldata", data)
+                io.to(data._id).emit(`messagelistloading`, false)
             }
         })
 
@@ -194,8 +196,11 @@ async function SocketRoute(io) {
 
         // message list get
         socket.on("messagelist", async (channelid) => {
+            
             var message = await Message.find({ channel: channelid });
             //     io.emit(`messagelist${channel}`, message)
+            console.log(`messagelists ${channelid}`)
+            console.log(`messagelists ${message}`)
             io.to(channelid.toString()).emit(`messagelist`, message)
             io.to(channelid.toString()).emit(`messagelistloading`, false)
         })

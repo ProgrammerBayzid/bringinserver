@@ -291,7 +291,7 @@ app.get('/recruiter_msg_date', tokenverify, async (req, res) => {
 
 app.get('/datetime', (req, res) => {
   var date_time = new Date()
-  res.status(200).send(date_time)
+  res.status(200).json(date_time.getTime())
 })
 
 
@@ -304,7 +304,6 @@ app.post("/channelcreate", tokenverify, async (req, res) => {
         res.json({ message: "invalid token" });
       } else {
         const _id = authdata._id;
-
         var populate = [
           { path: "expertice_area" },
           { path: "experience" },

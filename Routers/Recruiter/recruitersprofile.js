@@ -30,14 +30,14 @@ app.get("/recruiters_profile", tokenverify, async (req, res) => {
             } else {
                 
                 const _id = authdata._id;
-                const singalRecruiter = await Recruiters.findOne({ _id: _id }).populate({
+                const singalRecruiter = await Recruiters.findOne({ _id: _id }).populate([{
                     path: 'companyname',
                     populate: {
                         path: 'industry',
                         model: 'industries' ,
                         select: "industryname"
                     }
-                });
+                }, {path: "other.package", populate: {path: "packageid"}}]);
                 res.status(200).send(singalRecruiter);
             }
         })
