@@ -7,6 +7,10 @@ const jobpostSchema = Schema(
             ref: "Recruiters_profile"
         },
         job_title: String,
+        companyname: {
+            type: String,
+            default: null
+        },
         expertice_area: {
             type: "ObjectId",
             ref: "FunctionalArea"

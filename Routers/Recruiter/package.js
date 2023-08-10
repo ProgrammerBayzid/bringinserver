@@ -42,13 +42,15 @@ app.post("/packagebuy", tokenverify, async (req, res) => {
                 // date.setMonth(date.getMonth()+2)
                 //  console.log(date)
                  console.log(enddate.getTime)
-                var packagedata = await PackageBuy.findOne({recruiterid: id, packageid: req.body.packageid})
+                var packagedata = await PackageBuy.findOne({recruiterid: id, packageid: req.body.packageid, active: true})
                 if(packagedata == null){
                   var pack =  await PackageBuy({
                     transactionID: amarpaydata.data,
                     recruiterid: id, packageid: req.body.packageid,
                     starddate: startdate.getTime(),
-                    enddate: enddate.getTime(),});
+                    enddate: enddate.getTime(),
+                
+                });
                     pack.save();
                     await Recruiters.findOneAndUpdate({_id: id}, {$set: {"other.package": pack._id, "other.premium": true}})
                     res.status(200).json({message: "Package buy Successfuly"})
@@ -65,6 +67,47 @@ app.post("/packagebuy", tokenverify, async (req, res) => {
     }
 
 
+})
+
+
+
+app.get('/user_payment_history',tokenverify, async (req, res) =>{
+    try {
+        jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+            if (err) {
+                res.json({ message: "invalid token" })
+            } else {
+                var id = authdata._id;
+               var data = await PackageBuy.find({recruiterid: id}).populate([{ path: "packageid" }, {path: "recruiterid"}])
+               res.status(200).send(data)
+            }
+        })
+
+    } catch (error) {
+        res.send(error);
+    }
+})
+
+
+app.post('/subscription_cancle', tokenverify, async (req, res)=> {
+    try {
+        jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+            if (err) {
+                res.json({ message: "invalid token" })
+            } else {
+                var id = authdata._id;
+               var data = await PackageBuy.findOneAndUpdate({recruiterid: id, _id: req.body.id}, {$set: {active_type: 2, active: false}}).populate([{ path: "packageid" }, {path: "recruiterid"}])
+               if(data == null) {
+                res.status(200).json({message: "active package not found"})
+               }else{
+                res.status(200).json({message: "subscription cacnle successfuly"})
+               }
+            }
+        })
+
+    } catch (error) {
+        res.send(error);
+    }
 })
 
 
