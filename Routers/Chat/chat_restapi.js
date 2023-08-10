@@ -199,6 +199,12 @@ app.post("/candidate_reject", tokenverify, async (req, res) => {
         if (rejectdata == null) {
           var data = await Profiledata.findOne({ userid: req.body.candidateid })
           await CandidateReject({ userid: _id, candidateid: req.body.candidateid, candidatefullprofileid: data._id }).save()
+          var rejectchat = await Chat.findOneAndUpdate({recruiterid: _id, type: 4}, {$inc: {"not_interest.person": 1}})
+          if(rejectchat == null){
+            await Chat({recruiterid: _id, type: 4, not_interest :{person: 1, title: "Not Interested"} }).save()
+          }
+           await Chat.findOneAndUpdate({recruiterid: _id, seekerid: req.body.candidateid, type: 1}, {$set: {"recruiter_reject": true}})
+        
           res.status(200).json({ message: "Reject successfull" })
         } else {
           res.status(200).json({ message: "All ready Reject" })
@@ -221,9 +227,10 @@ app.post("/candidate_unreject", tokenverify, async (req, res) => {
         const _id = authdata._id;
         var rejectdata = await CandidateReject.findOneAndDelete({ userid: _id, candidateid: req.body.candidateid })
         if (rejectdata == null) {
-
           res.status(400).json({ message: "Candidate Not Found" })
         } else {
+          await Chat.findOneAndUpdate({recruiterid: _id, type: 4}, {$inc: {"not_interest.person": -1}})
+          await Chat.findOneAndUpdate({recruiterid: _id, seekerid: req.body.candidateid, type: 1}, {$set: {"recruiter_reject": false}})
           res.status(200).json({ message: "Candidate Unrejected Successfull" })
         }
 
