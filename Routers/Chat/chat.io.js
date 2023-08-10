@@ -73,14 +73,14 @@ async function seeker_convupdate(io, seekerid) {
         var data2 = await channellistdata(false, seekerid);
         io.sockets.in(seekerid).emit("channellist", data2)
         // var data3 = await channellistdata(true ,recruiterid);
-        // await io.sockets.in(recruiterid).emit("channellist", data3)
+        // await io.to(recruiterid).emit("channellist", data3)
     })
 }
 
 async function recruiter_convupdate(io, recruiterid) {
     new Promise(async (resolve, reject) => {
         //   var data2 = await channellistdata(false ,seekerid);
-        //   await io.sockets.in(seekerid).emit("channellist", data2)
+        //   await io.to(seekerid).emit("channellist", data2)
         var data3 = await channellistdata(true, recruiterid);
         io.sockets.in(recruiterid).emit("channellist", data3)
     })
@@ -181,8 +181,8 @@ async function SocketRoute(io) {
             console.log("user channl list rom join")
             socket.join(channellist.currentid)
             var data = await channellistdata(channellist.isrecruiter, channellist.currentid);
-            io.sockets.in(channellist.currentid).emit("channellist", data)
-            io.sockets.in(channellist.currentid).emit("channellistloading", false)
+            io.to(channellist.currentid).emit("channellist", data)
+            io.to(channellist.currentid).emit("channellistloading", false)
         })
 
 
@@ -200,8 +200,6 @@ async function SocketRoute(io) {
             
             var message = await Message.find({ channel: channelid });
             //     io.emit(`messagelist${channel}`, message)
-            console.log(`messagelists ${channelid}`)
-            console.log(`messagelists ${message}`)
             io.to(channelid.toString()).emit(`messagelist`, message)
             io.to(channelid.toString()).emit(`messagelistloading`, false)
         })
@@ -211,9 +209,9 @@ async function SocketRoute(io) {
             socket.broadcast.to(message.channelid).emit("singlemsg", message)
             // chaneel list update
             // var data2 = await channellistdata(false ,message.message.user.customProperties['seekerid']);
-            // await io.sockets.in(message.message.user.customProperties['seekerid']).emit("channellist", data2)
+            // await io.to(message.message.user.customProperties['seekerid']).emit("channellist", data2)
             // var data3 = await channellistdata(true ,message.message.user.customProperties['recruiterid']);
-            // await io.sockets.in(message.message.user.customProperties['recruiterid']).emit("channellist", data3)
+            // await io.to(message.message.user.customProperties['recruiterid']).emit("channellist", data3)
             // await Promise.all([singlemessage(message)])
             singlemessage(message, io);
         })
@@ -221,7 +219,7 @@ async function SocketRoute(io) {
         // greating message
         socket.on("greating", async (message) => {
             Promise.all([singlemessage(message), greatingupdate(message)])
-            io.sockets.in(message.channelid).emit("singlemsg", message)
+            io.to(message.channelid).emit("singlemsg", message)
         })
 
         // imageupload
@@ -230,14 +228,13 @@ async function SocketRoute(io) {
             var data = await Message({ channel: filedata.channelid, message: filedata.message })
             data.save()
             await Chat.findOneAndUpdate({ _id: filedata.channelid }, { $set: { lastmessage: data } })
-            console.log(data)
-            // io.sockets.in(filedata.channelid).emit("imageupload", data)
-            io.sockets.in(filedata.channelid).emit("singlemsg", data)
+            // io.to(filedata.channelid).emit("imageupload", data)
+            socket.broadcast.to(filedata.channelid).emit("singlemsg", data)
             // chaneel list update
             var data2 = await channellistdata(false, data.message.user.customProperties['seekerid']);
-            io.sockets.in(data.message.user.customProperties['seekerid']).emit("channellist", data2)
+            io.to(data.message.user.customProperties['seekerid']).emit("channellist", data2)
             var data3 = await channellistdata(true, data.message.user.customProperties['recruiterid']);
-            io.sockets.in(data.message.user.customProperties['recruiterid']).emit("channellist", data3)
+            io.to(data.message.user.customProperties['recruiterid']).emit("channellist", data3)
 
             // single_msg_notifiation(filedata.channelid, filedata.message.user.customProperties)
         })
@@ -252,7 +249,7 @@ async function SocketRoute(io) {
                     recruiterblock: blockdata.recruiterblock
                 }
             });
-            io.sockets.in(blockdata.channelid).emit("block_user", blockdata)
+            io.to(blockdata.channelid).emit("block_user", blockdata)
         })
 
 
@@ -280,34 +277,34 @@ async function SocketRoute(io) {
         // seeker inbox join
         socket.on("seeker_join", async (data) => {
             console.log(`seeker join done ${data.currentchannelid}`)
-            io.sockets.in(data.currentchannelid).emit("seeker_join", true)
+            io.to(data.currentchannelid).emit("seeker_join", true)
             await seekerseen(data.currentchannelid)
             var data2 = await channellistdata(false, data.seekerid);
-            io.sockets.in(data.seekerid).emit("channellist", data2)
+            io.to(data.seekerid).emit("channellist", data2)
 
         })
 
         // seeker inbox leave
         socket.on("seeker_leave", (data) => {
             console.log(`seeker leave done ${data}`)
-            io.sockets.in(data).emit("seeker_join", false)
+            io.to(data).emit("seeker_join", false)
             socket.leave(data);
         })
 
         // recruiter inbox join
         socket.on("recruiter_join", async (data) => {
             console.log(`recruiter join done ${data}`)
-            io.sockets.in(data.currentchannelid).emit("recruiter_join", true)
+            io.to(data.currentchannelid).emit("recruiter_join", true)
             await recruiterseen(data.currentchannelid)
             var data1 = await channellistdata(true, data.recruiterid);
-            io.sockets.in(data.recruiterid).emit("channellist", data1)
+            io.to(data.recruiterid).emit("channellist", data1)
 
         })
 
         // recruiter inbox leave
         socket.on("recruiter_leave", (data) => {
             console.log(`recruiter leave done ${data}`)
-            io.sockets.in(data).emit("recruiter_join", false)
+            io.to(data).emit("recruiter_join", false)
             socket.leave(data);
         })
 
