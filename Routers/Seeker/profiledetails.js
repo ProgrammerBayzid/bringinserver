@@ -489,10 +489,10 @@ app.delete("/seeker_skill", tokenverify, async (req, res) => {
         res.json({ message: "invalid token" });
       } else {
         var id = authdata._id;
-        var skilldata = await Skill.findOneAndDelete({
+        var skilldata = await Skill.findOneAndUpdate({
           userid: id,
-          _id: req.query.id,
-        });
+          
+        },{ $pull: { skill: req.query.id } });
 
         if (skilldata == null) {
           res.status(400).json({ message: "iteam not found" });
@@ -535,6 +535,27 @@ app.delete("/default_skill", tokenverify, async (req, res) => {
     res.send(error);
   }
 });
+
+app.post("/seeker_skill_update", tokenverify, async (req, res)=> {
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        var id = authdata._id;
+        console.log(id)
+        await Skill.findOneAndUpdate({ userid: id}, {$push: {"skill.$[h]": req.body.id}}, {arrayFilters: [
+          {
+            "h": "64d20f0710c24bae1c09871e"
+          }
+        ]})
+        res.status(200).send("update")
+      }
+    });
+  } catch (error) {
+    res.send(error);
+  }
+})
 
 // protfolio api
 

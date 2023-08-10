@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-
+const axios = require("axios");
 const {
   Expertisearea,
   Category,
@@ -336,6 +336,19 @@ app.post("/candidate_filter", tokenverify, async (req, res) => {
   } catch (error) {
     res.status(400).send(error);
   }
+});
+
+app.post("/app_link", async (req, res) => {
+  const number = req.body.number;
+  axios
+    .post(
+      `http://bulksmsbd.net/api/smsapi?api_key=${process.env.SMS_KEY}&type=text&number=${number}&senderid=8809617611096&message=Bringin+App+Link+is+https://play.google.com/store/apps/details?id=com.bringin.io`
+    )
+    .then((response) => {
+      console.log(response.data);
+    });
+
+  return res.status(200).json({ message: "App Link Sent Successfully" });
 });
 
 module.exports = app;
