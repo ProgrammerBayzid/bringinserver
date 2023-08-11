@@ -114,15 +114,19 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
                     { path: "salary.min_salary", select: "-other_salary" },
                     { path: "salary.max_salary", select: "-other_salary" },
                     { path: "skill" },
-                    { path: "jobtype" , match: { _id: { $in: jobtype } } },
+                    { path: "jobtype" },
                 ];
+                // , match: { _id: { $in: jobtype } } 
                // , match: { _id: { $in: jobtype } } 
                 if (req.query.functionalarea == 0) {
-                    var company = await JobPost.find({expertice_area: {$in: functionarea}}).populate(populate).then((data) => data.filter((filterdata) => {
+                    // {expertice_area: {$in: functionarea}}
+                    // && filterdata.jobtype != null
+                    var company = await JobPost.find().populate(populate).then((data) => data.filter((filterdata) => {
                         // var salary = salaryfilter(filterdata, careardata);
                         // salary.length > 0 &&
+                        // / && filterdata.expertice_area != null 
                         var location = locationfilter(filterdata, careardata)
-                       if ( location.length > 0 && filterdata.expertice_area != null && filterdata.jobtype != null &&  filterdata.userid.other.profile_verify == true) {
+                       if ( location.length > 0  &&  filterdata.userid.other.profile_verify == true) {
                             return true;
                         } else {
                             return false
@@ -132,15 +136,16 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
                     
                     res.status(200).send(company)
                 } else {
-                    var company = await JobPost.find({expertice_area: req.query.functionalarea }).populate(populate).then((data) => data.filter((filterdata) => {
-                        var salary = salaryfilter(filterdata, careardata);
-                        var location = locationfilter(filterdata, careardata)
-                        if (salary.length > 0 && location.length > 0 && filterdata.userid.other.profile_verify == true) {
-                            return true;
-                        } else {
-                            return false
-                        }
-                    }))
+                    var company = await JobPost.find({expertice_area: req.query.functionalarea }).populate(populate)
+                    // .then((data) => data.filter((filterdata) => {
+                    //     var salary = salaryfilter(filterdata, careardata);
+                    //     var location = locationfilter(filterdata, careardata)
+                    //     if (salary.length > 0 && location.length > 0 && filterdata.userid.other.profile_verify == true) {
+                    //         return true;
+                    //     } else {
+                    //         return false
+                    //     }
+                    // }))
                     res.status(200).send(company);
                 }
             }

@@ -132,7 +132,7 @@ app.post('/job_post', tokenverify, async (req, res) => {
                         notificaton_send_by_job(req.body.expertice_area, id, {"type": 2, "jobid": jobdata._id})
                     ])
                     await Recruiters.findOneAndUpdate({ _id: id }, {
-                        $set: {"other.latestjobid": jobdata._id}});
+                        $set: {"other.latestjobid": jobdata._id}, $inc: {"other.totaljob": 1}});
                     res.status(200).json({ jobid: jobdata._id })
                 } else {
                     res.status(400).json({ message: "Job Post Allready Submited" })
@@ -236,6 +236,8 @@ app.delete('/job_post_update', tokenverify, async (req, res) => {
                     await RecruiterFunctionarea.deleteMany({ userid: id, jobid: req.query.jobid })
                     await ViewJob.deleteMany({jobid: req.query.jobid})
                     await JobSave.deleteMany({jobid: req.query.jobid})
+                    await Recruiters.findOneAndUpdate({ _id: id }, {
+                     $inc: {"other.totaljob": -1}});
                     res.status(200).json({ message: "Delete Successfull" })
                 }
             }

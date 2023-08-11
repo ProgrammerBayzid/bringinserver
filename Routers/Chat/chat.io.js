@@ -122,28 +122,24 @@ async function channellistdata(isrecruiter, currentid) {
     ];
 
     if (isrecruiter == false) {
-        data = await Chat.find({ seekerid: currentid, $or: [{ seekerid: currentid }, { recruiterid: null }] }).sort({ updatedAt: -1 })
+        data = await Chat.find({   $or: [{ seekerid: currentid },{ type: 2 }]}).sort({ updatedAt: -1 })
             .populate([
                 { path: "jobid", populate: populate, select: "-userid" },
                 { path: "candidate_fullprofile", populate: populate2 },
                 { path: "seekerid", select: ["other.online", "other.pushnotification", "other.lastfunctionalarea", "other.offlinedate", "fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"], populate: { path: "other.lastfunctionalarea" } },
-                { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email", "other.offlinedate"], populate: { path: "companyname", populate: { path: "industry" } } },
+                { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email", "other.offlinedate", "other.totaljob"], populate: { path: "companyname", populate: { path: "industry" } } },
                 { path: "lastmessage" },
                 { path: "bring_assis.bringlastmessage" },
                 { path: "who_view_me.seekerviewid" },
                 { path: "who_view_me.recruiterview" }
             ])
     } else {
-        data = await Chat.find({ recruiterid: currentid, $or: [{ recruiterid: currentid }, { seekerid: null }] }).sort({ updatedAt: -1 }).populate([
+        data = await Chat.find({  $or: [{ recruiterid: currentid } ,{ type: 2 }, {type: 4}] }).sort({ updatedAt: -1 }).populate([
             { path: "jobid", populate: populate, select: "-userid" },
             { path: "candidate_fullprofile", populate: populate2 },
             { path: "seekerid", select: ["other.online", "other.pushnotification", "other.lastfunctionalarea", "other.offlinedate", "fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"], populate: { path: "other.lastfunctionalarea" } },
-            { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email", "other.offlinedate"], populate: { path: "companyname", populate: { path: "industry" } } },
-            { path: "lastmessage" }, { path: "bring_assis.bringlastmessage" }, {
-                path: "who_view_me.seekerviewid", options: {
-
-                }
-            },
+            { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email", "other.offlinedate", "other.totaljob"], populate: { path: "companyname", populate: { path: "industry" } } },
+            { path: "lastmessage" }, { path: "bring_assis.bringlastmessage" }, {path: "who_view_me.seekerviewid"},
             { path: "who_view_me.recruiterview", select: ["fastname", "lastname"] }
 
         ])
@@ -219,7 +215,7 @@ async function SocketRoute(io) {
         // greating message
         socket.on("greating", async (message) => {
             Promise.all([singlemessage(message, io), greatingupdate(message)])
-            io.sockets.in(message.channelid).emit("singlemsg", message)
+            socket.broadcast.to(message.channelid).emit("singlemsg", message)
         })
 
         // imageupload

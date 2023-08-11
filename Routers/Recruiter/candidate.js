@@ -82,19 +82,18 @@ app.get("/candidatelist", tokenverify, async (req, res) => {
         res.json({ message: "invalid token" });
       } else {
         const _id = authdata._id;
+        console.log(req.query.functionalareaid);
         var profiledata = await Recruiters.findOne({ _id: _id }).populate([
           { path: "companyname" },
         ]);
         function industryfilter(element) {
-          var data = element.category.filter(
-            (data) => data.industryid == profiledata.companyname.industry
-          );
-          if (
-            data.length > 0 &&
-            new RegExp(element.division.cityid.name.toLowerCase()).test(
-              profiledata.companyname.c_location.formet_address.toLowerCase()
-            ) == true
-          ) {
+          // var data = element.category.filter(
+          //   (data) => data.industryid == profiledata.companyname.industry
+          // );
+
+          // && new RegExp(element.division.cityid.name.toLowerCase()).test(profiledata.companyname.c_location.formet_address.toLowerCase()) == true
+          //data.length > 0 
+          if (new RegExp(element.division.cityid.name.toLowerCase()).test(profiledata.companyname.c_location.formet_address.toLowerCase()) == true) {
             return true;
           } else {
             return false;
@@ -102,63 +101,27 @@ app.get("/candidatelist", tokenverify, async (req, res) => {
         }
 
         function functionalareafilter(element) {
-          if (
-            element.functionalarea._id == req.query.functionalareaid &&
-            new RegExp(element.division.cityid.name.toLowerCase()).test(
-              profiledata.companyname.c_location.formet_address.toLowerCase()
-            ) == true
-          ) {
+          // new RegExp(element.division.cityid.name.toLowerCase()).test(
+            // profiledata.companyname.c_location.formet_address.toLowerCase()
+            // ) == true
+          if (element.functionalarea._id == req.query.functionalareaid) {
             return true;
           } else {
             return false;
           }
         }
+
         if (req.query.functionalareaid == 0) {
+          
           var populate = [
-            {
-              path: "workexperience",
-              populate: [
-                { path: "category", select: "-functionarea" },
-                "expertisearea",
-              ],
-            },
-            {
-              path: "education",
-              populate: [
-                {
-                  path: "digree",
-                  select: "-subject",
-                  populate: { path: "education", select: "-digree" },
-                },
-                "subject",
-              ],
-            },
-            "skill",
-            "protfoliolink",
-            "about",
-            {
-              path: "careerPreference",
-              populate: [
-                { path: "category", select: "-functionarea" },
-                {
-                  path: "functionalarea",
-                  populate: [{ path: "industryid", select: "-category" }],
-                },
-                {
-                  path: "division",
-                  populate: { path: "cityid", select: "-divisionid" },
-                },
-                "jobtype",
-                { path: "salaray.min_salary", select: "-other_salary" },
-                { path: "salaray.max_salary", select: "-other_salary" },
-              ],
-            },
-            { path: "userid", populate: { path: "experiencedlevel" } },
+            {path: "workexperience",populate: [{ path: "category", select: "-functionarea" },"expertisearea"]},
+            {path: "education",populate: [{path: "digree",select: "-subject",populate: { path: "education", select: "-digree" }},"subject"]},
+            "skill","protfoliolink","about",
+            {path: "careerPreference",populate: [{ path: "category", select: "-functionarea" },{path: "functionalarea",populate: [{ path: "industryid", select: "-category" }]},{path: "division",populate: { path: "cityid", select: "-divisionid" },},"jobtype",{ path: "salaray.min_salary", select: "-other_salary" },{ path: "salaray.max_salary", select: "-other_salary" }]},
+            { path: "userid", populate: { path: "experiencedlevel" }},
           ];
 
-          var seekerdata = await Profiledata.find()
-            .populate(populate)
-            .then((data) =>
+          var seekerdata = await Profiledata.find().populate(populate).then((data) =>
               data.filter((filterdata) => {
                 var industrydata =
                   filterdata.careerPreference.filter(industryfilter);
@@ -171,47 +134,13 @@ app.get("/candidatelist", tokenverify, async (req, res) => {
             );
           res.status(200).send(seekerdata);
         } else {
-          var populate2 = [
-            {
-              path: "workexperience",
-              populate: [
-                { path: "category", select: "-functionarea" },
-                "expertisearea",
-              ],
-            },
-            {
-              path: "education",
-              populate: [
-                {
-                  path: "digree",
-                  select: "-subject",
-                  populate: { path: "education", select: "-digree" },
-                },
-                "subject",
-              ],
-            },
-            "skill",
-            "protfoliolink",
-            "about",
-            {
-              path: "careerPreference",
-              populate: [
-                { path: "category", select: "-functionarea" },
-                {
-                  path: "functionalarea",
-                  populate: [{ path: "industryid", select: "-category" }],
-                },
-                {
-                  path: "division",
-                  populate: { path: "cityid", select: "-divisionid" },
-                },
-                "jobtype",
-                { path: "salaray.min_salary", select: "-other_salary" },
-                { path: "salaray.max_salary", select: "-other_salary" },
-              ],
-            },
+          var populate2 = [{path: "workexperience",populate: [{ path: "category", select: "-functionarea" },"expertisearea"]},
+            {path: "education",populate: [{path: "digree",select: "-subject",populate: { path: "education", select: "-digree" }},"subject"]},
+            "skill","protfoliolink","about",
+            {path: "careerPreference",populate: [{ path: "category", select: "-functionarea" },{path: "functionalarea",populate: [{ path: "industryid", select: "-category" }]},{path: "division",populate: { path: "cityid", select: "-divisionid" }},"jobtype",{ path: "salaray.min_salary", select: "-other_salary" },{ path: "salaray.max_salary", select: "-other_salary" }]},
             { path: "userid", populate: { path: "experiencedlevel" } },
           ];
+          
           var seekerdata = await Profiledata.find()
             .populate(populate2)
             .then((data) =>
@@ -233,6 +162,9 @@ app.get("/candidatelist", tokenverify, async (req, res) => {
     res.status(400).send(error);
   }
 });
+
+
+
 
 app.post("/candidate_save", tokenverify, async (req, res) => {
   try {
@@ -450,7 +382,7 @@ app.get("/candidate_search", tokenverify, async (req, res) => {
           .then((data) => data.filter((filterdata) => {
             var locationdata = filterdata.careerPreference.filter((f) => {
               var l = locationfilter(f, req.query.location);
-              
+
               return l
             })
             if (filterdata.userid != null && locationdata.length > 0) {

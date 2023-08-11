@@ -7,6 +7,7 @@ const candidatesave = require("../../Model/Recruiter/Candidate_Save/candidate_sa
 const multer = require("multer");
 const { Chat } = require("../../Model/Chat/chat")
 const ViewJob = require("../../Model/viewjob")
+const JobPost = require('../../Model/Recruiter/Job_Post/job_post.js')
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, "uploads");
@@ -27,10 +28,13 @@ async function recruiternumberupdate(_id) {
     var candidate = await candidatesave.find({ userid: _id })
     var chat = await Chat.find({ recruiterid: _id, type: 1 , recruitermsgdate: {$ne: null}})
     var viewjob = await ViewJob.find({ jobpost_userid: _id })
+    var totaljob = await JobPost.find({userid: _id})
     await Recruiters.findOneAndUpdate({ _id: _id }, {
         $set: {
             "other.total_chat": chat.length,
             "other.savecandidate": candidate.length,
+            "other.totaljob": totaljob.length,
+            "other.latestjobid": totaljob.length > 0 ? totaljob[totaljob.length - 1]._id : null
         }
     })
     // console.log(viewjob.length)
