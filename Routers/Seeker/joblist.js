@@ -74,7 +74,6 @@ function salaryfilter(filter, careardata) {
 
 function locationfilter(filter, careardata) {
     return careardata.filter((data) => {
-        
         if ((new RegExp(data.division.cityid.name.toLowerCase())).test(filter.job_location.formet_address.toLowerCase()) == true || (new RegExp(data.division.divisionname.toLowerCase())).test(filter.job_location.formet_address.toLowerCase()) == true) {
             return true;
         } else {
@@ -114,14 +113,19 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
                     { path: "salary.min_salary", select: "-other_salary" },
                     { path: "salary.max_salary", select: "-other_salary" },
                     { path: "skill" },
-                    { path: "jobtype" , match: { _id: { $in: jobtype } } },
+                    { path: "jobtype" },
                 ];
+                // , match: { _id: { $in: jobtype } } 
                // , match: { _id: { $in: jobtype } } 
                 if (req.query.functionalarea == 0) {
-                    var company = await JobPost.find({expertice_area: {$in: functionarea}}).populate(populate).then((data) => data.filter((filterdata) => {
-                        var salary = salaryfilter(filterdata, careardata);
+                    // {expertice_area: {$in: functionarea}}
+                    // && filterdata.jobtype != null
+                    var company = await JobPost.find().populate(populate).then((data) => data.filter((filterdata) => {
+                        // var salary = salaryfilter(filterdata, careardata);
+                        // salary.length > 0 &&
+                        // / && filterdata.expertice_area != null 
                         var location = locationfilter(filterdata, careardata)
-                       if (salary.length > 0 && location.length > 0 && filterdata.expertice_area != null && filterdata.jobtype != null &&  filterdata.userid.other.profile_verify == true) {
+                       if ( location.length > 0  &&  filterdata.userid.other.profile_verify == true) {
                             return true;
                         } else {
                             return false
@@ -131,10 +135,12 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
                     
                     res.status(200).send(company)
                 } else {
-                    var company = await JobPost.find({expertice_area: req.query.functionalarea }).populate(populate).then((data) => data.filter((filterdata) => {
-                        var salary = salaryfilter(filterdata, careardata);
-                        var location = locationfilter(filterdata, careardata)
-                        if (salary.length > 0 && location.length > 0 && filterdata.userid.other.profile_verify == true) {
+                    var company = await JobPost.find({expertice_area: req.query.functionalarea }).populate(populate)
+                    .then((data) => data.filter((filterdata) => {
+                        // var salary = salaryfilter(filterdata, careardata);
+                        // var location = locationfilter(filterdata, careardata)
+                        // salary.length > 0 && location.length > 0 && f
+                        if (filterdata.userid.other.profile_verify == true) {
                             return true;
                         } else {
                             return false
@@ -159,7 +165,8 @@ app.get("/job_search", tokenverify, async (req, res) => {
             } else {
                 const _id = authdata._id;
                 var term = new RegExp(req.query.city, 'i');
-                var company = await JobPost.find({ job_title: { $regex: req.query.search, $options: "i" }, $or: [{"job_location.formet_address": {$regex: term}}, {"job_location.city": {$regex: term}}] }).populate(
+                
+                var company = await JobPost.find({$or: [{job_title: { $regex: req.query.search, $options: "i" }}, {companyname: { $regex: req.query.search, $options: "i" }}] , $and: [{"job_location.formet_address": {$regex: term}}, {"job_location.city": {$regex: term}}] }).populate(
                     [{path: "userid"},
                     "expertice_area",
                     "experience",

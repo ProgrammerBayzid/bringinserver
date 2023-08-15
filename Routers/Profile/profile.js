@@ -6,6 +6,11 @@ const jwt = require("jsonwebtoken");
 const Experince = require("../../Model/experience.js");
 const multer = require("multer");
 const Recruiters = require("../../Model/Recruiter/recruiters");
+const ViewJob = require('../../Model/viewjob')
+const { Chat } = require("../../Model/Chat/chat")
+const JobSave = require("../../Model/jobsave.js")
+const { Resume } = require("../../Model/resumefile");
+const Career_preferences = require("../../Model/career_preferences.js");
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads");
@@ -19,6 +24,28 @@ const upload = multer({ storage: storage });
 
 // user get
 
+
+async function profilenmberupdate(_id) {
+  var viewjob = await ViewJob.find({ userid: _id })
+  var jobsave = await JobSave.find({ userid: _id })
+  var resume = await Resume.find({ userid: _id })
+  var chat = await Chat.find({ seekerid: _id, type: 1 })
+  var carearpre = await Career_preferences.find({ userid: _id })
+  await User.findByIdAndUpdate({ _id: _id }, {
+    $set: {
+      "other.viewjob": viewjob.length,
+      "other.cvsend": resume.length,
+      "other.totalchat": chat.length,
+      "other.savejob": jobsave.length,
+      "other.carearpre": carearpre.length
+
+    }
+  })
+
+
+
+}
+
 app.get("/users", tokenverify, async (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
@@ -27,6 +54,7 @@ app.get("/users", tokenverify, async (req, res) => {
       } else {
         const _id = authdata._id;
         const singalUser = await User.findById(_id).populate("experiencedlevel");
+        Promise.all([profilenmberupdate(_id)])
         res.send(singalUser);
       }
     });
@@ -106,14 +134,16 @@ app.post("/notification", tokenverify, async (req, res) => {
       } else {
         const _id = authdata._id;
         if (req.body.isrecruiter == true) {
-         await Recruiters.findOneAndUpdate({_id: _id}, {$set: {
-            "other.notification.push_notification": req.body.push,
-            "other.notification.whatsapp_notification": req.body.whatsapp,
-            "other.notification.sms_notification": req.body.sms,
-            "other.notification.job_recommandation": req.body.job,
-          }})
-          res.status(200).json({message: "update successfull"});
-        }else{
+          await Recruiters.findOneAndUpdate({ _id: _id }, {
+            $set: {
+              "other.notification.push_notification": req.body.push,
+              "other.notification.whatsapp_notification": req.body.whatsapp,
+              "other.notification.sms_notification": req.body.sms,
+              "other.notification.job_recommandation": req.body.job,
+            }
+          })
+          res.status(200).json({ message: "update successfull" });
+        } else {
           const singalUser = await User.findOneAndUpdate({ _id: _id }, {
             $set: {
               "other.notification.push_notification": req.body.push,
@@ -122,9 +152,9 @@ app.post("/notification", tokenverify, async (req, res) => {
               "other.notification.job_recommandation": req.body.job,
             }
           });
-          res.status(200).json({message: "Successfully Updated"});
+          res.status(200).json({ message: "Successfully Updated" });
         }
-        
+
       }
     });
   } catch (error) {
@@ -133,7 +163,7 @@ app.post("/notification", tokenverify, async (req, res) => {
 })
 
 
-app.post("/job_hunting", tokenverify, (req, res)=>{
+app.post("/job_hunting", tokenverify, (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
       if (err) {
@@ -147,7 +177,7 @@ app.post("/job_hunting", tokenverify, (req, res)=>{
             "other.job_right_now": req.body.job_right_now
           }
         });
-        res.status(200).json({message: "Successfully Updated"});
+        res.status(200).json({ message: "Successfully Updated" });
       }
     });
   } catch (error) {
@@ -156,7 +186,7 @@ app.post("/job_hunting", tokenverify, (req, res)=>{
 })
 
 
-app.post("/push_notification",tokenverify, async (req, res)=> {
+app.post("/push_notification", tokenverify, async (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
       if (err) {
@@ -164,17 +194,19 @@ app.post("/push_notification",tokenverify, async (req, res)=> {
       } else {
         const _id = authdata._id;
         if (req.body.isrecruiter == true) {
-         await Recruiters.findOneAndUpdate({_id: _id}, {$set: {
-          "other.pushnotification": req.body.pushnotification,
-          }})
-          res.status(200).json({message: "Successfully Updated"});
-        }else{
+          await Recruiters.findOneAndUpdate({ _id: _id }, {
+            $set: {
+              "other.pushnotification": req.body.pushnotification,
+            }
+          })
+          res.status(200).json({ message: "Successfully Updated" });
+        } else {
           const singalUser = await User.findOneAndUpdate({ _id: _id }, {
             $set: {
               "other.pushnotification": req.body.pushnotification,
             }
           });
-          res.status(200).json({message: "update successfull"});
+          res.status(200).json({ message: "update successfull" });
         }
       }
     });

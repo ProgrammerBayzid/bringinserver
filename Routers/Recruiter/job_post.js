@@ -6,13 +6,13 @@ const multer = require("multer");
 const EducationLavel = require('../../Model/education_lavel.js')
 const Skill = require('../../Model/Recruiter/Skill/skill.js')
 const JobPost = require('../../Model/Recruiter/Job_Post/job_post.js')
+const JobSave = require("../../Model/jobsave.js")
 const RecruiterFunctionarea = require("../../Model/Recruiter/Recruiter_Functionarea/recruiter_functionarea.js")
 const {Functionarea} = require("../../Model/industry.js")
 const {notificaton_send_by_job} = require("../../Routers/Notification/notification")
 const Recruiters = require("../../Model/Recruiter/recruiters");
-const {
-    DefaultSkill,
-  } = require("../../Model/Seeker_profile_all_details.js");
+const {DefaultSkill} = require("../../Model/Seeker_profile_all_details.js");
+const ViewJob = require('../../Model/viewjob')
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, "uploads");
@@ -107,6 +107,7 @@ app.post('/job_post', tokenverify, async (req, res) => {
                     var jobdata = await JobPost({
                         userid: id,
                         job_title: req.body.job_title,
+                        companyname: req.body.companyname,
                         expertice_area: req.body.expertice_area,
                         job_description: req.body.job_description,
                         experience: req.body.experience,
@@ -131,7 +132,7 @@ app.post('/job_post', tokenverify, async (req, res) => {
                         notificaton_send_by_job(req.body.expertice_area, id, {"type": 2, "jobid": jobdata._id})
                     ])
                     await Recruiters.findOneAndUpdate({ _id: id }, {
-                        $set: {"other.latestjobid": jobdata._id}});
+                        $set: {"other.latestjobid": jobdata._id}, $inc: {"other.totaljob": 1}});
                     res.status(200).json({ jobid: jobdata._id })
                 } else {
                     res.status(400).json({ message: "Job Post Allready Submited" })
@@ -194,6 +195,7 @@ app.post('/job_post_update', tokenverify, async (req, res) => {
                         $set: {
                             userid: id,
                             job_title: req.body.job_title,
+                            companyname: req.body.companyname,
                             expertice_area: req.body.expertice_area,
                             job_description: req.body.job_description,
                             experience: req.body.experience,
@@ -232,6 +234,10 @@ app.delete('/job_post_update', tokenverify, async (req, res) => {
                 if (req.query.jobid) {
                     await JobPost.findOneAndDelete({ _id: req.query.jobid, userid: id })
                     await RecruiterFunctionarea.deleteMany({ userid: id, jobid: req.query.jobid })
+                    await ViewJob.deleteMany({jobid: req.query.jobid})
+                    await JobSave.deleteMany({jobid: req.query.jobid})
+                    await Recruiters.findOneAndUpdate({ _id: id }, {
+                     $inc: {"other.totaljob": -1}});
                     res.status(200).json({ message: "Delete Successfull" })
                 }
             }

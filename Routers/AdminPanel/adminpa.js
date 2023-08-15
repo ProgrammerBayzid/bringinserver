@@ -454,7 +454,7 @@ app.get("/verifyRecruterProfile", async (req, res) => {
 
 // candidate list
 
-app.get("/candidatelist", async (req, res) => {
+app.get("/admin/candidatelist", async (req, res) => {
   try {
     var populate2 = [
       {

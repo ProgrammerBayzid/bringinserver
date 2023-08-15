@@ -12,6 +12,7 @@ const candidateview = require("../../Model/Recruiter/Candidate_View/candidate_vi
 const candidatesave = require("../../Model/Recruiter/Candidate_Save/candidate_save")
 const ViewJob = require("../../Model/viewjob")
 const savejob = require("../../Model/jobsave")
+const JobPost = require('../../Model/Recruiter/Job_Post/job_post.js')
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -118,7 +119,7 @@ app.get("/channellist", tokenverify, async (req, res) => {
         { path: "jobid", populate: populate, select: "-userid" },
         { path: "candidate_fullprofile", populate: populate2 },
         { path: "seekerid", select: ["other.online", "other.pushnotification", "other.lastfunctionalarea", "other.offlinedate", "fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"], populate: { path: "other.lastfunctionalarea" } },
-        { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email", "other.offlinedate"], populate: { path: "companyname", populate: { path: "industry" } } },
+        { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email", "other.offlinedate", "other.totaljob"], populate: { path: "companyname", populate: { path: "industry" } } },
         { path: "lastmessage" },
         {path: "bring_assis.bringlastmessage"},
         {path: "who_view_me.seekerviewid"},
@@ -129,7 +130,7 @@ app.get("/channellist", tokenverify, async (req, res) => {
       { path: "jobid", populate: populate, select: "-userid" },
       { path: "candidate_fullprofile", populate: populate2 },
       { path: "seekerid", select: ["other.online", "other.pushnotification", "other.lastfunctionalarea", "other.offlinedate", "fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"], populate: { path: "other.lastfunctionalarea" } },
-      { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email", "other.offlinedate"], populate: { path: "companyname", populate: { path: "industry" } } },
+      { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email", "other.offlinedate","other.totaljob"], populate: { path: "companyname", populate: { path: "industry" } } },
       { path: "lastmessage" },{path: "bring_assis.bringlastmessage"},{path: "who_view_me.seekerviewid",options: {
 
       }},
@@ -298,7 +299,7 @@ app.get('/recruiter_msg_date', tokenverify, async (req, res) => {
 
 app.get('/datetime', (req, res) => {
   var date_time = new Date()
-  res.status(200).send(date_time)
+  res.status(200).json(date_time.getTime())
 })
 
 
@@ -311,7 +312,6 @@ app.post("/channelcreate", tokenverify, async (req, res) => {
         res.json({ message: "invalid token" });
       } else {
         const _id = authdata._id;
-
         var populate = [
           { path: "expertice_area" },
           { path: "experience" },
@@ -399,7 +399,47 @@ app.get("/cv_send_count", tokenverify, async (req, res) => {
 
 
 app.get("/single_channelinfo", tokenverify, async (req, res) => {
-  var data = await Chat.findOne({ _id: req.query.channelid }).populate([{ path: "seekerid" }, { path: "recruiterid", populate: { path: "companyname", populate: { path: "industry" } } }, { path: "lastmessage" }])
+  var populate = [
+    { path: "expertice_area" },
+    { path: "experience" },
+    { path: "education", select: "-digree" },
+    { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
+    { path: "salary.min_salary", select: "-other_salary" },
+    { path: "salary.max_salary", select: "-other_salary" },
+    { path: "skill" },
+    { path: "jobtype" },
+  ];
+  var populate2 = [
+    { path: "userid", populate: { path: "experiencedlevel" } },
+    {
+      path: "workexperience", options: {
+        limit: 1
+      }, populate: [{ path: "category", select: "-functionarea" }, "expertisearea"]
+    },
+    {
+      path: "education", options: {
+        limit: 1
+      }, populate: [{ path: "digree", select: "-subject", populate: { path: "education", select: "-digree" } }, "subject"]
+    },
+    "skill",
+    "protfoliolink",
+    "about",
+    {
+      path: "careerPreference", options: {
+        limit: 1
+      }, populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea", populate: [{ path: "industryid", select: "-category" }] }, { path: "division", populate: { path: "cityid", select: "-divisionid" }, }, "jobtype", { path: "salaray.min_salary", select: "-other_salary" }, { path: "salaray.max_salary", select: "-other_salary" },],
+    },
+  ];
+  var data = await Chat.findOne({ _id: req.query.channelid }).populate([
+    { path: "jobid", populate: populate, select: "-userid" },
+      { path: "candidate_fullprofile", populate: populate2 },
+      { path: "seekerid", select: ["other.online", "other.pushnotification", "other.lastfunctionalarea", "other.offlinedate", "fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"], populate: { path: "other.lastfunctionalarea" } },
+      { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email", "other.offlinedate","other.totaljob"], populate: { path: "companyname", populate: { path: "industry" } } },
+      { path: "lastmessage" },{path: "bring_assis.bringlastmessage"},{path: "who_view_me.seekerviewid",options: {
+
+      }},
+      {path: "who_view_me.recruiterview", select: ["fastname", "lastname"]}
+  ])
   res.status(200).send(data)
 })
 
@@ -427,8 +467,12 @@ app.get('/who_view_me', tokenverify, async (req, res) => {
             { path: "jobtype" },
           ];
           const job = await candidateview.find({ candidate_id: _id }).populate({ path: "userid", populate: { path: "other.latestjobid", populate: populate } })
+          
           for (let index = 0; index < job.length; index++) {
-            recruiterjob.push(job[index].userid.other.latestjobid)
+            if(job[index].userid.other.latestjobid != null){
+              recruiterjob.push(job[index].userid.other.latestjobid)
+            }
+            
           }
           res.status(200).send(recruiterjob)
         } else {
@@ -512,7 +556,9 @@ app.get('/who_save_me', tokenverify, async (req, res) => {
           ];
           const job = await candidatesave.find({ candidateid: _id }).populate({ path: "userid", populate: { path: "other.latestjobid", populate: populate } })
           for (let index = 0; index < job.length; index++) {
-            recruiterjob.push(job[index].userid.other.latestjobid)
+            if(job[index].userid.other.latestjobid != null){
+              recruiterjob.push(job[index].userid.other.latestjobid)
+            }
           }
           res.status(200).send(recruiterjob)
 
@@ -600,6 +646,104 @@ app.post("/chatfeedback", upload.single("image"), tokenverify, async (req, res)=
 // recruiter
 
 
+app.get("/candidate_profilebid", tokenverify, async (req, res)=> {
+  // const _id = authdata._id;
+        
+
+  var data = await Profiledata.findOne({ userid: req.query.id }).populate([
+    {
+      path: "workexperience",
+      populate: [
+        { path: "category", select: "-functionarea" },
+        "expertisearea",
+      ],
+    },
+    {
+      path: "education",
+      populate: [
+        {
+          path: "digree",
+          select: "-subject",
+          populate: { path: "education", select: "-digree" },
+        },
+        "subject",
+      ],
+    },
+    "skill",
+    "protfoliolink",
+    "about",
+    {
+      path: "careerPreference",
+      populate: [
+        { path: "category", select: "-functionarea" },
+        "functionalarea",
+        {
+          path: "division",
+          populate: { path: "cityid", select: "-divisionid" },
+        },
+        "jobtype",
+        { path: "salaray.min_salary", select: "-other_salary" },
+        { path: "salaray.max_salary", select: "-other_salary" },
+      ],
+    },
+    { path: "userid", populate: { path: "experiencedlevel" } },
+  ]);
+  res.status(200).send(data);
+  // try {
+  //   jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+  //     if (err) {
+  //       res.json({ message: "invalid token" })
+  //     } else {
+       
+
+  //     }
+  //   })
+  // } catch (error) {
+  //   res.status(400).send(error);
+  // }
+})
+
+
+app.get("/recruiter_profilebyid",tokenverify, async (req, res)=>{
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" })
+      } else {
+        const _id = authdata._id;
+
+        var populate1 = [{
+          path: 'companyname',
+          populate: {
+              path: 'industry',
+              
+          }
+      }, { path: "other.package", populate: { path: "packageid" } }]
+
+      var populate2 = ["userid",
+                    "expertice_area",
+                    "experience",
+                    "education",
+                    { path: "salary.min_salary", select: "-other_salary" },
+                    { path: "salary.max_salary", select: "-other_salary" },
+                    { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
+                    "skill",
+                    "jobtype"];
+        
+         var recruiter = await Recruiters.findOne({_id: req.query.id}).populate(populate1)
+         var joblist = await JobPost.find({userid: req.query.id, job_status_type: 1}).populate(populate2)
+         res.status(200).json({
+          recruiter: recruiter,
+          joblist: joblist
+         })
+        
+
+      }
+    })
+  } catch (error) {
+    res.status(400).send(error);
+  }
+})
 
 
 module.exports = app

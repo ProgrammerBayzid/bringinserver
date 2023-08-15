@@ -122,28 +122,24 @@ async function channellistdata(isrecruiter, currentid) {
     ];
 
     if (isrecruiter == false) {
-        data = await Chat.find({ seekerid: currentid, $or: [{ seekerid: currentid }, { recruiterid: null }] }).sort({ updatedAt: -1 })
+        data = await Chat.find({   $or: [{ seekerid: currentid },{ type: 2 }]}).sort({ updatedAt: -1 })
             .populate([
                 { path: "jobid", populate: populate, select: "-userid" },
                 { path: "candidate_fullprofile", populate: populate2 },
                 { path: "seekerid", select: ["other.online", "other.pushnotification", "other.lastfunctionalarea", "other.offlinedate", "fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"], populate: { path: "other.lastfunctionalarea" } },
-                { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email", "other.offlinedate"], populate: { path: "companyname", populate: { path: "industry" } } },
+                { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email", "other.offlinedate", "other.totaljob"], populate: { path: "companyname", populate: { path: "industry" } } },
                 { path: "lastmessage" },
                 { path: "bring_assis.bringlastmessage" },
                 { path: "who_view_me.seekerviewid" },
                 { path: "who_view_me.recruiterview" }
             ])
     } else {
-        data = await Chat.find({ recruiterid: currentid, $or: [{ recruiterid: currentid }, { seekerid: null }] }).sort({ updatedAt: -1 }).populate([
+        data = await Chat.find({  $or: [{ recruiterid: currentid } ,{ type: 2 }, {type: 4}] }).sort({ updatedAt: -1 }).populate([
             { path: "jobid", populate: populate, select: "-userid" },
             { path: "candidate_fullprofile", populate: populate2 },
             { path: "seekerid", select: ["other.online", "other.pushnotification", "other.lastfunctionalarea", "other.offlinedate", "fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"], populate: { path: "other.lastfunctionalarea" } },
-            { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email", "other.offlinedate"], populate: { path: "companyname", populate: { path: "industry" } } },
-            { path: "lastmessage" }, { path: "bring_assis.bringlastmessage" }, {
-                path: "who_view_me.seekerviewid", options: {
-
-                }
-            },
+            { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email", "other.offlinedate", "other.totaljob"], populate: { path: "companyname", populate: { path: "industry" } } },
+            { path: "lastmessage" }, { path: "bring_assis.bringlastmessage" }, {path: "who_view_me.seekerviewid"},
             { path: "who_view_me.recruiterview", select: ["fastname", "lastname"] }
 
         ])
@@ -164,8 +160,10 @@ async function SocketRoute(io) {
                 channeldata.save();
                 var channelinfo = await Chat.findOne({ _id: channeldata._id }).populate([{ path: "seekerid" }])
                 io.emit("channeldata", channelinfo)
+                io.sockets.in(channeldata._id).emit(`messagelistloading`, false)
             } else {
                 io.emit("channeldata", data)
+                io.sockets.in(data._id).emit(`messagelistloading`, false)
             }
         })
 
@@ -195,6 +193,7 @@ async function SocketRoute(io) {
 
         // message list get
         socket.on("messagelist", async (channelid) => {
+            
             var message = await Message.find({ channel: channelid });
             //     io.emit(`messagelist${channel}`, message)
             io.sockets.in(channelid.toString()).emit(`messagelist`, message)
@@ -215,8 +214,8 @@ async function SocketRoute(io) {
 
         // greating message
         socket.on("greating", async (message) => {
-            Promise.all([singlemessage(message), greatingupdate(message)])
-            io.sockets.in(message.channelid).emit("singlemsg", message)
+            Promise.all([singlemessage(message, io), greatingupdate(message)])
+            socket.broadcast.to(message.channelid).emit("singlemsg", message)
         })
 
         // imageupload
@@ -225,9 +224,8 @@ async function SocketRoute(io) {
             var data = await Message({ channel: filedata.channelid, message: filedata.message })
             data.save()
             await Chat.findOneAndUpdate({ _id: filedata.channelid }, { $set: { lastmessage: data } })
-            console.log(data)
             // io.sockets.in(filedata.channelid).emit("imageupload", data)
-            io.sockets.in(filedata.channelid).emit("singlemsg", data)
+            socket.broadcast.to(filedata.channelid).emit("singlemsg", data)
             // chaneel list update
             var data2 = await channellistdata(false, data.message.user.customProperties['seekerid']);
             io.sockets.in(data.message.user.customProperties['seekerid']).emit("channellist", data2)

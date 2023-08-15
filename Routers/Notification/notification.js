@@ -94,9 +94,9 @@ async function notificaton_send_by_job(functionalid, recruiterid, mapdata) {
 
 async function single_msg_notifiation(channelid, recruiter) {
   var chatdata = await Chat.findOne({ _id: channelid }).select({ seekerid: 1, recruiterid: 1 }).populate([{ path: "lastmessage" }, { path: "seekerid", select: ["other", "fastname", "lastname"] }, { path: "recruiterid", select: ["other", "firstname", "lastname"] }])
-  let mapdata = { "channelid": channelid, "recruiter": recruiter.recruiter == true ? false : true, "type": 1 }
+  let mapdata = { "channelid": channelid, "recruiter": recruiter.recruiter, "type": 1 }
   let include_player_ids;
-
+   console.log(chatdata.recruiterid.other.pushnotification)
   if (recruiter.recruiter == true) {
     include_player_ids = chatdata.seekerid.other.pushnotification
   } else {
