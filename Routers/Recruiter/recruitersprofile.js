@@ -3,8 +3,11 @@ const app = express();
 const Recruiters = require("../../Model/Recruiter/recruiters");
 const tokenverify = require("../../MiddleWare/tokenverify.js")
 const jwt = require('jsonwebtoken');
-
+const candidatesave = require("../../Model/Recruiter/Candidate_Save/candidate_save");
 const multer = require("multer");
+const { Chat } = require("../../Model/Chat/chat")
+const ViewJob = require("../../Model/viewjob")
+const JobPost = require('../../Model/Recruiter/Job_Post/job_post.js')
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, "uploads");
@@ -20,6 +23,24 @@ const upload = multer({ storage: storage });
 
 // recruiters get
 
+
+async function recruiternumberupdate(_id) {
+    var candidate = await candidatesave.find({ userid: _id })
+    var chat = await Chat.find({ recruiterid: _id, type: 1 , recruitermsgdate: {$ne: null}})
+    var viewjob = await ViewJob.find({ jobpost_userid: _id })
+    var totaljob = await JobPost.find({userid: _id})
+    await Recruiters.findOneAndUpdate({ _id: _id }, {
+        $set: {
+            "other.total_chat": chat.length,
+            "other.savecandidate": candidate.length,
+            "other.totaljob": totaljob.length,
+            "other.latestjobid": totaljob.length > 0 ? totaljob[totaljob.length - 1]._id : null
+        }
+    })
+    // console.log(viewjob.length)
+    // await Chat.findOneAndUpdate({recruiterid: _id, type: 3},{$set: {"who_view_me.totalview": viewjob.length}})
+}
+
 app.get("/recruiters_profile", tokenverify, async (req, res) => {
 
     try {
@@ -28,16 +49,17 @@ app.get("/recruiters_profile", tokenverify, async (req, res) => {
             if (err) {
                 res.json({ message: "invalid token" })
             } else {
-                
+
                 const _id = authdata._id;
-                const singalRecruiter = await Recruiters.findOne({ _id: _id }).populate({
+                const singalRecruiter = await Recruiters.findOne({ _id: _id }).populate([{
                     path: 'companyname',
                     populate: {
                         path: 'industry',
-                        model: 'industries' ,
+                        model: 'industries',
                         select: "industryname"
                     }
-                });
+                }, { path: "other.package", populate: { path: "packageid" } }]);
+                Promise.all([recruiternumberupdate(_id)])
                 res.status(200).send(singalRecruiter);
             }
         })
@@ -61,9 +83,9 @@ app.post("/recruiters_update", tokenverify, upload.single("image"), async (req, 
                 if (req.file) {
                     console.log(req.file.path)
                     await Recruiters.findOneAndUpdate({ _id: _id }, {
-                        $set: { image: req.file.path ,"other.incomplete": 0, "other.complete": 6}
+                        $set: { image: req.file.path, "other.incomplete": 0, "other.complete": 6 }
                     });
-                  
+
                 }
                 const updateRecruiter = await Recruiters.findOneAndUpdate({ _id: _id }, {
                     $set: {
@@ -76,7 +98,7 @@ app.post("/recruiters_update", tokenverify, upload.single("image"), async (req, 
                     new: true,
                 });
 
-                res.status(200).json({message: "profile update successfull"});
+                res.status(200).json({ message: "profile update successfull" });
 
             }
         })

@@ -82,15 +82,18 @@ app.get("/candidatelist", tokenverify, async (req, res) => {
         res.json({ message: "invalid token" });
       } else {
         const _id = authdata._id;
+        console.log(req.query.functionalareaid);
         var profiledata = await Recruiters.findOne({ _id: _id }).populate([
           { path: "companyname" },
         ]);
         function industryfilter(element) {
-          var data = element.category.filter(
-            (data) => data.industryid == profiledata.companyname.industry
-          );
+          // var data = element.category.filter(
+          //   (data) => data.industryid == profiledata.companyname.industry
+          // );
+
+          // && new RegExp(element.division.cityid.name.toLowerCase()).test(profiledata.companyname.c_location.formet_address.toLowerCase()) == true
+          //data.length > 0
           if (
-            data.length > 0 &&
             new RegExp(element.division.cityid.name.toLowerCase()).test(
               profiledata.companyname.c_location.formet_address.toLowerCase()
             ) == true
@@ -102,17 +105,16 @@ app.get("/candidatelist", tokenverify, async (req, res) => {
         }
 
         function functionalareafilter(element) {
-          if (
-            element.functionalarea._id == req.query.functionalareaid &&
-            new RegExp(element.division.cityid.name.toLowerCase()).test(
-              profiledata.companyname.c_location.formet_address.toLowerCase()
-            ) == true
-          ) {
+          // new RegExp(element.division.cityid.name.toLowerCase()).test(
+          // profiledata.companyname.c_location.formet_address.toLowerCase()
+          // ) == true
+          if (element.functionalarea._id == req.query.functionalareaid) {
             return true;
           } else {
             return false;
           }
         }
+
         if (req.query.functionalareaid == 0) {
           var populate = [
             {
@@ -212,6 +214,7 @@ app.get("/candidatelist", tokenverify, async (req, res) => {
             },
             { path: "userid", populate: { path: "experiencedlevel" } },
           ];
+
           var seekerdata = await Profiledata.find()
             .populate(populate2)
             .then((data) =>
@@ -374,6 +377,17 @@ app.post(
   }
 );
 
+function locationfilter(locationdata, locationid) {
+  if (
+    locationdata.division.cityid != null &&
+    locationdata.division.cityid._id == locationid
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 app.get("/candidate_search", tokenverify, async (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
@@ -381,6 +395,7 @@ app.get("/candidate_search", tokenverify, async (req, res) => {
         res.json({ message: "invalid token" });
       } else {
         const _id = authdata._id;
+        console.log(req.query.location);
         // var company = await Profiledata.find({job_title: {$regex: req.query.search, $options: "i"} }).populate(["userid",
         //         "expertice_area",
         //         "experience",
@@ -420,7 +435,11 @@ app.get("/candidate_search", tokenverify, async (req, res) => {
                 { path: "functionalarea", populate: { path: "industryid" } },
                 {
                   path: "division",
-                  populate: { path: "cityid", select: "-divisionid" },
+                  populate: {
+                    path: "cityid",
+                    select: "-divisionid",
+                    match: { _id: req.query.location },
+                  },
                 },
                 "jobtype",
                 { path: "salaray.min_salary", select: "-other_salary" },
@@ -434,7 +453,18 @@ app.get("/candidate_search", tokenverify, async (req, res) => {
             },
           ])
           .then((data) =>
-            data.filter((filterdata) => filterdata.userid != null)
+            data.filter((filterdata) => {
+              var locationdata = filterdata.careerPreference.filter((f) => {
+                var l = locationfilter(f, req.query.location);
+
+                return l;
+              });
+              if (filterdata.userid != null && locationdata.length > 0) {
+                return true;
+              } else {
+                return false;
+              }
+            })
           );
         res.status(200).send(seekerdata);
       }
