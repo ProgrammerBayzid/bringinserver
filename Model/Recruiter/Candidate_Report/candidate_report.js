@@ -13,9 +13,9 @@ const candidatereportSchema = Schema(
       type: "ObjectID",
       ref: "User",
     },
-    profileid: {
+    candidatefulldetailsid: {
       type: "ObjectID",
-      ref: "Profiledata",
+      ref: "seeker_profiledata",
     },
     description: {
       type: String,
