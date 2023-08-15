@@ -716,8 +716,7 @@ app.get("/recruiter_profilebyid",tokenverify, async (req, res)=>{
           path: 'companyname',
           populate: {
               path: 'industry',
-              model: 'industries',
-              select: "industryname"
+              
           }
       }, { path: "other.package", populate: { path: "packageid" } }]
 

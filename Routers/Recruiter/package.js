@@ -100,6 +100,7 @@ app.post('/subscription_cancle', tokenverify, async (req, res)=> {
                if(data == null) {
                 res.status(200).json({message: "active package not found"})
                }else{
+                await Recruiters.findOneAndUpdate({_id: id}, {$set: {"other.premium": false}})
                 res.status(200).json({message: "subscription cacnle successfuly"})
                }
             }

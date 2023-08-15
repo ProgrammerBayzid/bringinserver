@@ -74,7 +74,6 @@ function salaryfilter(filter, careardata) {
 
 function locationfilter(filter, careardata) {
     return careardata.filter((data) => {
-        
         if ((new RegExp(data.division.cityid.name.toLowerCase())).test(filter.job_location.formet_address.toLowerCase()) == true || (new RegExp(data.division.divisionname.toLowerCase())).test(filter.job_location.formet_address.toLowerCase()) == true) {
             return true;
         } else {
@@ -137,15 +136,16 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
                     res.status(200).send(company)
                 } else {
                     var company = await JobPost.find({expertice_area: req.query.functionalarea }).populate(populate)
-                    // .then((data) => data.filter((filterdata) => {
-                    //     var salary = salaryfilter(filterdata, careardata);
-                    //     var location = locationfilter(filterdata, careardata)
-                    //     if (salary.length > 0 && location.length > 0 && filterdata.userid.other.profile_verify == true) {
-                    //         return true;
-                    //     } else {
-                    //         return false
-                    //     }
-                    // }))
+                    .then((data) => data.filter((filterdata) => {
+                        // var salary = salaryfilter(filterdata, careardata);
+                        // var location = locationfilter(filterdata, careardata)
+                        // salary.length > 0 && location.length > 0 && f
+                        if (filterdata.userid.other.profile_verify == true) {
+                            return true;
+                        } else {
+                            return false
+                        }
+                    }))
                     res.status(200).send(company);
                 }
             }
