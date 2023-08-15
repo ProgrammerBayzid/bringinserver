@@ -22,6 +22,17 @@ const chatSchema  =  Schema(
                 ref: "User"
             }
         },
+        not_interest: {
+           title: String,
+           person: {
+            type: Number,
+            default: 0
+           }
+        },
+        recruiter_reject: {
+            type: Boolean,
+            default: false
+        },
         type: {
             type: Number,
             default: 1
