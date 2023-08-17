@@ -18,6 +18,7 @@ const { City, Division } = require("../../Model/alllocation.js");
 const { Jobtype } = require("../../Model/jobtype.js");
 const { Salirietype } = require("../../Model/salarie.js");
 const Experince = require("../../Model/experience.js");
+const JobPost = require("../../Model/Recruiter/Job_Post/job_post.js");
 const { Profiledata } = require("../../Model/Seeker_profile_all_details.js");
 const {
   EducationLavel,
@@ -1368,6 +1369,54 @@ app.post("/subject_add", async (req, res) => {
 // });
 
 // experience insert
+
+app.get("/job_details/:_id", async (req, res) => {
+  try {
+    var populate = [
+      {
+        path: "userid",
+        populate: [{ path: "companyname" }],
+      },
+      {
+        path: "experience",
+        populate: [],
+      },
+      {
+        path: "education",
+        populate: [{ path: "digree" }],
+      },
+
+      {
+        path: "company",
+        populate: [{ path: "c_size" }],
+      },
+      {
+        path: "jobtype",
+        populate: [],
+      },
+      {
+        path: "job_location",
+        populate: [],
+      },
+      {
+        path: "expertice_area",
+        populate: [{ path: "industryid" }, { path: "categoryid" }],
+      },
+      {
+        path: "salary",
+        populate: [{ path: "min_salary" }, { path: "max_salary" }],
+      },
+      {
+        path: "skill",
+        populate: [],
+      },
+    ];
+    var data = await JobPost.findById(req.params._id).populate(populate);
+    res.json(data);
+  } catch (error) {
+    res.send(error);
+  }
+});
 
 app.post("/experience", async (req, res) => {
   try {

@@ -60,6 +60,7 @@ app.get("/functionalarea/:_id", async (req, res) => {
     res.send(error);
   }
 });
+
 app.get("/single_profile/:_id", async (req, res) => {
   try {
     var populate = [
