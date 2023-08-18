@@ -18,8 +18,12 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-const store_id = "aamarpaytest";
-const signature_key = "dbb74894e82415a2f7ff0ec3a97e4183"
+
+let sendbox = true;
+
+const store_id = sendbox ? "aamarpaytest" :"bringin";
+const signature_key = sendbox ? "dbb74894e82415a2f7ff0ec3a97e4183" : "cdc5d825cb402db73c2a60b80bf0f1b7"
+const url = sendbox ? "https://sandbox.aamarpay.com" : "https://secure.aamarpay.com"
 
 app.post("/packagebuy", tokenverify, async (req, res) => {
     try {
@@ -36,8 +40,8 @@ app.post("/packagebuy", tokenverify, async (req, res) => {
                 // let enddate =  Date(date.getUTCFullYear(), date.getUTCMonth() + 1,date.getUTCDay(), date.getUTCHours(), date.getUTCMinutes())
                 // res.status(200).json({dsddssv: startdate.getTime(), end: enddate.getTime()})
 
-               var amarpaydata = await axios.post(
-                  `https://sandbox.aamarpay.com/api/v1/trxcheck/request.php?request_id=${req.body.transactionID}&store_id=${store_id}&signature_key=${signature_key}&type=json`
+                var amarpaydata = await axios.post(
+                  `${url}/api/v1/trxcheck/request.php?request_id=${req.body.transactionID}&store_id=${store_id}&signature_key=${signature_key}&type=json`
                 )
                 // date.setMonth(date.getMonth()+2)
                 //  console.log(date)
@@ -70,7 +74,6 @@ app.post("/packagebuy", tokenverify, async (req, res) => {
 })
 
 
-
 app.get('/user_payment_history',tokenverify, async (req, res) =>{
     try {
         jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
@@ -87,6 +90,8 @@ app.get('/user_payment_history',tokenverify, async (req, res) =>{
         res.send(error);
     }
 })
+
+
 
 
 app.post('/subscription_cancle', tokenverify, async (req, res)=> {
@@ -110,9 +115,6 @@ app.post('/subscription_cancle', tokenverify, async (req, res)=> {
         res.send(error);
     }
 })
-
-
-
 
 
 

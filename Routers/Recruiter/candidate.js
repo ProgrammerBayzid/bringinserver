@@ -364,6 +364,7 @@ app.post(
                   report: req.body.report,
                   image: req.file == null ? "" : req.file.path,
                   description: req.body.description,
+                  candidatefulldetailsid: req.body.candidatefulldetailsid,
                 },
               }
             );

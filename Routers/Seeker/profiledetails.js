@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 
+const {Functionarea} = require("../../Model/industry")
+
 const {
   Workexperience,
   Education,
@@ -375,187 +377,209 @@ app.post("/education_update", tokenverify, async (req, res) => {
 
 // skill api
 
-app.post("/default_skill", tokenverify, async (req, res) => {
+
+app.get("/default_skill", tokenverify, async (req, res)=> {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
       if (err) {
         res.json({ message: "invalid token" });
       } else {
-        var id = authdata._id;
-        var skilldata = await DefaultSkill.findOne({
-          skill: req.body.skill,
-          userid: id,
-        });
-
-        if (skilldata == null) {
-          var skilldata = await DefaultSkill({
-            skill: req.body.skill,
-            userid: id,
-          });
-          skilldata.save();
-          res.status(200).json({ message: "skill add successfull data" });
-        } else {
-          res.status(400).json({ message: "skill allready added" });
+        const _id = authdata._id;
+        if(req.query.categoryid){
+            var data = await Functionarea.find({categoryid: req.query.categoryid})
+            res.status(200).send(data)
+        }else{
+          res.status(400).json({message: "insert a category id"})
         }
+        
       }
     });
   } catch (error) {
-    res.send(error);
-  }
-});
-
-app.post("/seeker_skill", tokenverify, async (req, res) => {
-  try {
-    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
-      if (err) {
-        res.json({ message: "invalid token" });
-      } else {
-        var id = authdata._id;
-        var skilldata = await Skill.findOneAndUpdate(
-          { userid: id },
-          { $addToSet: { skill: req.body.skill } }
-        );
-        if (skilldata == null) {
-          var skilldata = await Skill({ skill: req.body.skill, userid: id });
-          skilldata.save();
-          var profiledata = await Profiledata.findOneAndUpdate(
-            { userid: id },
-            { $addToSet: { skill: req.body.skill } }
-          );
-          if (profiledata == null) {
-            await Profiledata({
-              userid: id,
-              skill: req.body.skill,
-            }).save();
-            await Seekeruser.findOneAndUpdate(
-              { _id: id },
-              { $inc: { "other.incomplete": -1, "other.complete": 1 } }
-            );
-          } else {
-            if (profiledata.skill.length == 0) {
-              await Seekeruser.findOneAndUpdate(
-                { _id: id },
-                { $inc: { "other.incomplete": -1, "other.complete": 1 } }
-              );
-            }
-          }
-
-          res.status(200).json({ message: "skill add successfull data" });
-        } else {
-          var profiledata = await Profiledata.findOneAndUpdate(
-            { userid: id },
-            { $addToSet: { skill: req.body.skill } }
-          );
-          if (profiledata == null) {
-            await Profiledata({
-              userid: id,
-              skill: req.body.skill,
-            }).save();
-          }
-          res.status(400).json({ message: "skill update" });
-        }
-      }
-    });
-  } catch (error) {
-    res.send(error);
-  }
-});
-
-app.get("/seeker_skill", tokenverify, async (req, res) => {
-  try {
-    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
-      if (err) {
-        res.json({ message: "invalid token" });
-      } else {
-        var id = authdata._id;
-        var defaults = [];
-        var skilldata = await Skill.findOne({ userid: id }).populate("skill");
-        var defaultskill = await DefaultSkill.find({ userid: null });
-        var defaultskill2 = await DefaultSkill.find({ userid: id });
-        defaults.push(...defaultskill);
-        defaults.push(...defaultskill2);
-        res.status(200).json({ skill: skilldata, default: defaults });
-      }
-    });
-  } catch (error) {
-    res.send(error);
-  }
-});
-
-app.delete("/seeker_skill", tokenverify, async (req, res) => {
-  try {
-    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
-      if (err) {
-        res.json({ message: "invalid token" });
-      } else {
-        var id = authdata._id;
-        var skilldata = await Skill.findOneAndUpdate({
-          userid: id,
-          
-        },{ $pull: { skill: req.query.id } });
-
-        if (skilldata == null) {
-          res.status(400).json({ message: "iteam not found" });
-        } else {
-          await Profiledata.findOneAndUpdate(
-            { userid: id },
-            { $pull: { skill: req.query.id } }
-          );
-          var skilldata = await Skill.find({ userid: id });
-          if (skilldata.length == 0) {
-            await Seekeruser.findOneAndUpdate(
-              { _id: id },
-              { $inc: { "other.incomplete": 1, "other.complete": -1 } }
-            );
-          }
-          res.status(200).json({ message: "delete successfull" });
-        }
-      }
-    });
-  } catch (error) {
-    res.send(error);
-  }
-});
-app.delete("/default_skill", tokenverify, async (req, res) => {
-  try {
-    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
-      if (err) {
-        res.json({ message: "invalid token" });
-      } else {
-        var id = authdata._id;
-        var skilldata = await DefaultSkill.findOneAndDelete({ userid: id,_id: req.query.id});
-        if (skilldata == null) {
-          res.status(400).json({ message: "iteam not found" });
-        } else {
-          res.status(200).json({ message: "delete successfull" });
-        }
-      }
-    });
-  } catch (error) {
-    res.send(error);
-  }
-});
-
-app.post("/seeker_skill_update", tokenverify, async (req, res)=> {
-  try {
-    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
-      if (err) {
-        res.json({ message: "invalid token" });
-      } else {
-        var id = authdata._id;
-        console.log(id)
-        await Skill.findOneAndUpdate({ userid: id}, {$push: {"skill.$[h]": req.body.id}}, {arrayFilters: [
-          {
-            "h": "64d20f0710c24bae1c09871e"
-          }
-        ]})
-        res.status(200).send("update")
-      }
-    });
-  } catch (error) {
-    res.send(error);
+    res.status(404).send(error);
   }
 })
+
+// app.post("/default_skill", tokenverify, async (req, res) => {
+//   try {
+//     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+//       if (err) {
+//         res.json({ message: "invalid token" });
+//       } else {
+//         var id = authdata._id;
+//         var skilldata = await DefaultSkill.findOne({
+//           skill: req.body.skill,
+//           userid: id,
+//         });
+
+//         if (skilldata == null) {
+//           var skilldata = await DefaultSkill({
+//             skill: req.body.skill,
+//             userid: id,
+//           });
+//           skilldata.save();
+//           res.status(200).json({ message: "skill add successfull data" });
+//         } else {
+//           res.status(400).json({ message: "skill allready added" });
+//         }
+//       }
+//     });
+//   } catch (error) {
+//     res.send(error);
+//   }
+// });
+
+// app.post("/seeker_skill", tokenverify, async (req, res) => {
+//   try {
+//     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+//       if (err) {
+//         res.json({ message: "invalid token" });
+//       } else {
+//         var id = authdata._id;
+//         var skilldata = await Skill.findOneAndUpdate(
+//           { userid: id },
+//           { $addToSet: { skill: req.body.skill } }
+//         );
+//         if (skilldata == null) {
+//           var skilldata = await Skill({ skill: req.body.skill, userid: id });
+//           skilldata.save();
+//           var profiledata = await Profiledata.findOneAndUpdate(
+//             { userid: id },
+//             { $addToSet: { skill: req.body.skill } }
+//           );
+//           if (profiledata == null) {
+//             await Profiledata({
+//               userid: id,
+//               skill: req.body.skill,
+//             }).save();
+//             await Seekeruser.findOneAndUpdate(
+//               { _id: id },
+//               { $inc: { "other.incomplete": -1, "other.complete": 1 } }
+//             );
+//           } else {
+//             if (profiledata.skill.length == 0) {
+//               await Seekeruser.findOneAndUpdate(
+//                 { _id: id },
+//                 { $inc: { "other.incomplete": -1, "other.complete": 1 } }
+//               );
+//             }
+//           }
+
+//           res.status(200).json({ message: "skill add successfull data" });
+//         } else {
+//           var profiledata = await Profiledata.findOneAndUpdate(
+//             { userid: id },
+//             { $addToSet: { skill: req.body.skill } }
+//           );
+//           if (profiledata == null) {
+//             await Profiledata({
+//               userid: id,
+//               skill: req.body.skill,
+//             }).save();
+//           }
+//           res.status(400).json({ message: "skill update" });
+//         }
+//       }
+//     });
+//   } catch (error) {
+//     res.send(error);
+//   }
+// });
+
+// app.get("/seeker_skill", tokenverify, async (req, res) => {
+//   try {
+//     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+//       if (err) {
+//         res.json({ message: "invalid token" });
+//       } else {
+//         var id = authdata._id;
+//         var defaults = [];
+//         var skilldata = await Skill.findOne({ userid: id }).populate("skill");
+//         var defaultskill = await DefaultSkill.find({ userid: null });
+//         var defaultskill2 = await DefaultSkill.find({ userid: id });
+//         defaults.push(...defaultskill);
+//         defaults.push(...defaultskill2);
+//         res.status(200).json({ skill: skilldata, default: defaults });
+//       }
+//     });
+//   } catch (error) {
+//     res.send(error);
+//   }
+// });
+
+// app.delete("/seeker_skill", tokenverify, async (req, res) => {
+//   try {
+//     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+//       if (err) {
+//         res.json({ message: "invalid token" });
+//       } else {
+//         var id = authdata._id;
+//         var skilldata = await Skill.findOneAndUpdate({
+//           userid: id,
+          
+//         },{ $pull: { skill: req.query.id } });
+
+//         if (skilldata == null) {
+//           res.status(400).json({ message: "iteam not found" });
+//         } else {
+//           await Profiledata.findOneAndUpdate(
+//             { userid: id },
+//             { $pull: { skill: req.query.id } }
+//           );
+//           var skilldata = await Skill.find({ userid: id });
+//           if (skilldata.length == 0) {
+//             await Seekeruser.findOneAndUpdate(
+//               { _id: id },
+//               { $inc: { "other.incomplete": 1, "other.complete": -1 } }
+//             );
+//           }
+//           res.status(200).json({ message: "delete successfull" });
+//         }
+//       }
+//     });
+//   } catch (error) {
+//     res.send(error);
+//   }
+// });
+// app.delete("/default_skill", tokenverify, async (req, res) => {
+//   try {
+//     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+//       if (err) {
+//         res.json({ message: "invalid token" });
+//       } else {
+//         var id = authdata._id;
+//         var skilldata = await DefaultSkill.findOneAndDelete({ userid: id,_id: req.query.id});
+//         if (skilldata == null) {
+//           res.status(400).json({ message: "iteam not found" });
+//         } else {
+//           res.status(200).json({ message: "delete successfull" });
+//         }
+//       }
+//     });
+//   } catch (error) {
+//     res.send(error);
+//   }
+// });
+
+// app.post("/seeker_skill_update", tokenverify, async (req, res)=> {
+//   try {
+//     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+//       if (err) {
+//         res.json({ message: "invalid token" });
+//       } else {
+//         var id = authdata._id;
+//         console.log(id)
+//         await Skill.findOneAndUpdate({ userid: id}, {$push: {"skill.$[h]": req.body.id}}, {arrayFilters: [
+//           {
+//             "h": "64d20f0710c24bae1c09871e"
+//           }
+//         ]})
+//         res.status(200).send("update")
+//       }
+//     });
+//   } catch (error) {
+//     res.send(error);
+//   }
+// })
 
 // protfolio api
 
