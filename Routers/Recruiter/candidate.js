@@ -135,7 +135,6 @@ app.get("/candidatelist", tokenverify, async (req, res) => {
                 "subject",
               ],
             },
-            "skill",
             "protfoliolink",
             "about",
             {
@@ -192,7 +191,6 @@ app.get("/candidatelist", tokenverify, async (req, res) => {
                 "subject",
               ],
             },
-            "skill",
             "protfoliolink",
             "about",
             {
@@ -303,7 +301,6 @@ app.get("/candidate_save", tokenverify, async (req, res) => {
                 "subject",
               ],
             },
-            "skill",
             "protfoliolink",
             "about",
             {
@@ -426,7 +423,6 @@ app.get("/candidate_search", tokenverify, async (req, res) => {
                 "subject",
               ],
             },
-            "skill",
             "protfoliolink",
             "about",
             {
@@ -513,7 +509,6 @@ app.post("/candidate_filter", tokenverify, async (req, res) => {
               "subject",
             ],
           },
-          "skill",
           "protfoliolink",
           "about",
           {

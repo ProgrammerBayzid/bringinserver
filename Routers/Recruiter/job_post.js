@@ -26,55 +26,55 @@ const upload = multer({ storage: storage });
 
 
 
-app.post("/skill", tokenverify, async (req, res) => {
-    try {
-        jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
-            if (err) {
-                res.json({ message: "invalid token" })
-            } else {
-                var id = authdata._id;
-                var skilldata = await Skill.findOne({ skill: req.body.skill })
+// app.post("/skill", tokenverify, async (req, res) => {
+//     try {
+//         jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+//             if (err) {
+//                 res.json({ message: "invalid token" })
+//             } else {
+//                 var id = authdata._id;
+//                 var skilldata = await Skill.findOne({ skill: req.body.skill })
 
-                if (skilldata == null) {
-                    await Skill({ skill: req.body.skill, userid: id }).save();
-                    res.status(200).json({ message: "skill add successfull" })
-                } else {
-                    res.status(200).json({ message: "skill allready added" })
-                }
+//                 if (skilldata == null) {
+//                     await Skill({ skill: req.body.skill, userid: id }).save();
+//                     res.status(200).json({ message: "skill add successfull" })
+//                 } else {
+//                     res.status(200).json({ message: "skill allready added" })
+//                 }
 
-            }
-        })
+//             }
+//         })
 
-    } catch (error) {
-        res.send(error);
-    }
-})
+//     } catch (error) {
+//         res.send(error);
+//     }
+// })
 
 
-app.get("/skill", tokenverify, async (req, res) => {
-    try {
-        jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
-            if (err) {
-                res.json({ message: "invalid token" })
-            } else {
-                var id = authdata._id;
-                // var skilldata = await Skill.find({ userid: id })
-                // var data = await Skill.find().select("-userid");
-                var defaults = [];
-                var skilldata = await Skill.findOne({ userid: id }).populate("skill");
-                var defaultskill = await DefaultSkill.find({ userid: null });
-                var defaultskill2 = await DefaultSkill.find({ userid: id });
-                defaults.push(...defaultskill);
-                defaults.push(...defaultskill2);
-                console.log(defaults)
-                res.status(200).json({ userskill: skilldata, defaultskill: defaults })
-            }
-        })
+// app.get("/skill", tokenverify, async (req, res) => {
+//     try {
+//         jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+//             if (err) {
+//                 res.json({ message: "invalid token" })
+//             } else {
+//                 var id = authdata._id;
+//                 // var skilldata = await Skill.find({ userid: id })
+//                 // var data = await Skill.find().select("-userid");
+//                 var defaults = [];
+//                 var skilldata = await Skill.findOne({ userid: id }).populate("skill");
+//                 var defaultskill = await DefaultSkill.find({ userid: null });
+//                 var defaultskill2 = await DefaultSkill.find({ userid: id });
+//                 defaults.push(...defaultskill);
+//                 defaults.push(...defaultskill2);
+//                 console.log(defaults)
+//                 res.status(200).json({ userskill: skilldata, defaultskill: defaults })
+//             }
+//         })
 
-    } catch (error) {
-        res.send(error);
-    }
-})
+//     } catch (error) {
+//         res.send(error);
+//     }
+// })
 
 
 
@@ -161,7 +161,6 @@ app.get('/job_post', tokenverify, async (req, res) => {
                     { path: "salary.min_salary", select: "-other_salary" },
                     { path: "salary.max_salary", select: "-other_salary" },
                     { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
-                    "skill",
                     "jobtype"];
 
                 if (req.query.type == 0) {
@@ -262,8 +261,7 @@ app.get('/single_jobdetails', tokenverify, async (req, res) => {
                 "education",
                 { path: "salary.min_salary", select: "-other_salary" },
                 { path: "salary.max_salary", select: "-other_salary" },
-                { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
-                "skill",
+                { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }]},
                 "jobtype"];
                 var company = await JobPost.findOne({ _id: req.query.jobid }).populate(populate)
                 res.status(200).send(company);
@@ -284,13 +282,8 @@ const maskEmail = (email = '') => {
  };
 
 app.post("/email", async (req, res)=> {
-   
     var data = maskEmail(req.body.string)
-        
     res.status(200).send(data )
-    
-
-
 })
 
 module.exports = app;

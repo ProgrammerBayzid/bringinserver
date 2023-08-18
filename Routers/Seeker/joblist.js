@@ -90,10 +90,11 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
             } else {
                 const _id = authdata._id;
 
-                var creaarpopulate = [{ path: "category", select: "-functionarea" },
-                    "functionalarea",
+                var creaarpopulate = [
+                { path: "category", select: "-functionarea" },
+                "functionalarea",
                 { path: "division", populate: { path: "cityid", select: "-divisionid" } },
-                    "jobtype",
+                "jobtype",
                 { path: "salaray.min_salary", select: "-other_salary" },
                 { path: "salaray.max_salary", select: "-other_salary" },];
                 var careardata = await Career_preferences.find({ userid: _id }).populate(creaarpopulate);
@@ -112,7 +113,6 @@ app.get("/seeker_joblist", tokenverify, async (req, res) => {
                     { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
                     { path: "salary.min_salary", select: "-other_salary" },
                     { path: "salary.max_salary", select: "-other_salary" },
-                    { path: "skill" },
                     { path: "jobtype" },
                 ];
                 // , match: { _id: { $in: jobtype } } 
@@ -174,7 +174,6 @@ app.get("/job_search", tokenverify, async (req, res) => {
                     { path: "salary.min_salary", select: "-other_salary" },
                     { path: "salary.max_salary", select: "-other_salary" },
                     { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
-                    "skill",
                     "jobtype"]).then((data) => data.filter((filterdata) => filterdata.userid.other.profile_verify== true))
                 res.status(200).send(company);
 // req.query.city ??
@@ -227,7 +226,6 @@ app.get("/job_save", tokenverify, async (req, res) => {
                         { path: "salary.min_salary", select: "-other_salary" },
                         { path: "salary.max_salary", select: "-other_salary" },
                         { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
-                        "skill",
                         "jobtype"]
                 })
                 if (data == null) {
@@ -365,7 +363,6 @@ app.post('/job_filter', tokenverify, async (req, res) => {
                     { path: "company", populate: [{ path: "c_size", match: { _id: { $in: companysize } } }, { path: "industry",  match: {_id: {$in: industry}} ,select: "-category" }] },
                     { path: "salary.min_salary", select: "-other_salary", match: {_id: {$in: minsalary}}},
                     { path: "salary.max_salary", select: "-other_salary" , match: {_id: {$in: maxsalary}}},
-                    { path: "skill" },
                     { path: "jobtype" }
 
                 ]

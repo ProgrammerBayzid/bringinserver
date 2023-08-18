@@ -134,8 +134,7 @@ const allprofiledataSchema = Schema(
     ],
     skill: [
       {
-        type: "ObjectId",
-        ref: "default_Skill",
+        type: String
       },
     ],
     protfoliolink: [

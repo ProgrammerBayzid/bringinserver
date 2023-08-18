@@ -386,7 +386,7 @@ app.get("/default_skill", tokenverify, async (req, res)=> {
       } else {
         const _id = authdata._id;
         if(req.query.categoryid){
-            var data = await Functionarea.find({categoryid: req.query.categoryid})
+            var data = await Functionarea.find({categoryid: req.query.categoryid}).select('functionalname').limit(5)
             res.status(200).send(data)
         }else{
           res.status(400).json({message: "insert a category id"})
@@ -397,6 +397,49 @@ app.get("/default_skill", tokenverify, async (req, res)=> {
   } catch (error) {
     res.status(404).send(error);
   }
+})
+
+app.post("/seeker_skill",tokenverify, async (req, res)=> {
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" });
+      } else {
+        const id = authdata._id;
+        var profiledata = await Profiledata.findOneAndUpdate(
+          { userid: id },
+          { $set: { skill: req.body.skill } }
+        );
+        if (profiledata == null) {
+          await Profiledata({
+            userid: id,
+            skill: req.body.skill,
+          }).save();
+          await Seekeruser.findOneAndUpdate(
+            { _id: id },
+            { $inc: { "other.incomplete": -1, "other.complete": 1 } }
+          );
+          res.status(200).json({ message: "skill add successfull data" });
+        } else {
+          if (profiledata.skill.length == 0) {
+            await Seekeruser.findOneAndUpdate(
+              { _id: id },
+              { $inc: { "other.incomplete": -1, "other.complete": 1 } }
+            );
+          }
+          res.status(200).json({ message: "skill update successfull" });
+        }
+      
+       
+        
+      }
+    });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+
+
+  
 })
 
 // app.post("/default_skill", tokenverify, async (req, res) => {
