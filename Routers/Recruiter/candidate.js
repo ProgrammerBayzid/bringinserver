@@ -33,7 +33,7 @@ app.get("/candidate_functionalarea", tokenverify, async (req, res) => {
           userid: _id,
         })
           .sort("-updatedAt")
-          .limit(5)
+          .limit(10)
           .select("expertice_area")
           .populate({ path: "expertice_area", select: "functionalname" });
         res.status(200).send(candidate_function);

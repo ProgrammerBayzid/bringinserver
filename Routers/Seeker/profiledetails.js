@@ -386,7 +386,7 @@ app.get("/default_skill", tokenverify, async (req, res)=> {
       } else {
         const _id = authdata._id;
         if(req.query.categoryid){
-            var data = await Functionarea.find({categoryid: req.query.categoryid}).select('functionalname').limit(5)
+            var data = await Functionarea.find({categoryid: req.query.categoryid}).select('functionalname').limit(12)
             res.status(200).send(data)
         }else{
           res.status(400).json({message: "insert a category id"})
