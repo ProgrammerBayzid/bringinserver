@@ -55,6 +55,10 @@ const recruitersSchema = Schema(
         type: Boolean,
         default: false,
       },
+      profile_other_docupload: {
+        type: Boolean,
+        default: false,
+      },
       profile_verify_date: {
         type: Date,
         default: new Date(),

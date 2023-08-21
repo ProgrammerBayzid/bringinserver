@@ -228,7 +228,6 @@ app.delete('/job_post_update', tokenverify, async (req, res) => {
             if (err) {
                 res.json({ message: "invalid token" })
             } else {
-
                 var id = authdata._id;
                 if (req.query.jobid) {
                     await JobPost.findOneAndDelete({ _id: req.query.jobid, userid: id })

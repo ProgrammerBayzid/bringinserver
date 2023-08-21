@@ -274,7 +274,7 @@ app.post(
               } else {
                 await Recruiters.findByIdAndUpdate(
                   { _id: _id },
-                  { $set: { "other.profile_docupload": true } }
+                  { $set: { "other.profile_docupload": true , "other.profile_verify_type": req.body.type} }
                 );
                 res.status(200).send("verification code send successfull");
               }
@@ -297,7 +297,7 @@ app.post(
               }).save();
               await Recruiters.findByIdAndUpdate(
                 { _id: _id },
-                { $set: { "other.profile_docupload": true } }
+                { $set: { "other.profile_docupload": true ,"other.profile_verify_type": req.body.type} }
               );
               res.status(200).send("send successfull");
             } else {
@@ -320,7 +320,7 @@ app.post(
               );
               await Recruiters.findByIdAndUpdate(
                 { _id: _id },
-                { $set: { "other.profile_docupload": true } }
+                { $set: { "other.profile_docupload": true ,"other.profile_verify_type": req.body.type} }
               );
               res.status(200).send("send successfull");
             }
@@ -342,7 +342,7 @@ app.post(
               }).save();
               await Recruiters.findByIdAndUpdate(
                 { _id: _id },
-                { $set: { "other.profile_docupload": true } }
+                { $set: { "other.profile_other_docupload": true ,"other.profile_verify_type": req.body.type} }
               );
               res.status(200).send("send successfull");
             } else {
@@ -365,7 +365,7 @@ app.post(
               );
               await Recruiters.findByIdAndUpdate(
                 { _id: _id },
-                { $set: { "other.profile_docupload": true } }
+                { $set: { "other.profile_other_docupload": true ,"other.profile_verify_type": req.body.type} }
               );
               res.status(200).send("send successfull");
             }
