@@ -274,7 +274,12 @@ app.post(
               } else {
                 await Recruiters.findByIdAndUpdate(
                   { _id: _id },
-                  { $set: { "other.profile_docupload": true , "other.profile_verify_type": req.body.type} }
+                  {
+                    $set: {
+                      "other.profile_docupload": true,
+                      "other.profile_verify_type": req.body.type,
+                    },
+                  }
                 );
                 res.status(200).send("verification code send successfull");
               }
@@ -297,7 +302,12 @@ app.post(
               }).save();
               await Recruiters.findByIdAndUpdate(
                 { _id: _id },
-                { $set: { "other.profile_docupload": true ,"other.profile_verify_type": req.body.type} }
+                {
+                  $set: {
+                    "other.profile_docupload": true,
+                    "other.profile_verify_type": req.body.type,
+                  },
+                }
               );
               res.status(200).send("send successfull");
             } else {
@@ -320,7 +330,12 @@ app.post(
               );
               await Recruiters.findByIdAndUpdate(
                 { _id: _id },
-                { $set: { "other.profile_docupload": true ,"other.profile_verify_type": req.body.type} }
+                {
+                  $set: {
+                    "other.profile_docupload": true,
+                    "other.profile_verify_type": req.body.type,
+                  },
+                }
               );
               res.status(200).send("send successfull");
             }
@@ -342,7 +357,12 @@ app.post(
               }).save();
               await Recruiters.findByIdAndUpdate(
                 { _id: _id },
-                { $set: { "other.profile_other_docupload": true ,"other.profile_verify_type": req.body.type} }
+                {
+                  $set: {
+                    "other.profile_other_docupload": true,
+                    "other.profile_verify_type": req.body.type,
+                  },
+                }
               );
               res.status(200).send("send successfull");
             } else {
@@ -365,7 +385,12 @@ app.post(
               );
               await Recruiters.findByIdAndUpdate(
                 { _id: _id },
-                { $set: { "other.profile_other_docupload": true ,"other.profile_verify_type": req.body.type} }
+                {
+                  $set: {
+                    "other.profile_other_docupload": true,
+                    "other.profile_verify_type": req.body.type,
+                  },
+                }
               );
               res.status(200).send("send successfull");
             }
@@ -557,6 +582,159 @@ app.post("/email_code_verify", tokenverify, (req, res) => {
     });
   } catch (error) {
     res.status(404).send(error);
+  }
+});
+
+// Define your route to send the verification email
+app.post("/admin_recruter_profile_verify_email", async (req, res) => {
+  try {
+    // Extract email from the request body
+    const { email } = req.body;
+
+    const mailOption = {
+      from: "notifications@bringin.io",
+      to: email,
+      subject:
+        "Congratulations on Joining Bringin, Your AI-Powered Chat-Based Instant Hiring Solution!",
+      html: `  
+            <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"><head>
+            <!--[if gte mso 15]>
+            <xml>
+            <o:OfficeDocumentSettings>
+            <o:AllowPNG/>
+            <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+            </xml>
+            <![endif]-->
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>Verification email from Bringin</title>
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=DM+Sans:400,400i,700,700i,900,900i"><style>          img{-ms-interpolation-mode:bicubic;} 
+                      table, td{mso-table-lspace:0pt; mso-table-rspace:0pt;} 
+                      .mceStandardButton, .mceStandardButton td, .mceStandardButton td a{mso-hide:all !important;} 
+                      p, a, li, td, blockquote{mso-line-height-rule:exactly;} 
+                      p, a, li, td, body, table, blockquote{-ms-text-size-adjust:100%; -webkit-text-size-adjust:100%;} 
+                      @media only screen and (max-width: 480px){
+                        body, table, td, p, a, li, blockquote{-webkit-text-size-adjust:none !important;} 
+                      }
+                      .mcnPreviewText{display: none !important;} 
+                      .bodyCell{margin:0 auto; padding:0; width:100%;}
+                      .ExternalClass, .ExternalClass p, .ExternalClass td, .ExternalClass div, .ExternalClass span, .ExternalClass font{line-height:100%;} 
+                      .ReadMsgBody{width:100%;} .ExternalClass{width:100%;} 
+                      a[x-apple-data-detectors]{color:inherit !important; text-decoration:none !important; font-size:inherit !important; font-family:inherit !important; font-weight:inherit !important; line-height:inherit !important;} 
+                        body{height:100%; margin:0; padding:0; width:100%; background: #ffffff;}
+                        p{margin:0; padding:0;} 
+                        table{border-collapse:collapse;} 
+                        td, p, a{word-break:break-word;} 
+                        h1, h2, h3, h4, h5, h6{display:block; margin:0; padding:0;} 
+                        img, a img{border:0; height:auto; outline:none; text-decoration:none;} 
+                        a[href^="tel"], a[href^="sms"]{color:inherit; cursor:default; text-decoration:none;} 
+                        li p {margin: 0 !important;}
+                        .ProseMirror a {
+                            pointer-events: none;
+                        }
+                        @media only screen and (max-width: 480px){
+                            body{width:100% !important; min-width:100% !important; } 
+                            body.mobile-native {
+                                -webkit-user-select: none; user-select: none; transition: transform 0.2s ease-in; transform-origin: top center;
+                            }
+                            body.mobile-native.selection-allowed a, body.mobile-native.selection-allowed .ProseMirror {
+                                user-select: auto;
+                                -webkit-user-select: auto;
+                            }
+                            colgroup{display: none;}
+                            img{height: auto !important;}
+                            .mceWidthContainer{max-width: 660px !important;}
+                            .mceColumn{display: block !important; width: 100% !important;}
+                            .mceColumn-forceSpan{display: table-cell !important; width: auto !important;}
+                            .mceBlockContainer{padding-right:16px !important; padding-left:16px !important;} 
+                            .mceSpacing-24{padding-right:16px !important; padding-left:16px !important;}
+                            .mceFooterSection .mceText, .mceFooterSection .mceText p{font-size: 16px !important; line-height: 140% !important;}
+                            .mceText, .mceText p{font-size: 16px !important; line-height: 140% !important;}
+                            h1{font-size: 30px !important; line-height: 120% !important;}
+                            h2{font-size: 26px !important; line-height: 120% !important;}
+                            h3{font-size: 20px !important; line-height: 125% !important;}
+                            h4{font-size: 18px !important; line-height: 125% !important;}
+                            .ProseMirror {
+                                -webkit-user-modify: read-write-plaintext-only;
+                                user-modify: read-write-plaintext-only;
+                            }
+                        }
+                        @media only screen and (max-width: 640px){
+                            .mceClusterLayout td{padding: 4px !important;} 
+                        }
+                        div[contenteditable="true"] {outline: 0;}
+                        .ProseMirror .empty-node, .ProseMirror:empty {position: relative;}
+                        .ProseMirror .empty-node::before, .ProseMirror:empty::before {
+                            position: absolute;
+                            left: 0;
+                            right: 0;
+                            color: rgba(0,0,0,0.2);
+                            cursor: text;
+                        }
+                        .ProseMirror .empty-node:hover::before, .ProseMirror:empty:hover::before {
+                            color: rgba(0,0,0,0.3);
+                        }
+                        .ProseMirror h1.empty-node::before {
+                            content: 'Heading';
+                        }
+                        .ProseMirror p.empty-node:only-child::before, .ProseMirror:empty::before {
+                            content: 'Start typing...';
+                        }
+                        a .ProseMirror p.empty-node::before, a .ProseMirror:empty::before {
+                            content: '';
+                        }
+                        .mceText, .ProseMirror {
+                            white-space: pre-wrap;
+                        }
+            body, #bodyTable { background-color: rgb(247, 247, 247); }.mceText, .mceLabel { font-family: "Helvetica Neue", Helvetica, Arial, Verdana, sans-serif; }.mceText, .mceLabel { color: rgb(0, 0, 0); }.mceText h2 { margin-bottom: 0px; }.mceText h4 { margin-bottom: 0px; }.mceText p { margin-bottom: 0px; }.mceText ul { margin-bottom: 0px; }.mceText label { margin-bottom: 0px; }.mceText input { margin-bottom: 0px; }.mceSpacing-12 .mceInput + .mceErrorMessage { margin-top: -6px; }.mceText h2 { margin-bottom: 0px; }.mceText h4 { margin-bottom: 0px; }.mceText p { margin-bottom: 0px; }.mceText ul { margin-bottom: 0px; }.mceText label { margin-bottom: 0px; }.mceText input { margin-bottom: 0px; }.mceSpacing-24 .mceInput + .mceErrorMessage { margin-top: -12px; }.mceInput { background-color: transparent; border: 2px solid rgb(208, 208, 208); width: 60%; color: rgb(77, 77, 77); display: block; }.mceInput[type="radio"], .mceInput[type="checkbox"] { float: left; margin-right: 12px; display: inline; width: auto !important; }.mceLabel > .mceInput { margin-bottom: 0px; margin-top: 2px; }.mceLabel { display: block; }.mceText p { color: rgb(0, 0, 0); font-family: "Helvetica Neue", Helvetica, Arial, Verdana, sans-serif; font-size: 16px; font-weight: normal; line-height: 1.5; text-align: center; letter-spacing: 0px; direction: ltr; }.mceText h2 { color: rgb(0, 0, 0); font-family: "Helvetica Neue", Helvetica, Arial, Verdana, sans-serif; font-size: 25px; font-weight: bold; line-height: 1.5; text-align: center; letter-spacing: 0px; direction: ltr; }.mceText h4 { color: rgb(0, 0, 0); font-family: "Helvetica Neue", Helvetica, Arial, Verdana, sans-serif; font-size: 16px; font-weight: bold; line-height: 1.5; text-align: center; letter-spacing: 0px; direction: ltr; }.mceText a { color: rgb(0, 0, 0); font-style: normal; font-weight: normal; text-decoration: none; direction: ltr; }
+            @media only screen and (max-width: 480px) {
+                        .mceText p { font-size: 14px !important; line-height: 1.25 !important; }
+                      }
+            @media only screen and (max-width: 480px) {
+                        .mceText h2 { font-size: 25px !important; line-height: 1.5 !important; }
+                      }
+            @media only screen and (max-width: 480px) {
+                        .mceText h4 { font-size: 16px !important; line-height: 1.5 !important; }
+                      }
+            @media only screen and (max-width: 480px) {
+                        .mceBlockContainer { padding-left: 16px !important; padding-right: 16px !important; }
+                      }
+            #dataBlockId-9 p, #dataBlockId-9 h1, #dataBlockId-9 h2, #dataBlockId-9 h3, #dataBlockId-9 h4, #dataBlockId-9 ul { text-align: center; }
+            @media only screen and (max-width: 480px) {
+                    .mobileClass-3 {padding-left: 12 !important;padding-top: 0 !important;padding-right: 12 !important;}.mobileClass-3 {padding-left: 12 !important;padding-top: 0 !important;padding-right: 12 !important;}.mobileClass-3 {padding-left: 12 !important;padding-top: 0 !important;padding-right: 12 !important;}.mobileClass-3 {padding-left: 12 !important;padding-top: 0 !important;padding-right: 12 !important;}.mobileClass-3 {padding-left: 12 !important;padding-top: 0 !important;padding-right: 12 !important;}
+                  }</style><script async="" crossorigin="anonymous" src="https://edge.fullstory.com/s/fs.js"></script></head>
+            <body>
+            <!--[if !gte mso 9]><!----><span class="mcnPreviewText" style="display:none; font-size:0px; line-height:0px; max-height:0px; max-width:0px; opacity:0; overflow:hidden; visibility:hidden; mso-hide:all;"></span><!--<![endif]-->
+            <!--*|END:IF|*-->
+            <center>
+            <table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable" style="background-color: rgb(247, 247, 247);">
+            <tbody><tr>
+            <td class="bodyCell" align="center" valign="top">
+            <table id="root" border="0" cellpadding="0" cellspacing="0" width="100%"><tbody data-block-id="13" class="mceWrapper"><tr><td align="center" valign="top" class="mceWrapperOuter"><!--[if (gte mso 9)|(IE)]><table align="center" border="0" cellspacing="0" cellpadding="0" width="660" style="width:660px;"><tr><td><![endif]--><table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:660px" role="presentation"><tbody><tr><td style="background-color:#ffffff;background-position:center;background-repeat:no-repeat;background-size:cover" class="mceWrapperInner" valign="top"><table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" role="presentation" data-block-id="12"><tbody><tr class="mceRow"><td style="background-position:center;background-repeat:no-repeat;background-size:cover" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="100%" role="presentation"><tbody><tr><td style="padding-top:0;padding-bottom:0" class="mceColumn" data-block-id="-12" valign="top" colspan="12" width="100%"><table border="0" cellpadding="0" cellspacing="0" width="100%" role="presentation"><tbody><tr><td style="padding-top:16px;padding-bottom:16px;padding-right:13px;padding-left:20px" class="mceBlockContainer" align="full" valign="top"><img data-block-id="2" width="660" height="auto" style="width:660px;height:auto;max-width:100%;max-height:100%;display:block" alt="" src="https://dim.mcusercontent.com/cs/804ed9270e6b71b0edbffc03c/images/04c267af-ab46-04a8-9a50-95767b76eebe.png?w=1148&amp;dpr=2" role="presentation" class="imageDropZone"></td></tr><tr><td style="background-color:transparent;padding-top:5px;padding-bottom:4px;padding-right:16px;padding-left:19px" class="mceBlockContainer" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:transparent" role="presentation" data-block-id="31"><tbody><tr><td style="min-width:100%;border-top:1px solid #ebebeb" valign="top"></td></tr></tbody></table></td></tr><tr><td style="padding-top:1px;padding-bottom:0;padding-right:24px;padding-left:24px" class="mceBlockContainer" valign="top"><div data-block-id="3" class="mceText" id="dataBlockId-3" style="width:100%"><h2 class="last-child"><span style="color:#0077b5;"><span style="font-family: 'DM Sans', sans-serif">Congratulations!</span></span></h2></div></td></tr><tr><td style="padding-top:12px;padding-bottom:1px;padding-right:24px;padding-left:24px" class="mceBlockContainer" valign="top"><div data-block-id="15" class="mceText" id="dataBlockId-15" style="width:100%"><p style="text-align: left;" class="last-child"><span style="color:#1f1f1f;"><span style="font-family: 'DM Sans', sans-serif">Dear </span></span><strong><span style="color:#1f1f1f;"><span style="font-family: 'DM Sans', sans-serif">Jakaria Hasan</span></span></strong><span style="color:#1f1f1f;"><span style="font-family: 'DM Sans', sans-serif">,<br>Congratulations on joining Bringin, the AI-Powered chat-based Instant Hiring app designed for high-growth Startups and SMEs in Bangladesh! Welcome to a new era of efficient recruitment.</span></span></p></div></td></tr><tr><td style="padding-top:1px;padding-bottom:6px;padding-right:24px;padding-left:0" class="mceBlockContainer" valign="top"><div data-block-id="22" class="mceText" id="dataBlockId-22" style="width:100%"><ul class="last-child"><li style="line-height: 1.5; text-align: justify;"><p style="text-align: justify; line-height: 1.5; letter-spacing: 0px;"><span style="font-family: 'DM Sans', sans-serif">With Bringin, you gain access to cutting-edge technology that revolutionizes hiring. Our AI algorithms instantly match your job requirements with qualified candidates, ensuring you connect with the right talent.</span></p></li><li style="line-height: 1.5; text-align: justify;"><p style="text-align: justify; line-height: 1.5; letter-spacing: 0px;"><span style="font-family: 'DM Sans', sans-serif">Engage in real-time conversations through our chat interface, and instant video call features, saving time and facilitating efficient evaluation. No more lengthy emails or phone tags!</span></p></li><li style="line-height: 1.5; text-align: justify;"><p style="text-align: justify; line-height: 1.5; letter-spacing: 0px;"><span style="font-family: 'DM Sans', sans-serif">Leverage AI-generated analytics for data-driven insights. Track metrics, optimize your recruitment strategy, and make informed decisions.</span></p></li><li style="line-height: 1.5; text-align: justify;"><p style="text-align: justify; line-height: 1.5; letter-spacing: 0px;"><span style="font-family: 'DM Sans', sans-serif">Our dedicated team is here to support you throughout your hiring journey. We are committed to your success and offer guidance and assistance whenever needed.</span></p></li></ul></div></td></tr><tr><td style="padding-top:10px;padding-bottom:6px;padding-right:24px;padding-left:24px" class="mceBlockContainer" valign="top"><div data-block-id="20" class="mceText" id="dataBlockId-20" style="width:100%"><h4 style="text-align: left;" class="last-child"><strong><span style="color:#0077b5;"><span style="font-family: 'DM Sans', sans-serif">Unlock the power of Bringin AI-Hiring and build an exceptional team!</span></span></strong></h4></div></td></tr><tr><td style="padding-top:12px;padding-bottom:12px;padding-right:24px;padding-left:24px" class="mceBlockContainer" valign="top"><div data-block-id="21" class="mceText" id="dataBlockId-21" style="width:100%"><p style="text-align: left;"><strong><span style="color:#1f1f1f;"><span style="font-family: 'DM Sans', sans-serif">Warmest regards,</span></span></strong></p><p style="text-align: left;" class="last-child"><span style="color:#797979;"><span style="font-family: 'DM Sans', sans-serif">Rony Hosen Sarker l CEO<br></span></span><a href="https://www.linkedin.com/company/bringinapp/" target="_blank" style="color: #0077b5;"><span style="font-family: 'DM Sans', sans-serif">On behalf of the Bringin-Instant&nbsp;Hiring Team</span></a></p></div></td></tr><tr><td style="padding-top:12px;padding-bottom:12px;padding-right:24px;padding-left:24px" class="mceBlockContainer" valign="top"><div data-block-id="16" class="mceText" id="dataBlockId-16" style="width:100%"><p style="text-align: left;"><em><span style="color:#1f1f1f;"><span style="font-size: 14px"><span style="font-family: 'DM Sans', sans-serif">Have a question?</span></span></span></em></p><p style="text-align: left;" class="last-child"><em><span style="color:#1f1f1f;"><span style="font-size: 14px"><span style="font-family: 'DM Sans', sans-serif">Check out our help center or contact us in the app using, </span></span></span></em><a href="https://wa.me/8801756175141" target="_blank" style="color: #0077b5;"><em><strong><span style="color:#0077b5;"><span style="font-size: 14px"><span style="font-family: 'DM Sans', sans-serif">Profile&gt;Contact us</span></span></span></strong></em></a></p></div></td></tr><tr><td style="background-color:transparent;padding-top:12px;padding-bottom:1px;padding-right:48px;padding-left:49px" class="mceBlockContainer" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:transparent" role="presentation" data-block-id="17"><tbody><tr><td style="min-width:100%;border-top:1px solid #dedede" valign="top"></td></tr></tbody></table></td></tr><tr><td style="background-color:#ffffff;padding-top:12px;padding-bottom:12px;padding-right:8px;padding-left:8px" class="mceLayoutContainer" valign="top"><table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" role="presentation" data-block-id="11" id="section_29e3e6807f82236a3a07bd1e8e1afc10" class="mceFooterSection"><tbody><tr class="mceRow"><td style="background-color:#ffffff;background-position:center;background-repeat:no-repeat;background-size:cover;padding-top:0px;padding-bottom:0px" valign="top"><table border="0" cellpadding="0" cellspacing="12" width="100%" role="presentation"><tbody><tr><td style="padding-top:0;padding-bottom:0;margin-bottom:12px" class="mceColumn" data-block-id="-3" valign="top" colspan="12" width="100%"><table border="0" cellpadding="0" cellspacing="0" width="100%" role="presentation"><tbody><tr><td style="padding-top:5px;padding-bottom:0;padding-right:16px;padding-left:16px" class="mceBlockContainer" align="center" valign="top"><div data-block-id="9" class="mceText" id="dataBlockId-9" style="display:inline-block;width:100%"><p><span style="font-size: 14px"><span style="font-family: 'DM Sans', sans-serif">Bringin</span></span><span style="color:#0077b5;"><span style="font-size: 14px"><span style="font-family: 'DM Sans', sans-serif"> </span></span></span><a href="https://bringin.io/privacypolicy" target="_blank" style="color: #0077b5; text-decoration: none;"><strong><span style="text-decoration:underline;"><span style="font-size: 14px"><span style="font-family: 'DM Sans', sans-serif">Privacy Policy</span></span></span></strong></a></p><p class="last-child"><span style="font-size: 14px"><span style="font-family: 'DM Sans', sans-serif">Plot 25, Road 04, Sector 10, Uttara, Dhaka – 1230.</span></span></p></div></td></tr><tr><td class="mceLayoutContainer" align="center" valign="top"><table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" role="presentation" data-block-id="-2"><tbody><tr class="mceRow"><td style="background-position:center;background-repeat:no-repeat;background-size:cover;padding-top:0px;padding-bottom:0px" valign="top"><table border="0" cellpadding="0" cellspacing="24" width="100%" role="presentation"><tbody></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr><tr><td style="background-color:#ffffff;padding-top:0;padding-bottom:21px;padding-right:0;padding-left:0" class="mceLayoutContainer" valign="top"><table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" role="presentation" data-block-id="19"><tbody><tr class="mceRow"><td style="background-color:#ffffff;background-position:center;background-repeat:no-repeat;background-size:cover;padding-top:0px;padding-bottom:0px" valign="top"><table border="0" cellpadding="0" cellspacing="24" width="100%" role="presentation"><tbody><tr><td style="margin-bottom:24px" class="mceColumn" data-block-id="-11" valign="top" colspan="12" width="100%"><table border="0" cellpadding="0" cellspacing="0" width="100%" role="presentation"><tbody><tr><td align="center" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="" role="presentation" class="mceClusterLayout" data-block-id="-10"><tbody><tr><td style="padding-left:6px;padding-top:0;padding-right:6px" data-breakpoint="3" valign="top" class="mobileClass-3"><a href="https://www.linkedin.com/company/bringinapp" style="display:block" target="_blank" data-block-id="-5"><img width="24" height="auto" style="border:0;width:24px;height:auto;max-width:100%;max-height:100%;display:block" alt="LinkedIn icon" src="https://dim.mcusercontent.com/https/cdn-images.mailchimp.com%2Ficons%2Fsocial-block-v3%2Fblock-icons-v3%2Flinkedin-filled-color-40.png?w=24&amp;dpr=2" class=""></a></td><td style="padding-left:6px;padding-top:0;padding-right:6px" data-breakpoint="3" valign="top" class="mobileClass-3"><a href="https://www.facebook.com/bringin.io" style="display:block" target="_blank" data-block-id="-6"><img width="24" height="auto" style="border:0;width:24px;height:auto;max-width:100%;max-height:100%;display:block" alt="Facebook icon" src="https://dim.mcusercontent.com/https/cdn-images.mailchimp.com%2Ficons%2Fsocial-block-v3%2Fblock-icons-v3%2Ffacebook-filled-color-40.png?w=24&amp;dpr=2" class=""></a></td><td style="padding-left:6px;padding-top:0;padding-right:6px" data-breakpoint="3" valign="top" class="mobileClass-3"><a href="https://www.instagram.com/bringin.io/" style="display:block" target="_blank" data-block-id="-7"><img width="24" height="auto" style="border:0;width:24px;height:auto;max-width:100%;max-height:100%;display:block" alt="Instagram icon" src="https://dim.mcusercontent.com/https/cdn-images.mailchimp.com%2Ficons%2Fsocial-block-v3%2Fblock-icons-v3%2Finstagram-filled-color-40.png?w=24&amp;dpr=2" class=""></a></td><td style="padding-left:6px;padding-top:0;padding-right:6px" data-breakpoint="3" valign="top" class="mobileClass-3"><a href="https://www.youtube.com/@Bringinapp" style="display:block" target="_blank" data-block-id="-8"><img width="24" height="auto" style="border:0;width:24px;height:auto;max-width:100%;max-height:100%;display:block" alt="YouTube icon" src="https://dim.mcusercontent.com/https/cdn-images.mailchimp.com%2Ficons%2Fsocial-block-v3%2Fblock-icons-v3%2Fyoutube-filled-color-40.png?w=24&amp;dpr=2" class=""></a></td><td style="padding-left:6px;padding-top:0;padding-right:6px" data-breakpoint="3" valign="top" class="mobileClass-3"><a href="https://twitter.com/bringinapp" style="display:block" target="_blank" data-block-id="-9"><img width="24" height="auto" style="border:0;width:24px;height:auto;max-width:100%;max-height:100%;display:block" alt="Twitter icon" src="https://dim.mcusercontent.com/https/cdn-images.mailchimp.com%2Ficons%2Fsocial-block-v3%2Fblock-icons-v3%2Ftwitter-filled-color-40.png?w=24&amp;dpr=2" class=""></a></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]--></td></tr></tbody></table>
+            </td>
+            </tr>
+            </tbody></table>
+            </center>
+            <script type="text/javascript" src="/rVzzGjTwEm1m5w1PgA/u9tYrX0kNJ/GBBTSjtmAg/cyY/ZEB0oQQ"></script></body></html>
+           
+            `,
+    };
+
+    // Send the verification email
+    transportar.sendMail(mailOption, (error) => {
+      if (error) {
+        console.error("Error sending email:", error);
+        res.status(400).send("Error sending email");
+      } else {
+        console.log("Verification email sent successfully");
+        res.status(200).send("Verification successful");
+      }
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Internal server error");
   }
 });
 

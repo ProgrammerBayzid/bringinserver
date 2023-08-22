@@ -113,16 +113,16 @@ async function notificaton_send_by_verifyAprove(recruiterid, mapdata) {
       app_id: "74463dd2-b8de-4624-a679-0221b4b0af85",
       data: mapdata,
       contents: {
-        en: `${recruiterinfo.firstname} ${recruiterinfo.lastname} Your profile verification has been successful`,
+        en: `Hi ${recruiterinfo.firstname} ${recruiterinfo.lastname}, Your Bringin profile verification has been successful.`,
       },
-      headings: { en: `${recruiterinfo.firstname} ${recruiterinfo.lastname}` },
+      headings: { en: "" },
       include_player_ids: notificationid, // Ensure notificationid is a valid player ID
       android_channel_id: "39d13464-1a8e-4fa7-88ea-e42d8af163f0",
     };
-
+    console.log("notificationid", notificationid);
     sendNotification(message); // Assuming you have a function named sendNotification
   } catch (error) {
-    console.log(error);
+    console.log("e", error);
   }
 }
 

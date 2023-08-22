@@ -276,6 +276,8 @@ app.delete('/job_post_update', tokenverify, async (req, res) => {
   }
 });
 
+
+
 app.get("/single_jobdetails", tokenverify, async (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
