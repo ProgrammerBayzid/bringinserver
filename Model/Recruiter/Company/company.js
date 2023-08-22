@@ -17,7 +17,8 @@ const companySchema = Schema(
             lat: Schema.Types.Mixed,
             lon: Schema.Types.Mixed,
             formet_address: String,
-            city: String
+            city: String,
+            division: String,
         },
         c_website: String,
     },{timestamps: true}
