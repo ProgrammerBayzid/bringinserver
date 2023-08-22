@@ -134,7 +134,7 @@ const allprofiledataSchema = Schema(
     ],
     skill: [
       {
-        type: String
+        type: String,
       },
     ],
     protfoliolink: [

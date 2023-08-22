@@ -1,17 +1,13 @@
-
 const express = require("express");
 const apps = express();
-const Career_preferences = require("../../Model/career_preferences")
-const Recruiter = require("../../Model/Recruiter/recruiters")
-const { Chat, Message } = require("../../Model/Chat/chat")
-
-
-
+const Career_preferences = require("../../Model/career_preferences");
+const Recruiter = require("../../Model/Recruiter/recruiters");
+const { Chat, Message } = require("../../Model/Chat/chat");
 
 var sendNotification = function (data) {
   var headers = {
     "Content-Type": "application/json; charset=utf-8",
-    "Authorization": "Basic NWUwMmExM2UtMmJlOC00YTEyLWE0ODUtMzE5NTAzZjYzMzhh"
+    Authorization: "Basic NWUwMmExM2UtMmJlOC00YTEyLWE0ODUtMzE5NTAzZjYzMzhh",
   };
 
   var options = {
@@ -19,18 +15,18 @@ var sendNotification = function (data) {
     port: 443,
     path: "/api/v1/notifications",
     method: "POST",
-    headers: headers
+    headers: headers,
   };
 
-  var https = require('https');
+  var https = require("https");
   var req = https.request(options, function (res) {
-    res.on('data', function (data) {
+    res.on("data", function (data) {
       console.log("Response:");
       console.log(JSON.parse(data));
     });
   });
 
-  req.on('error', function (e) {
+  req.on("error", function (e) {
     console.log("ERROR:");
     console.log(e);
   });
@@ -39,77 +35,127 @@ var sendNotification = function (data) {
   req.end();
 };
 
-
-
 apps.post("/single_notification_send", async (req, res) => {
   var message = {
     app_id: "74463dd2-b8de-4624-a679-0221b4b0af85",
     data: req.body.data,
-    contents: { "en": req.body.message },
-    headings: { "en": req.body.title },
+    contents: { en: req.body.message },
+    headings: { en: req.body.title },
     android_channel_id: "39d13464-1a8e-4fa7-88ea-e42d8af163f0",
-    include_player_ids: [req.body.playerid]
+    include_player_ids: [req.body.playerid],
   };
   sendNotification(message);
-  res.status(200).json({ message: "notifiation send" })
-})
-
-
-
+  res.status(200).json({ message: "notifiation send" });
+});
 
 async function notificaton_send_by_job(functionalid, recruiterid, mapdata) {
   try {
-    var data = await Career_preferences.find({ functionalarea: functionalid }).select({ userid: 1 }).populate([{ path: "userid" }, { path: "functionalarea" }])
+    var data = await Career_preferences.find({ functionalarea: functionalid })
+      .select({ userid: 1 })
+      .populate([{ path: "userid" }, { path: "functionalarea" }]);
     let notificationid = [];
     let functionalname = "";
     let enablentf = false;
     for (let index = 0; index < data.length; index++) {
-      if (data[index]['userid']['other']['notification']['push_notification'] == true) {
-        notificationid.push(data[index]['userid']['other']['pushnotification'])
-        functionalname = data[index]['functionalarea']['functionalname']
+      if (
+        data[index]["userid"]["other"]["notification"]["push_notification"] ==
+        true
+      ) {
+        notificationid.push(data[index]["userid"]["other"]["pushnotification"]);
+        functionalname = data[index]["functionalarea"]["functionalname"];
       }
-
     }
-    var recruiterinfo = await Recruiter.findOne({ _id: recruiterid })
+    var recruiterinfo = await Recruiter.findOne({ _id: recruiterid });
 
-    console.log(notificationid)
+    console.log(notificationid);
 
     var message = {
       app_id: "74463dd2-b8de-4624-a679-0221b4b0af85",
       data: mapdata,
-      contents: { "en": `${recruiterinfo.firstname} ${recruiterinfo.lastname} has posted a job for “${functionalname}”` },
-      headings: { "en": `${recruiterinfo.firstname} ${recruiterinfo.lastname}` },
+      contents: {
+        en: `${recruiterinfo.firstname} ${recruiterinfo.lastname} has posted a job for “${functionalname}”`,
+      },
+      headings: { en: `${recruiterinfo.firstname} ${recruiterinfo.lastname}` },
       include_player_ids: notificationid,
-      android_channel_id: "39d13464-1a8e-4fa7-88ea-e42d8af163f0"
+      android_channel_id: "39d13464-1a8e-4fa7-88ea-e42d8af163f0",
     };
     if (notificationid.length > 0) {
       sendNotification(message);
     }
-
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 }
 
+async function notificaton_send_by_verifyAprove(recruiterid, mapdata) {
+  try {
+    var recruiterinfo = await Recruiter.findOne({ _id: recruiterid });
+
+    if (!recruiterinfo) {
+      console.log("Recruiter not found.");
+      return;
+    }
+
+    let notificationid = [];
+    if (recruiterinfo.other.notification.push_notification === true) {
+      notificationid.push(recruiterinfo.other.pushnotification);
+    } else {
+      console.log("Push notification disabled for this recruiter.");
+      return;
+    }
+
+    if (notificationid.length === 0) {
+      console.log("No valid notification recipient.");
+      return;
+    }
+
+    var message = {
+      app_id: "74463dd2-b8de-4624-a679-0221b4b0af85",
+      data: mapdata,
+      contents: {
+        en: `${recruiterinfo.firstname} ${recruiterinfo.lastname} Your profile verification has been successful`,
+      },
+      headings: { en: `${recruiterinfo.firstname} ${recruiterinfo.lastname}` },
+      include_player_ids: notificationid, // Ensure notificationid is a valid player ID
+      android_channel_id: "39d13464-1a8e-4fa7-88ea-e42d8af163f0",
+    };
+
+    sendNotification(message); // Assuming you have a function named sendNotification
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 async function single_msg_notifiation(channelid, recruiter) {
-  var chatdata = await Chat.findOne({ _id: channelid }).select({ seekerid: 1, recruiterid: 1 }).populate([{ path: "lastmessage" }, { path: "seekerid", select: ["other", "fastname", "lastname"] }, { path: "recruiterid", select: ["other", "firstname", "lastname"] }])
-  let mapdata = { "channelid": channelid, "recruiter": recruiter.recruiter, "type": 1 }
+  var chatdata = await Chat.findOne({ _id: channelid })
+    .select({ seekerid: 1, recruiterid: 1 })
+    .populate([
+      { path: "lastmessage" },
+      { path: "seekerid", select: ["other", "fastname", "lastname"] },
+      { path: "recruiterid", select: ["other", "firstname", "lastname"] },
+    ]);
+  let mapdata = {
+    channelid: channelid,
+    recruiter: recruiter.recruiter,
+    type: 1,
+  };
   let include_player_ids;
-   console.log(chatdata.recruiterid.other.pushnotification)
+  console.log(chatdata.recruiterid.other.pushnotification);
   if (recruiter.recruiter == true) {
-    include_player_ids = chatdata.seekerid.other.pushnotification
+    include_player_ids = chatdata.seekerid.other.pushnotification;
   } else {
-    include_player_ids = chatdata.recruiterid.other.pushnotification
+    include_player_ids = chatdata.recruiterid.other.pushnotification;
   }
 
   var message = {
     app_id: "74463dd2-b8de-4624-a679-0221b4b0af85",
     data: mapdata,
-    contents: { "en": `${chatdata.lastmessage.message.text}` },
-    headings: { "en": `${chatdata.lastmessage.message.user.firstName} ${chatdata.lastmessage.message.user.lastName}` },
+    contents: { en: `${chatdata.lastmessage.message.text}` },
+    headings: {
+      en: `${chatdata.lastmessage.message.user.firstName} ${chatdata.lastmessage.message.user.lastName}`,
+    },
     include_player_ids: [include_player_ids],
-    android_channel_id: "39d13464-1a8e-4fa7-88ea-e42d8af163f0"
+    android_channel_id: "39d13464-1a8e-4fa7-88ea-e42d8af163f0",
   };
 
   if (recruiter.recruiter == true) {
@@ -121,11 +167,11 @@ async function single_msg_notifiation(channelid, recruiter) {
       sendNotification(message);
     }
   }
-
-
 }
 
-
-
-
-module.exports = { apps, notificaton_send_by_job, single_msg_notifiation }
+module.exports = {
+  apps,
+  notificaton_send_by_job,
+  single_msg_notifiation,
+  notificaton_send_by_verifyAprove,
+};

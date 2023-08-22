@@ -32,6 +32,9 @@ const {
 const {
   ProfileVerify,
 } = require("../../Model/Recruiter/Verify/profile_verify.js");
+const {
+  notificaton_send_by_verifyAprove,
+} = require("../../Routers/Notification/notification.js");
 const { DefaultSkill } = require("../../Model/Seeker_profile_all_details.js");
 const Package = require("../../Model/Package/package.js");
 const { populate } = require("dotenv");
@@ -378,19 +381,59 @@ app.get("/profile_varifys/:id", async (req, res) => {
 //
 
 app.patch("/verifyRecruterProfile/:_id", async (req, res) => {
-  const id = req.params._id;
-  const filter = { _id: id };
-  const updateDoc = {
-    $set: {
-      "other.profile_verify_type": 1,
-      "other.company_verify_type": 1,
-      "other.profile_verify": true,
-      "other.company_verify": true,
-    },
-  };
-  const result = await recruiters.findByIdAndUpdate(filter, updateDoc);
-  res.send(result);
+  try {
+    const id = req.params._id;
+    const filter = { _id: id };
+    const updateDoc = {
+      $set: {
+        "other.profile_verify_type": 1,
+        "other.company_verify_type": 1,
+        "other.profile_verify": true,
+        "other.company_verify": true,
+      },
+    };
+
+    const result = await recruiters.findByIdAndUpdate(filter, updateDoc);
+
+    // Assuming you have defined 'mapdata' appropriately for this scenario
+    const mapdata = {
+      verificationType: "profile", // Indicate the type of verification (profile or company)
+      userId: id, // The ID of the recruiter being verified
+    };
+
+    // Call the notification function
+    await notificaton_send_by_verifyAprove(id, mapdata);
+
+    res.send(result);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Internal server error");
+  }
 });
+
+// app.patch("/verifyRecruterProfile/:_id", async (req, res) => {
+//   const id = req.params._id;
+//   const filter = { _id: id };
+//   const updateDoc = {
+//     $set: {
+//       "other.profile_verify_type": 1,
+//       "other.company_verify_type": 1,
+//       "other.profile_verify": true,
+//       "other.company_verify": true,
+//     },
+//   };
+//   const result = await recruiters.findByIdAndUpdate(filter, updateDoc);
+//   // Call your notification function here
+//   const functionalid = req.query.functionalid;
+//   const mapdata = req.body.mapdata;
+//   const uid = req.params._id;
+//   await notificaton_send_by_verifyAprove(
+//     functionalid, // Provide the functional ID here
+//     uid, // Use the recruiter ID from the route
+//     mapdata // Provide the map data here
+//   );
+//   res.send(result);
+// });
 app.patch("/rejectRecruterProfile/:_id", async (req, res) => {
   const id = req.params._id;
   const filter = { _id: id };
@@ -404,6 +447,7 @@ app.patch("/rejectRecruterProfile/:_id", async (req, res) => {
     },
   };
   const result = await recruiters.findByIdAndUpdate(filter, updateDoc);
+
   res.send(result);
 });
 app.patch("/unverifyRecruterProfile/:_id", async (req, res) => {
