@@ -248,33 +248,35 @@ app.post("/job_post_update", tokenverify, async (req, res) => {
   }
 });
 
-// app.delete('/job_post_update', tokenverify, async (req, res) => {
-//     try {
-//         jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
-//             if (err) {
-//                 res.json({ message: "invalid token" })
-//             } else {
+app.delete('/job_post_update', tokenverify, async (req, res) => {
+    try {
+        jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+            if (err) {
+                res.json({ message: "invalid token" })
+            } else {
 
-//                 var id = authdata._id;
-//                 if (req.query.jobid) {
-//                     await JobPost.findOneAndDelete({ _id: req.query.jobid, userid: id })
-//                     await RecruiterFunctionarea.deleteMany({ userid: id, jobid: req.query.jobid })
-//                     await ViewJob.deleteMany({jobid: req.query.jobid})
-//                     await JobSave.deleteMany({jobid: req.query.jobid})
-//                     await Recruiters.findOneAndUpdate({ _id: id }, {
-//                      $inc: {"other.totaljob": -1}});
-//                     res.status(200).json({ message: "Delete Successfull" })
-//                 }
-//             }
-//           );
-//           res.status(200).json({ message: "Delete Successfull" });
-//         }
-//       }
-//     });
-//   } catch (error) {
-//     res.send(error);
-//   }
-// });
+                var id = authdata._id;
+                if (req.query.jobid) {
+                    await JobPost.findOneAndDelete({ _id: req.query.jobid, userid: id })
+                    await RecruiterFunctionarea.deleteMany({ userid: id, jobid: req.query.jobid })
+                    await ViewJob.deleteMany({jobid: req.query.jobid})
+                    await JobSave.deleteMany({jobid: req.query.jobid})
+                    await Recruiters.findOneAndUpdate({ _id: id }, {
+                     $inc: {"other.totaljob": -1}});
+                    res.status(200).json({ message: "Delete Successfull" })
+                }
+            }
+          );
+          res.status(200).json({ message: "Delete Successfull" });
+        }
+      }
+    });
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+
 
 app.get("/single_jobdetails", tokenverify, async (req, res) => {
   try {
