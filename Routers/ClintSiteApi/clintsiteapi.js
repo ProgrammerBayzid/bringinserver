@@ -8,12 +8,46 @@ const {
 } = require("../../Model/industry.js");
 const { Profiledata } = require("../../Model/Seeker_profile_all_details.js");
 const Recruiters = require("../../Model/Recruiter/recruiters");
+const { ContactUs } = require("../../Model/WebContactUs.js");
 const tokenverify = require("../../MiddleWare/tokenverify.js");
 const jwt = require("jsonwebtoken");
 
 const { City, Division } = require("../../Model/alllocation.js");
 
 const Experince = require("../../Model/experience.js");
+
+app.get("/web_contact", async (req, res) => {
+  try {
+    var data = await ContactUs.find();
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+app.post("/web_contact", async (req, res) => {
+  try {
+    const contact = await ContactUs({
+      email: req.body.email,
+      about: req.body.about,
+    }).save();
+    res.json({ message: "Contact us add successfull" });
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+app.delete("/web_contact/:id", async (req, res) => {
+  try {
+    const result = await ContactUs.findByIdAndDelete(req.params.id);
+    if (!req.params.id) {
+      return res.status(404).send();
+    }
+    res.send(result);
+  } catch (error) {
+    res.send(error);
+  }
+});
 
 app.get("/job_functionalarea/clint", async (req, res) => {
   try {
