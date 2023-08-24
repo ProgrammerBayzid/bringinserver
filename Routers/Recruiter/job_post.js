@@ -187,13 +187,13 @@ app.get("/job_post", tokenverify, async (req, res) => {
         ];
 
         if (req.query.type == 0) {
-          var jobpost = await JobPost.find({ userid: id }).populate(populate);
+          var jobpost = await JobPost.find({ userid: id }).sort("-updatedAt").populate(populate);
           res.status(200).send(jobpost);
         } else {
           var jobpost = await JobPost.find({
             userid: id,
             job_status_type: req.query.type,
-          }).populate(populate);
+          }).sort("-updatedAt").populate(populate);
           res.status(200).send(jobpost);
         }
       }
