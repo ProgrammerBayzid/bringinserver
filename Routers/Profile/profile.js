@@ -11,6 +11,7 @@ const { Chat } = require("../../Model/Chat/chat")
 const JobSave = require("../../Model/jobsave.js")
 const { Resume } = require("../../Model/resumefile");
 const Career_preferences = require("../../Model/career_preferences.js");
+const CvSendStore = require('../../Model/cv_send_store')
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads");
@@ -28,7 +29,7 @@ const upload = multer({ storage: storage });
 async function profilenmberupdate(_id) {
   var viewjob = await ViewJob.find({ userid: _id })
   var jobsave = await JobSave.find({ userid: _id })
-  var resume = await Resume.find({ userid: _id })
+  var resume = await  CvSendStore.find({userid: _id})
   var chat = await Chat.find({ seekerid: _id, type: 1 })
   var carearpre = await Career_preferences.find({ userid: _id })
   await User.findByIdAndUpdate({ _id: _id }, {

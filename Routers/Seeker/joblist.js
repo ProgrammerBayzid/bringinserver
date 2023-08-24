@@ -405,6 +405,37 @@ app.post("/view_job_count", tokenverify, async (req, res) => {
 })
 
 
+app.get("/view_job_history", tokenverify, async (req, res) =>{
+    try {
+        jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+            if (err) {
+                res.json({ message: "invalid token" })
+            } else {
+                const _id = authdata._id;
+                let joblist = [];
+                var populate = [
+                    { path: "userid" },
+                    { path: "expertice_area" },
+                    { path: "experience" },
+                    { path: "education", select: "-digree" },
+                    { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
+                    { path: "salary.min_salary", select: "-other_salary" },
+                    { path: "salary.max_salary", select: "-other_salary" },
+                    { path: "skill" },
+                    { path: "jobtype" },
+                  ];
+                var viewjobdata = await ViewJob.find({userid: _id }).populate({path: "jobid", populate: populate})
+                for (let index = 0; index < viewjobdata.length; index++) {
+                    joblist.push(viewjobdata[index].jobid)
+                    
+                }
+                res.status(200).send(joblist)
+            }
+        })
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
 
 
 

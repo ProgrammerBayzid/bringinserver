@@ -13,6 +13,9 @@ const candidatesave = require("../../Model/Recruiter/Candidate_Save/candidate_sa
 const ViewJob = require("../../Model/viewjob")
 const savejob = require("../../Model/jobsave")
 const JobPost = require('../../Model/Recruiter/Job_Post/job_post.js')
+const CvSendStore = require('../../Model/cv_send_store')
+const chatstore = require('../../Model/Chat/chat_store')
+
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -343,6 +346,8 @@ app.post("/channelcreate", tokenverify, async (req, res) => {
             }, populate: [{ path: "category", select: "-functionarea" }, { path: "functionalarea", populate: [{ path: "industryid", select: "-category" }] }, { path: "division", populate: { path: "cityid", select: "-divisionid" }, }, "jobtype", { path: "salaray.min_salary", select: "-other_salary" }, { path: "salaray.max_salary", select: "-other_salary" },],
           },
         ];
+        
+        chatstoredata(_id,req.body.seekerid, req.body.recruiterid)
 
         var data = await Chat.findOne({ seekerid: req.body.seekerid, recruiterid: req.body.recruiterid }).populate([
           { path: "jobid", populate: populate, select: "-userid" },
@@ -743,6 +748,166 @@ app.get("/recruiter_profilebyid",tokenverify, async (req, res)=>{
   } catch (error) {
     res.status(400).send(error);
   }
+})
+
+
+app.get('/cv_send_store', tokenverify, async (req, res)=> {
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" })
+      } else {
+        const _id = authdata._id;
+        var jobdata = await JobPost.findOne({userid: req.query.recruiterid});
+        if(jobdata != null) {
+          var olddata = await CvSendStore.findOne({userid: _id, recruiterid: req.query.recruiterid})
+          if(olddata == null) {
+            await CvSendStore({userid: _id, recruiterid: req.query.recruiterid,recruiter_job_postid: jobdata._id}).save()
+            await User.findOneAndUpdate({ _id: _id }, { $inc: { "other.cvsend": 1 } })
+            res.status(200).json({message: "cv send successfull"})
+          }else{
+            res.status(200).json({message: "cv all ready send"})
+          }
+        }else{
+          var olddata = await CvSendStore.findOne({userid: _id, recruiterid: req.query.recruiterid})
+          if(olddata == null) {
+            await CvSendStore({userid: _id, recruiterid: req.query.recruiterid,recruiter_job_postid: null}).save()
+            await User.findOneAndUpdate({ _id: _id }, { $inc: { "other.cvsend": 1 } })
+            res.status(200).json({message: "cv send successfull"})
+          }else{
+            res.status(200).json({message: "cv all ready send"})
+          }
+        }
+      }
+    })
+  } catch (error) {
+    res.status(400).send(error);
+  }
+})
+
+
+app.get('/send_cv',  tokenverify, async (req, res)=>{
+  try {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+      if (err) {
+        res.json({ message: "invalid token" })
+      } else {
+        const _id = authdata._id;
+        let joblist = [];
+                var populate = [
+                    { path: "userid" },
+                    { path: "expertice_area" },
+                    { path: "experience" },
+                    { path: "education", select: "-digree" },
+                    { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
+                    { path: "salary.min_salary", select: "-other_salary" },
+                    { path: "salary.max_salary", select: "-other_salary" },
+                    { path: "skill" },
+                    { path: "jobtype" },
+                  ];
+        var data = await CvSendStore.find({userid: _id}).populate({path: "recruiter_job_postid", populate: populate})
+        for (let index = 0; index < data.length; index++) {
+          joblist.push(data[index].recruiter_job_postid)
+          
+      }
+        
+        res.status(200).send(joblist)
+      
+      }
+    })
+  } catch (error) {
+    res.status(400).send(error);
+  }
+})
+
+
+
+async function chatstoredata(_id, seekerid, recruiterid) {
+        
+        var jobdata = await JobPost.findOne({userid: recruiterid});
+        var profiledata = await Profiledata.findOne({userid: seekerid})
+        var data = await chatstore.findOne({seekerid: seekerid, recruiterid:recruiterid })
+        if(data == null){
+          await chatstore({seekerid: seekerid, recruiterid:recruiterid ,jobid: jobdata == null ? null : jobdata._id, candidate_fullprofile: profiledata._id}).save()
+          await Recruiters.findOneAndUpdate({ _id: recruiterid }, { $inc: { "other.total_chat": 1 } })
+          await User.findOneAndUpdate({ _id: seekerid }, { $inc: { "other.totalchat": 1 } })
+          
+        }
+        
+
+}
+
+
+app.get("/chat_history", tokenverify, async (req, res)=>{
+  let joblist = [];
+  var populate1 = [
+      { path: "userid" },
+      { path: "expertice_area" },
+      { path: "experience" },
+      { path: "education", select: "-digree" },
+      { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
+      { path: "salary.min_salary", select: "-other_salary" },
+      { path: "salary.max_salary", select: "-other_salary" },
+      { path: "skill" },
+      { path: "jobtype" },
+    ];
+
+    var  profilepopulate =[
+      {
+        path: "workexperience",
+        populate: [
+          { path: "category", select: "-functionarea" },
+          "expertisearea",
+        ],
+      },
+      {
+        path: "education",
+        populate: [
+          {
+            path: "digree",
+            select: "-subject",
+            populate: { path: "education", select: "-digree" },
+          },
+          "subject",
+        ],
+      },
+      "skill",
+      "protfoliolink",
+      "about",
+      {
+        path: "careerPreference",
+        populate: [
+          { path: "category", select: "-functionarea" },
+          "functionalarea",
+          {
+            path: "division",
+            populate: { path: "cityid", select: "-divisionid" },
+          },
+          "jobtype",
+          { path: "salaray.min_salary", select: "-other_salary" },
+          { path: "salaray.max_salary", select: "-other_salary" },
+        ],
+      },
+      { path: "userid", populate: { path: "experiencedlevel" } },
+    ];
+
+
+
+    if(req.query.recruiter == "false"){
+      var jobdata = await chatstore.find({seekerid: req.query.id}).populate({path: "jobid", populate: populate1})
+      for (let index = 0; index < jobdata.length; index++) {
+        joblist.push(jobdata[index].jobid);
+      }
+      
+    }else{
+      var profiledata = await chatstore.find({recruiterid:req.query.id }).populate({path: "candidate_fullprofile", populate: profilepopulate})
+      for (let index = 0; index < profiledata.length; index++) {
+        joblist.push(profiledata[index].candidate_fullprofile);
+      }
+    
+    }
+    res.status(200).send(joblist)
+    
 })
 
 
