@@ -23,6 +23,7 @@ const upload = multer({ storage: storage });
 
 
 async function singlemessage(message, io) {
+    
     var data = await Message({ channel: message.channelid, message: message.message })
     data.save()
     await Chat.findOneAndUpdate({ _id: message.channelid }, {
