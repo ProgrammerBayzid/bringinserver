@@ -9,8 +9,21 @@ const {
 const { Profiledata } = require("../../Model/Seeker_profile_all_details.js");
 const Recruiters = require("../../Model/Recruiter/recruiters");
 const { ContactUs } = require("../../Model/WebContactUs.js");
+const { HelpFeedback } = require("../../Model/Help&Feedback.js");
 const tokenverify = require("../../MiddleWare/tokenverify.js");
 const jwt = require("jsonwebtoken");
+
+const multer = require("multer");
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads");
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, file.originalname);
+  },
+});
+const upload = multer({ storage: storage });
 
 const { City, Division } = require("../../Model/alllocation.js");
 
@@ -40,6 +53,52 @@ app.post("/web_contact", async (req, res) => {
 app.delete("/web_contact/:id", async (req, res) => {
   try {
     const result = await ContactUs.findByIdAndDelete(req.params.id);
+    if (!req.params.id) {
+      return res.status(404).send();
+    }
+    res.send(result);
+  } catch (error) {
+    res.send(error);
+  }
+});
+app.get("/help_feedback", async (req, res) => {
+  try {
+    var data = await HelpFeedback.find().populate("userid");
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+app.post(
+  "/help_feedback",
+  tokenverify,
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+        if (err) {
+          res.json({ message: "invalid token" });
+        } else {
+          const _id = authdata._id;
+
+          const contact = await HelpFeedback({
+            userid: _id,
+            about: req.body.about,
+            image: req.file == null ? "" : req.file.path,
+          }).save();
+          res.json({ message: "help_feedback add successfull" });
+        }
+      });
+    } catch (error) {
+      res.status(400).send(error);
+    }
+  }
+);
+
+app.delete("/help_feedback/:id", async (req, res) => {
+  try {
+    const result = await HelpFeedback.findByIdAndDelete(req.params.id);
     if (!req.params.id) {
       return res.status(404).send();
     }
@@ -384,6 +443,10 @@ app.post("/app_link", async (req, res) => {
     });
 
   return res.status(200).json({ message: "App Link Sent Successfully" });
+});
+
+app.listen(3000, () => {
+  console.log("Server is running on port 3000");
 });
 
 module.exports = app;
