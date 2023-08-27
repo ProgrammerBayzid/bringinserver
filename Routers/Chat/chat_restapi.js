@@ -48,7 +48,7 @@ app.post("/bringin_sup_gen", async (req, res)=> {
   console.log(msg._id)
   console.log(channel._id)
   await Chat.findOneAndUpdate({_id: channel._id}, {$set: {"bring_assis.bringlastmessage": msg._id}})
-  res.status(200).send("bringin assistent create successfull")
+  res.status(200).send("bringin assistent create successfully")
 
 })
 
@@ -182,7 +182,7 @@ app.post('/chat_report', tokenverify, upload.single("image"), async (req, res) =
           image: req.file == null ? "" : req.file.path,
           discription: req.body.discription
         }).save()
-        res.status(200).json({ message: "report successfull" })
+        res.status(200).json({ message: "Report successfully" })
       }
     });
   } catch (error) {
@@ -209,9 +209,9 @@ app.post("/candidate_reject", tokenverify, async (req, res) => {
           }
            await Chat.findOneAndUpdate({recruiterid: _id, seekerid: req.body.candidateid, type: 1}, {$set: {"recruiter_reject": true}})
         
-          res.status(200).json({ message: "Reject successfull" })
+          res.status(200).json({ message: "Reject successfully" })
         } else {
-          res.status(200).json({ message: "All ready Reject" })
+          res.status(200).json({ message: "Already Reject" })
         }
 
       }
@@ -235,7 +235,7 @@ app.post("/candidate_unreject", tokenverify, async (req, res) => {
         } else {
           await Chat.findOneAndUpdate({recruiterid: _id, type: 4}, {$inc: {"not_interest.person": -1}})
           await Chat.findOneAndUpdate({recruiterid: _id, seekerid: req.body.candidateid, type: 1}, {$set: {"recruiter_reject": false}})
-          res.status(200).json({ message: "Candidate Unrejected Successfull" })
+          res.status(200).json({ message: "Candidate unrejected successfully" })
         }
 
       }
@@ -288,7 +288,7 @@ app.get('/recruiter_msg_date', tokenverify, async (req, res) => {
         const _id = authdata._id;
         await Chat.findOneAndUpdate({ _id: req.query.channelid }, { $set: { recruitermsgdate: new Date() } })
 
-        res.status(200).send("date update")
+        res.status(200).send("Date updated")
 
       }
     });
@@ -639,7 +639,7 @@ app.post("/chatfeedback", upload.single("image"), tokenverify, async (req, res)=
           text: req.body.text,
           image:  req.file != null ?  req.file.path : null,
           channel: req.body.channel,}).save()
-          res.status(200).json({message: "Feedback submit successfully"})
+          res.status(200).json({message: "Feedback submited successfully"})
       }
     })
   } catch (error) {
@@ -764,18 +764,18 @@ app.get('/cv_send_store', tokenverify, async (req, res)=> {
           if(olddata == null) {
             await CvSendStore({userid: _id, recruiterid: req.query.recruiterid,recruiter_job_postid: jobdata._id}).save()
             await User.findOneAndUpdate({ _id: _id }, { $inc: { "other.cvsend": 1 } })
-            res.status(200).json({message: "cv send successfull"})
+            res.status(200).json({message: "CV send successfully"})
           }else{
-            res.status(200).json({message: "cv all ready send"})
+            res.status(200).json({message: "CV already send"})
           }
         }else{
           var olddata = await CvSendStore.findOne({userid: _id, recruiterid: req.query.recruiterid})
           if(olddata == null) {
             await CvSendStore({userid: _id, recruiterid: req.query.recruiterid,recruiter_job_postid: null}).save()
             await User.findOneAndUpdate({ _id: _id }, { $inc: { "other.cvsend": 1 } })
-            res.status(200).json({message: "cv send successfull"})
+            res.status(200).json({message: "CV send successfully"})
           }else{
-            res.status(200).json({message: "cv all ready send"})
+            res.status(200).json({message: "CV already send"})
           }
         }
       }
@@ -878,7 +878,7 @@ app.get("/chat_history", tokenverify, async (req, res)=>{
         path: "careerPreference",
         populate: [
           { path: "category", select: "-functionarea" },
-          "functionalarea",
+          {path: "functionalarea", populate: {path: "industryid"}},
           {
             path: "division",
             populate: { path: "cityid", select: "-divisionid" },

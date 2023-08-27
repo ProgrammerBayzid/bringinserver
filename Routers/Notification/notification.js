@@ -3,6 +3,7 @@ const apps = express();
 const Career_preferences = require("../../Model/career_preferences");
 const Recruiter = require("../../Model/Recruiter/recruiters");
 const { Chat, Message } = require("../../Model/Chat/chat");
+const User = require("../../Model/userModel");
 
 var sendNotification = function (data) {
   var headers = {
@@ -45,7 +46,7 @@ apps.post("/single_notification_send", async (req, res) => {
     include_player_ids: [req.body.playerid],
   };
   sendNotification(message);
-  res.status(200).json({ message: "notifiation send" });
+  res.status(200).json({ message: "Notifiation send" });
 });
 
 async function notificaton_send_by_job(functionalid, recruiterid, mapdata) {
@@ -169,9 +170,41 @@ async function single_msg_notifiation(channelid, recruiter) {
   }
 }
 
+
+
+async function bring_assistent_notify_send(id, isrecruiter) {
+  
+  let fullname;
+  let include_player_ids;
+
+  if(isrecruiter == true){
+    var rec = await Recruiter.findOne({_id: id})
+    fullname = `${rec.firstname} ${rec.lastname}`;
+    include_player_ids = rec.other.pushnotification
+  }else{
+     var seek =  await User.findOne({_id: id})
+     fullname = `${seek.fastname} ${seek.lastname}`;
+     include_player_ids = seek.other.pushnotification
+  }
+
+  var message = {
+    app_id: "74463dd2-b8de-4624-a679-0221b4b0af85",
+    
+    contents: { en: `You are now approve to reach more.` },
+    headings: {
+      en: `Hi, ${fullname}! welcome to bringin!`,
+    },
+    include_player_ids: [include_player_ids],
+    android_channel_id: "39d13464-1a8e-4fa7-88ea-e42d8af163f0",
+  };
+
+  sendNotification(message);
+}
+
 module.exports = {
   apps,
   notificaton_send_by_job,
   single_msg_notifiation,
   notificaton_send_by_verifyAprove,
+  bring_assistent_notify_send
 };

@@ -98,7 +98,7 @@ app.post("/recruiters_update", tokenverify, upload.single("image"), async (req, 
                     new: true,
                 });
 
-                res.status(200).json({ message: "profile update successfull" });
+                res.status(200).json({ message: "Photo updated successfully" });
 
             }
         })
