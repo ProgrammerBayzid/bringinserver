@@ -6,10 +6,11 @@ const tokenverify = require("../../MiddleWare/tokenverify.js");
 const jwt = require("jsonwebtoken");
 const Experince = require("../../Model/experience.js");
 const { Chat, Message } = require("../../Model/Chat/chat")
-const { single_msg_notifiation } = require("../../Routers/Notification/notification")
+const { single_msg_notifiation ,bring_assistent_notify_send} = require("../../Routers/Notification/notification")
 const multer = require("multer");
 const fs = require("fs");
 const { resolve } = require("path");
+const { Console } = require("console");
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, "uploads");
@@ -23,7 +24,7 @@ const upload = multer({ storage: storage });
 
 
 async function singlemessage(message, io) {
-    
+
     var data = await Message({ channel: message.channelid, message: message.message })
     data.save()
     await Chat.findOneAndUpdate({ _id: message.channelid }, {
@@ -123,7 +124,8 @@ async function channellistdata(isrecruiter, currentid) {
     ];
 
     if (isrecruiter == false) {
-        data = await Chat.find({   $or: [{ seekerid: currentid },{ type: 2 }]}).sort({ updatedAt: -1 })
+        // $or: [{ seekerid: currentid }, { type: 2 }]
+        data = await Chat.find({ seekerid: currentid }).sort({ updatedAt: -1 })
             .populate([
                 { path: "jobid", populate: populate, select: "-userid" },
                 { path: "candidate_fullprofile", populate: populate2 },
@@ -135,12 +137,12 @@ async function channellistdata(isrecruiter, currentid) {
                 { path: "who_view_me.recruiterview" }
             ])
     } else {
-        data = await Chat.find({  $or: [{ recruiterid: currentid } ,{ type: 2 }, {type: 4}] }).sort({ updatedAt: -1 }).populate([
+        data = await Chat.find({recruiterid: currentid }).sort({ updatedAt: -1 }).populate([
             { path: "jobid", populate: populate, select: "-userid" },
             { path: "candidate_fullprofile", populate: populate2 },
             { path: "seekerid", select: ["other.online", "other.pushnotification", "other.lastfunctionalarea", "other.offlinedate", "fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"], populate: { path: "other.lastfunctionalarea" } },
             { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email", "other.offlinedate", "other.totaljob"], populate: { path: "companyname", populate: { path: "industry" } } },
-            { path: "lastmessage" }, { path: "bring_assis.bringlastmessage" }, {path: "who_view_me.seekerviewid"},
+            { path: "lastmessage" }, { path: "bring_assis.bringlastmessage" }, { path: "who_view_me.seekerviewid" },
             { path: "who_view_me.recruiterview", select: ["fastname", "lastname"] }
 
         ])
@@ -151,10 +153,41 @@ async function channellistdata(isrecruiter, currentid) {
 async function SocketRoute(io) {
     io.on('connection', (socket) => {
         console.log("1 user connect")
+        socket.on("assistent_create", async (data) => {
+            console.log(data)
+            var olddata = await Chat.findOne({type: 2, seekerid: data.isrecruiter == false ? data.id : null,recruiterid: data.isrecruiter == true ? data.id : null});
+            
+            if(olddata == null) {
+                var channel = await Chat({
+                    seekerid: data.isrecruiter == false ? data.id : null,
+                    recruiterid: data.isrecruiter == true ? data.id : null,
+                    type: 2, bring_assis: {
+                        title: "Bringin Assistant",
+                        message1: "Hi, Jakaria! welcome to brinign!",
+                        message2: "You are now approve to reach more.",
+                        bringlastmessage: null
+                    }
+                })
+                await channel.save();
+                var message = {
+                    "createdAt": new Date().getTime(),
+                    "text": `Welcome to Bringin! you are now approved to reach more! if there anything we can help you with, feel free to reach us at +88 01756175141 via WhatsApp.`,
+                }
+                var msg = await Message({ channel: channel._id, message: message })
+                await msg.save();
+                console.log(msg._id)
+                console.log(channel._id)
+                await Chat.findOneAndUpdate({ _id: channel._id }, { $set: { "bring_assis.bringlastmessage": msg._id } })
+                console.log("bringin assistent create successfully")
+                bring_assistent_notify_send(data.id, data.isrecruiter)
+            }else{
+                console.log("bringin assistent Already create successfully")
+            }
+            
+           
+        })
 
         socket.on('channelcreate', async (channel) => {
-            console.log(channel)
-            // channelcreate(channel, io)
             var data = await Chat.findOne({ seekerid: channel.seekerid, recruiterid: channel.recruiterid }).populate([{ path: "seekerid" }, { path: "recruiterid" }])
             if (data == null) {
                 var channeldata = await Chat({ seekerid: channel.seekerid, recruiterid: channel.recruiterid, date: new Date() });
@@ -169,10 +202,6 @@ async function SocketRoute(io) {
         })
 
 
-        // socket.on("channellistroom", (currentid) => {
-        //     socket.join(currentid)
-        // })
-
         // seekr and recruiter inter conversation list screen
         socket.on("channellist", async (channellist) => {
             console.log("user channl list rom join")
@@ -186,7 +215,6 @@ async function SocketRoute(io) {
         // channel join
         socket.on("channel", (channel) => {
             socket.join(channel);
-            // console.log(socket.rooms.has(channel))
             console.log(`chat room join a user ${channel}`)
         })
 
@@ -194,7 +222,7 @@ async function SocketRoute(io) {
 
         // message list get
         socket.on("messagelist", async (channelid) => {
-            
+
             var message = await Message.find({ channel: channelid });
             //     io.emit(`messagelist${channel}`, message)
             io.sockets.in(channelid.toString()).emit(`messagelist`, message)
@@ -204,12 +232,6 @@ async function SocketRoute(io) {
         //message snef
         socket.on("message", async (message) => {
             socket.broadcast.to(message.channelid).emit("singlemsg", message)
-            // chaneel list update
-            // var data2 = await channellistdata(false ,message.message.user.customProperties['seekerid']);
-            // await io.sockets.in(message.message.user.customProperties['seekerid']).emit("channellist", data2)
-            // var data3 = await channellistdata(true ,message.message.user.customProperties['recruiterid']);
-            // await io.sockets.in(message.message.user.customProperties['recruiterid']).emit("channellist", data3)
-            // await Promise.all([singlemessage(message)])
             singlemessage(message, io);
         })
 

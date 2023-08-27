@@ -57,9 +57,9 @@ app.post("/packagebuy", tokenverify, async (req, res) => {
                 });
                     pack.save();
                     await Recruiters.findOneAndUpdate({_id: id}, {$set: {"other.package": pack._id, "other.premium": true}})
-                    res.status(200).json({message: "Package buy Successfuly"})
+                    res.status(200).json({message: "Package buy successfully"})
                 }else{
-                    res.status(400).json({message: "you all ready buy a package"});
+                    res.status(400).json({message: "Already buy a package"});
                 }
 
 
@@ -106,7 +106,7 @@ app.post('/subscription_cancle', tokenverify, async (req, res)=> {
                 res.status(200).json({message: "active package not found"})
                }else{
                 await Recruiters.findOneAndUpdate({_id: id}, {$set: {"other.premium": false}})
-                res.status(200).json({message: "subscription cacnle successfuly"})
+                res.status(200).json({message: "Subscription cancel successfully"})
                }
             }
         })

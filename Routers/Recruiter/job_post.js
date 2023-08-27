@@ -239,7 +239,7 @@ app.post("/job_post_update", tokenverify, async (req, res) => {
             { $set: { expertice_area: req.body.expertice_area } }
           );
 
-          res.status(200).json({ message: "Update Successfull" });
+          res.status(200).json({ message: "Job Updated successfully" });
         }
       }
     });
@@ -262,7 +262,7 @@ app.delete('/job_post_update', tokenverify, async (req, res) => {
             await JobSave.deleteMany({jobid: req.query.jobid})
             await Recruiters.findOneAndUpdate({ _id: id }, {
              $inc: {"other.totaljob": -1}});
-            res.status(200).json({ message: "Delete Successfull" })
+            res.status(200).json({ message: "Delete successfully" })
         }
     }
 })

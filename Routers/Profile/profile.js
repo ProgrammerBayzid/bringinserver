@@ -143,7 +143,7 @@ app.post("/notification", tokenverify, async (req, res) => {
               "other.notification.job_recommandation": req.body.job,
             }
           })
-          res.status(200).json({ message: "update successfull" });
+          res.status(200).json({ message: "Updated successfully" });
         } else {
           const singalUser = await User.findOneAndUpdate({ _id: _id }, {
             $set: {
@@ -207,7 +207,7 @@ app.post("/push_notification", tokenverify, async (req, res) => {
               "other.pushnotification": req.body.pushnotification,
             }
           });
-          res.status(200).json({ message: "update successfull" });
+          res.status(200).json({ message: "Update successfully" });
         }
       }
     });

@@ -396,7 +396,7 @@ app.post("/view_job_count", tokenverify, async (req, res) => {
                     await Chat({type: 3, recruiterid: req.body.jobpost_userid, seekerid: null, who_view_me: {title: "Who viewed me", totalview: 1,newview: 1, recruiterview:_id,seekerviewid: null}}).save()
                    } 
                 }
-                res.status(200).json({ message: "successfull view" })
+                res.status(200).json({ message: "Successfully view" })
             }
         })
     } catch (error) {

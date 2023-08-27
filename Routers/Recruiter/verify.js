@@ -63,7 +63,7 @@ app.post("/company_verify", tokenverify, upload.single("image"), (req, res) => {
             { _id: _id },
             { $set: { "other.company_docupload": true } }
           );
-          res.status(200).send("file upload successfull");
+          res.status(200).send("File uploaded successfully");
         } else {
           await CompanyVerify.findOneAndUpdate(
             { userid: _id },
@@ -84,7 +84,7 @@ app.post("/company_verify", tokenverify, upload.single("image"), (req, res) => {
             { _id: _id },
             { $set: { "other.company_docupload": true } }
           );
-          res.status(200).send("file reupload successfull");
+          res.status(200).send("File uploaded successfully");
         }
       }
     });
@@ -281,7 +281,7 @@ app.post(
                     },
                   }
                 );
-                res.status(200).send("verification code send successfull");
+                res.status(200).send("Verification code send successfully");
               }
             });
           } else if (req.body.type == 5) {
@@ -309,7 +309,7 @@ app.post(
                   },
                 }
               );
-              res.status(200).send("send successfull");
+              res.status(200).send("Send successfully");
             } else {
               await ProfileVerify.findOneAndUpdate(
                 { userid: _id },
@@ -337,7 +337,7 @@ app.post(
                   },
                 }
               );
-              res.status(200).send("send successfull");
+              res.status(200).send("Send successfully");
             }
           } else {
             var verifydata = await ProfileVerify.findOne({ userid: _id });
@@ -364,7 +364,7 @@ app.post(
                   },
                 }
               );
-              res.status(200).send("send successfull");
+              res.status(200).send("Send successfully");
             } else {
               await ProfileVerify.findOneAndUpdate(
                 { userid: _id },
@@ -392,7 +392,7 @@ app.post(
                   },
                 }
               );
-              res.status(200).send("send successfull");
+              res.status(200).send("Send successfully");
             }
           }
         }
@@ -568,12 +568,12 @@ app.post("/email_code_verify", tokenverify, (req, res) => {
                 { _id: _id },
                 { $set: { "other.profile_docupload": true } }
               );
-              res.status(200).send("verification code send successfull");
+              res.status(200).send("Verification code send successfully");
             }
           });
 
           return res.status(200).json({
-            message: "Verified Succefully",
+            message: "Verified successfully",
           });
         } else {
           return res.status(400).send("Your OTP was wrong!");
@@ -729,7 +729,7 @@ app.post("/admin_recruter_profile_verify_email", async (req, res) => {
         res.status(400).send("Error sending email");
       } else {
         console.log("Verification email sent successfully");
-        res.status(200).send("Verification successful");
+        res.status(200).send("Verification successfully");
       }
     });
   } catch (error) {
