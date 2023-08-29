@@ -251,7 +251,7 @@ app.post("/job_report", tokenverify, upload.single("image"), async (req, res) =>
                 const _id = authdata._id;
                 var reportdata = await JobReport.findOne({ userid: _id, jobid: req.body.jobid })
                 if (reportdata == null) {
-                    await JobReport({ userid: _id, jobid: req.body.jobid, report: req.body.report, image: req.file == null ? "" : req.file.path, description: req.body.description }).save()
+                    await JobReport({ userid: _id, jobid: req.body.jobid, report: req.body.report, image: req.file == null ? "" : req.file.path, description: req.body.description,jobpostuserid: req.body.jobpostuserid}).save()
                     res.status(200).json({ message: "report successfull" })
                 } else {
                     await JobReport.findOneAndUpdate({ userid: _id, jobid: req.body.jobid }, {

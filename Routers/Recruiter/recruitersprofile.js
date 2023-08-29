@@ -5,9 +5,20 @@ const tokenverify = require("../../MiddleWare/tokenverify.js")
 const jwt = require('jsonwebtoken');
 const candidatesave = require("../../Model/Recruiter/Candidate_Save/candidate_save");
 const multer = require("multer");
-const { Chat } = require("../../Model/Chat/chat")
+const { Chat, Message, Chatreport, CandidateReject, ChatFeedBack } = require("../../Model/Chat/chat")
 const ViewJob = require("../../Model/viewjob")
 const JobPost = require('../../Model/Recruiter/Job_Post/job_post.js')
+const CandidateReport = require('../../Model/Recruiter/Candidate_Report/candidate_report')
+const CandidateView = require("../../Model/Recruiter/Candidate_View/candidate_view");
+const ChatStore = require("../../Model/Chat/chat_store");
+const {CompanyVerify} = require("../../Model/Recruiter/Verify/company_verify.js");
+const Company = require('../../Model/Recruiter/Company/company')
+const CvSnedStore = require("../../Model/cv_send_store")
+const JobReport = require('../../Model/job_report')
+const JobSave = require('../../Model/jobsave')
+const Packagebuy = require('../../Model/Package/package_buy.js')
+const ProfileVerify = require('../../Model/Recruiter/Verify/profile_verify')
+const Recruiterfunction = require('../../Model/Recruiter/Recruiter_Functionarea/recruiter_functionarea')
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, "uploads");
@@ -26,9 +37,9 @@ const upload = multer({ storage: storage });
 
 async function recruiternumberupdate(_id) {
     var candidate = await candidatesave.find({ userid: _id })
-    var chat = await Chat.find({ recruiterid: _id, type: 1 , recruitermsgdate: {$ne: null}})
+    var chat = await Chat.find({ recruiterid: _id, type: 1, recruitermsgdate: { $ne: null } })
     var viewjob = await ViewJob.find({ jobpost_userid: _id })
-    var totaljob = await JobPost.find({userid: _id})
+    var totaljob = await JobPost.find({ userid: _id })
     await Recruiters.findOneAndUpdate({ _id: _id }, {
         $set: {
             "other.total_chat": chat.length,
@@ -73,7 +84,6 @@ app.get("/recruiters_profile", tokenverify, async (req, res) => {
 //   // # update user data  
 
 app.post("/recruiters_update", tokenverify, upload.single("image"), async (req, res) => {
-
     try {
         jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
             if (err) {
@@ -107,6 +117,37 @@ app.post("/recruiters_update", tokenverify, upload.single("image"), async (req, 
         res.status(404).send(error);
     }
 });
+
+
+
+app.delete('/recruiter_delete', async (req, res) => {
+    await CandidateReject.deleteMany({ userid: req.query.id })
+    await CandidateReport.deleteMany({ userid: req.params.id })
+    await candidatesave.deleteMany({ userid: req.params.id })
+    await CandidateView.deleteMany({ userid: req.params.id })
+    await Chat.deleteMany({ recruiterid: req.params.id})
+    await Chatreport.deleteMany({ recruiterid: req.params.id})
+    await ChatStore.deleteMany({ recruiterid: req.params.id})
+    await ChatFeedBack.deleteMany({ recruiterid: req.params.id})
+    await CompanyVerify.deleteMany({userid: req.params.id})
+    await Company.deleteMany({userid: req.params.id})
+    await CvSnedStore.deleteMany({recruiterid: req.params.id})
+    await JobPost.deleteMany({userid: req.params.id})
+    await JobReport.deleteMany({jobpostuserid: req.params.id})
+    await JobSave.deleteMany({jobpostuserid: req.params.id})
+    await Packagebuy.deleteMany({recruiterid: req.params.id})
+    await ProfileVerify.deleteMany({userid: req.params.id})
+    await Recruiterfunction.deleteMany({userid: req.params.id})
+    await Recruiters.deleteMany({_id: req.params.id})
+    await ViewJob.deleteMany({jobpost_userid: req.params.id})
+
+
+   res.status(200).json({message: "all data remove this recruiter"})
+
+
+
+})
+
 
 
 
