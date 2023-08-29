@@ -7,7 +7,7 @@ const {
   Functionarea,
 } = require("../../Model/industry.js");
 const { Profiledata } = require("../../Model/Seeker_profile_all_details.js");
-const Recruiters = require("../../Model/Recruiter/recruiters");
+
 const { ContactUs } = require("../../Model/WebContactUs.js");
 const { HelpFeedback } = require("../../Model/Help&Feedback.js");
 const tokenverify = require("../../MiddleWare/tokenverify.js");
