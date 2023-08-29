@@ -64,9 +64,9 @@ app.post("/add_candidate_functional", tokenverify, async (req, res) => {
             userid: _id,
             expertice_area: req.body.expertice_area,
           }).save();
-          res.status(200).json({ message: "Functional Area add successfull" });
+          res.status(200).json({ message: "Functional Area add successfully" });
         } else {
-          res.status(200).json({ message: "Functional Area Update" });
+          res.status(200).json({ message: "Functional Area Updated" });
         }
       }
     });
@@ -352,7 +352,7 @@ app.post(
               image: req.file == null ? "" : req.file.path,
               description: req.body.description,
             }).save();
-            res.status(200).json({ message: "report successfull" });
+            res.status(200).json({ message: "Report successfully" });
           } else {
             await candidateReport.findOneAndUpdate(
               { userid: _id, candidateid: req.body.candidateid },
@@ -365,7 +365,7 @@ app.post(
                 },
               }
             );
-            res.status(200).json({ message: "you job report update" });
+            res.status(200).json({ message: "Job report updated successfully" });
           }
         }
       });

@@ -243,7 +243,7 @@ app.post("/job_post_update", tokenverify, async (req, res) => {
             { $set: { expertice_area: req.body.expertice_area } }
           );
 
-          res.status(200).json({ message: "Update Successfull" });
+          res.status(200).json({ message: "Job Updated successfully" });
         }
       }
     });

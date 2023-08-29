@@ -53,7 +53,7 @@ app.post("/about", tokenverify, async (req, res) => {
             { _id: _id },
             { $inc: { "other.incomplete": -1, "other.complete": 1 } }
           );
-          res.status(200).json({ message: "add successfull" });
+          res.status(200).json({ message: "Add successfully" });
         } else {
           console.log(aboutdata._id);
           var profiledata = await Profiledata.findOneAndUpdate(
@@ -66,7 +66,7 @@ app.post("/about", tokenverify, async (req, res) => {
               about: aboutdata._id,
             }).save();
           }
-          res.status(200).json({ message: "update successfull" });
+          res.status(200).json({ message: "Updated successfully" });
         }
       }
     });
@@ -127,9 +127,9 @@ app.post("/workexperience", tokenverify, async (req, res) => {
           }
         }
 
-        res.status(200).json({ message: "Add Successfull" });
+        res.status(200).json({ message: "Add successfully" });
       } else {
-        res.status(400).json({ message: "All ready Added" });
+        res.status(400).json({ message: "Already Added" });
       }
     }
   });
@@ -180,7 +180,7 @@ app.delete("/workexperience", tokenverify, async (req, res) => {
               { $inc: { "other.incomplete": 1, "other.complete": -1 } }
             );
           }
-          res.status(200).json({ message: "delete successfull" });
+          res.status(200).json({ message: "Delete successfully" });
         }
       }
     });
@@ -218,7 +218,7 @@ app.post("/workexperience_update", tokenverify, async (req, res) => {
           }
         );
 
-        res.status(200).json({ message: "update successfull" });
+        res.status(200).json({ message: "Updated successfully" });
       }
     });
   } catch (error) {
@@ -278,9 +278,9 @@ app.post("/education", tokenverify, async (req, res) => {
             }
           }
 
-          res.status(200).json({ message: "Education Add Successfull" });
+          res.status(200).json({ message: "Education Add successfully" });
         } else {
-          res.status(400).json({ message: "already added" });
+          res.status(400).json({ message: "Already added" });
         }
       }
     });
@@ -328,7 +328,7 @@ app.delete("/education", tokenverify, async (req, res) => {
           );
         }
 
-        res.status(200).json({ message: "Delete Successfull" });
+        res.status(200).json({ message: "Delete successfully" });
       }
     });
   } catch (error) {
@@ -364,9 +364,9 @@ app.post("/education_update", tokenverify, async (req, res) => {
         );
 
         if (updateEducation != null) {
-          res.status(200).json({ message: "Update successful" });
+          res.status(200).json({ message: "Update successfully" });
         } else {
-          res.status(400).json({ message: "not found" });
+          res.status(400).json({ message: "Not found" });
         }
       }
     });
@@ -389,7 +389,7 @@ app.get("/default_skill", tokenverify, async (req, res)=> {
             var data = await Functionarea.find({categoryid: req.query.categoryid}).select('functionalname').limit(12)
             res.status(200).send(data)
         }else{
-          res.status(400).json({message: "insert a category id"})
+          res.status(400).json({message: "Insert a category id"})
         }
         
       }
@@ -419,7 +419,7 @@ app.post("/seeker_skill",tokenverify, async (req, res)=> {
             { _id: id },
             { $inc: { "other.incomplete": -1, "other.complete": 1 } }
           );
-          res.status(200).json({ message: "skill add successfull data" });
+          res.status(200).json({ message: "Skill add successfully" });
         } else {
           if (profiledata.skill.length == 0) {
             await Seekeruser.findOneAndUpdate(
@@ -427,7 +427,7 @@ app.post("/seeker_skill",tokenverify, async (req, res)=> {
               { $inc: { "other.incomplete": -1, "other.complete": 1 } }
             );
           }
-          res.status(200).json({ message: "skill update successfull" });
+          res.status(200).json({ message: "Skill updated successfully" });
         }
       
        
@@ -669,7 +669,7 @@ app.post("/protfolio", tokenverify, async (req, res) => {
 
           res.status(200).json(profiledata);
         } else {
-          res.status(400).json({ message: "allready added" });
+          res.status(400).json({ message: "Already added" });
         }
       }
     });
@@ -721,7 +721,7 @@ app.delete("/protfolio", tokenverify, async (req, res) => {
               { $inc: { "other.incomplete": 1, "other.complete": -1 } }
             );
           }
-          res.status(200).json({ message: "delete successfull" });
+          res.status(200).json({ message: "Delete successfully" });
         }
       }
     });

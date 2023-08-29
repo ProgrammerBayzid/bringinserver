@@ -32,9 +32,9 @@ app.post("/resume", tokenverify, resume.single("resume"), async (req, res) => {
             uploadtime: new Date()
           });
           const resumefile = await resumedata.save();
-          res.status(200).json({message: "upload successfull"});
+          res.status(200).json({message: "Uploaded successfully"});
         }else{
-          res.status(400).json({message: "upload maximum 1mb file"});
+          res.status(400).json({message: "Uploaded maximum 1mb file"});
         }
         
       }
@@ -68,7 +68,7 @@ app.delete("/resume", tokenverify, async (req, res) => {
       } else {
         const user = authdata._id;
         const deleteData = await Resume.findOneAndDelete({_id: req.query.id, userid: user});
-        res.status(200).json({message: "delete successfull"});
+        res.status(200).json({message: "Delete successfully"});
       }
     });
   } catch (error) {

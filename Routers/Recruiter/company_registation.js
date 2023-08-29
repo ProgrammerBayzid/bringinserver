@@ -25,7 +25,7 @@ app.post("/companySize_add", async (req, res) => {
     });
     if (companysize == null) {
         await Companysize({ size: req.body.size }).save();
-        res.json({ message: "company size add successfull" });
+        res.json({ message: "Company size add successfully" });
     } else {
         res.json({ message: "company size already added" });
     }
@@ -73,7 +73,7 @@ app.post('/company', tokenverify, (req, res) => {
                     })
                     console.log(company._id)
                     await Recruiters.findOneAndUpdate({_id: _id}, {$set: {companyname: company._id}})
-                    res.status(200).send("company registation update Successfull")
+                    res.status(200).send("Company registation updated successfully")
                 } else {
                    var data = await Company({
                         userid: _id,
@@ -88,7 +88,7 @@ app.post('/company', tokenverify, (req, res) => {
                     data.save();
                     console.log(data._id)
                     await Recruiters.findOneAndUpdate({_id: _id}, {$set: {companyname: data._id}})
-                    res.status(200).send("company registation Add Successfull")
+                    res.status(200).send("Company registation Add successfully")
                 }
             }
         })
