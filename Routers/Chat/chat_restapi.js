@@ -50,21 +50,14 @@ app.post("/bringin_sup_gen", async (req, res) => {
   };
   var msg = await Message({ channel: channel._id, message: message });
   await msg.save();
-<<<<<<< HEAD
   console.log(msg._id);
   console.log(channel._id);
   await Chat.findOneAndUpdate(
     { _id: channel._id },
     { $set: { "bring_assis.bringlastmessage": msg._id } }
   );
-  res.status(200).send("bringin assistent create successfull");
+  res.status(200).send("bringin assistent create successfully");
 });
-=======
-  console.log(msg._id)
-  console.log(channel._id)
-  await Chat.findOneAndUpdate({_id: channel._id}, {$set: {"bring_assis.bringlastmessage": msg._id}})
-  res.status(200).send("bringin assistent create successfully")
->>>>>>> b2068e38ab1776dc61fed61d372a0289e4b5bd21
 
 app.get("/bringin_sup_msg", async (req, res) => {
   var msg = await Message.find({ channel: req.query.channelid });
@@ -286,7 +279,6 @@ app.post("/message_update", tokenverify, async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
 app.post(
   "/chat_report",
   tokenverify,
@@ -313,30 +305,35 @@ app.post(
     } catch (error) {
       res.status(400).send(error);
     }
-=======
+  }
+);
 
-app.post('/chat_report', tokenverify, upload.single("image"), async (req, res) => {
-  try {
-    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
-      if (err) {
-        res.json({ message: "invalid token" });
-      } else {
-        const _id = authdata._id;
-        await Chatreport({
-          userid: _id,
-          channel: req.body.channel,
-          seekerid: req.body.seekerid,
-          report: req.body.report,
-          recruiterid: req.body.recruiterid,
-          image: req.file == null ? "" : req.file.path,
-          discription: req.body.discription
-        }).save()
-        res.status(200).json({ message: "Report successfully" })
-      }
-    });
-  } catch (error) {
-    res.status(400).send(error);
->>>>>>> b2068e38ab1776dc61fed61d372a0289e4b5bd21
+app.post(
+  "/chat_report",
+  tokenverify,
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
+        if (err) {
+          res.json({ message: "invalid token" });
+        } else {
+          const _id = authdata._id;
+          await Chatreport({
+            userid: _id,
+            channel: req.body.channel,
+            seekerid: req.body.seekerid,
+            report: req.body.report,
+            recruiterid: req.body.recruiterid,
+            image: req.file == null ? "" : req.file.path,
+            discription: req.body.discription,
+          }).save();
+          res.status(200).json({ message: "Report successfully" });
+        }
+      });
+    } catch (error) {
+      res.status(400).send(error);
+    }
   }
 );
 
@@ -371,24 +368,20 @@ app.post("/candidate_reject", tokenverify, async (req, res) => {
               not_interest: { person: 1, title: "Not Interested" },
             }).save();
           }
-<<<<<<< HEAD
           await Chat.findOneAndUpdate(
             { recruiterid: _id, seekerid: req.body.candidateid, type: 1 },
             { $set: { recruiter_reject: true } }
           );
-=======
-           await Chat.findOneAndUpdate({recruiterid: _id, seekerid: req.body.candidateid, type: 1}, {$set: {"recruiter_reject": true}})
-        
-          res.status(200).json({ message: "Reject successfully" })
-        } else {
-          res.status(200).json({ message: "Already Reject" })
-        }
->>>>>>> b2068e38ab1776dc61fed61d372a0289e4b5bd21
 
-          res.status(200).json({ message: "Reject successfull" });
+          res.status(200).json({ message: "Reject successfully" });
         } else {
-          res.status(200).json({ message: "All ready Reject" });
+          res.status(200).json({ message: "Already Reject" });
         }
+
+        res.status(200).json({ message: "Reject successfull" });
+      }
+      {
+        res.status(200).json({ message: "All ready Reject" });
       }
     });
   } catch (error) {
@@ -410,7 +403,6 @@ app.post("/candidate_unreject", tokenverify, async (req, res) => {
         if (rejectdata == null) {
           res.status(400).json({ message: "Candidate Not Found" });
         } else {
-<<<<<<< HEAD
           await Chat.findOneAndUpdate(
             { recruiterid: _id, type: 4 },
             { $inc: { "not_interest.person": -1 } }
@@ -419,12 +411,9 @@ app.post("/candidate_unreject", tokenverify, async (req, res) => {
             { recruiterid: _id, seekerid: req.body.candidateid, type: 1 },
             { $set: { recruiter_reject: false } }
           );
-          res.status(200).json({ message: "Candidate Unrejected Successfull" });
-=======
-          await Chat.findOneAndUpdate({recruiterid: _id, type: 4}, {$inc: {"not_interest.person": -1}})
-          await Chat.findOneAndUpdate({recruiterid: _id, seekerid: req.body.candidateid, type: 1}, {$set: {"recruiter_reject": false}})
-          res.status(200).json({ message: "Candidate unrejected successfully" })
->>>>>>> b2068e38ab1776dc61fed61d372a0289e4b5bd21
+          res
+            .status(200)
+            .json({ message: "Candidate unrejected successfully" });
         }
       }
     });
@@ -498,16 +487,12 @@ app.get("/recruiter_msg_date", tokenverify, async (req, res) => {
         res.json({ message: "invalid token" });
       } else {
         const _id = authdata._id;
-<<<<<<< HEAD
         await Chat.findOneAndUpdate(
           { _id: req.query.channelid },
           { $set: { recruitermsgdate: new Date() } }
         );
-=======
-        await Chat.findOneAndUpdate({ _id: req.query.channelid }, { $set: { recruitermsgdate: new Date() } })
 
-        res.status(200).send("Date updated")
->>>>>>> b2068e38ab1776dc61fed61d372a0289e4b5bd21
+        res.status(200).send("Date updated");
 
         res.status(200).send("date update");
       }
@@ -1035,7 +1020,6 @@ app.get("/who_save_me", tokenverify, async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
 app.post(
   "/chatfeedback",
   upload.single("image"),
@@ -1055,33 +1039,12 @@ app.post(
             image: req.file != null ? req.file.path : null,
             channel: req.body.channel,
           }).save();
-          res.status(200).json({ message: "Feedback submit successfully" });
+          res.status(200).json({ message: "Feedback submited successfully" });
         }
       });
     } catch (error) {
       res.status(400).send(error);
     }
-=======
-
-
-app.post("/chatfeedback", upload.single("image"), tokenverify, async (req, res)=> {
-  try {
-    jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
-      if (err) {
-        res.json({ message: "invalid token" })
-      } else {
-        const _id = authdata._id;
-        await ChatFeedBack({userid: req.body.userid,
-          recruiterid: req.body.recruiterid == null ? null : req.body.recruiterid,
-          text: req.body.text,
-          image:  req.file != null ?  req.file.path : null,
-          channel: req.body.channel,}).save()
-          res.status(200).json({message: "Feedback submited successfully"})
-      }
-    })
-  } catch (error) {
-    res.status(400).send(error);
->>>>>>> b2068e38ab1776dc61fed61d372a0289e4b5bd21
   }
 );
 
@@ -1203,7 +1166,6 @@ app.get("/cv_send_store", tokenverify, async (req, res) => {
         res.json({ message: "invalid token" });
       } else {
         const _id = authdata._id;
-<<<<<<< HEAD
         var jobdata = await JobPost.findOne({ userid: req.query.recruiterid });
         if (jobdata != null) {
           var olddata = await CvSendStore.findOne({
@@ -1220,9 +1182,9 @@ app.get("/cv_send_store", tokenverify, async (req, res) => {
               { _id: _id },
               { $inc: { "other.cvsend": 1 } }
             );
-            res.status(200).json({ message: "cv send successfull" });
+            res.status(200).json({ message: "CV send successfully" });
           } else {
-            res.status(200).json({ message: "cv all ready send" });
+            res.status(200).json({ message: "CV already send" });
           }
         } else {
           var olddata = await CvSendStore.findOne({
@@ -1239,29 +1201,9 @@ app.get("/cv_send_store", tokenverify, async (req, res) => {
               { _id: _id },
               { $inc: { "other.cvsend": 1 } }
             );
-            res.status(200).json({ message: "cv send successfull" });
+            res.status(200).json({ message: "CV send successfully" });
           } else {
-            res.status(200).json({ message: "cv all ready send" });
-=======
-        var jobdata = await JobPost.findOne({userid: req.query.recruiterid});
-        if(jobdata != null) {
-          var olddata = await CvSendStore.findOne({userid: _id, recruiterid: req.query.recruiterid})
-          if(olddata == null) {
-            await CvSendStore({userid: _id, recruiterid: req.query.recruiterid,recruiter_job_postid: jobdata._id}).save()
-            await User.findOneAndUpdate({ _id: _id }, { $inc: { "other.cvsend": 1 } })
-            res.status(200).json({message: "CV send successfully"})
-          }else{
-            res.status(200).json({message: "CV already send"})
-          }
-        }else{
-          var olddata = await CvSendStore.findOne({userid: _id, recruiterid: req.query.recruiterid})
-          if(olddata == null) {
-            await CvSendStore({userid: _id, recruiterid: req.query.recruiterid,recruiter_job_postid: null}).save()
-            await User.findOneAndUpdate({ _id: _id }, { $inc: { "other.cvsend": 1 } })
-            res.status(200).json({message: "CV send successfully"})
-          }else{
-            res.status(200).json({message: "CV already send"})
->>>>>>> b2068e38ab1776dc61fed61d372a0289e4b5bd21
+            res.status(200).json({ message: "CV already send" });
           }
         }
       }
@@ -1354,7 +1296,6 @@ app.get("/chat_history", tokenverify, async (req, res) => {
     { path: "jobtype" },
   ];
 
-<<<<<<< HEAD
   var profilepopulate = [
     {
       path: "workexperience",
@@ -1381,7 +1322,7 @@ app.get("/chat_history", tokenverify, async (req, res) => {
       path: "careerPreference",
       populate: [
         { path: "category", select: "-functionarea" },
-        "functionalarea",
+        { path: "functionalarea", populate: { path: "industryid" } },
         {
           path: "division",
           populate: { path: "cityid", select: "-divisionid" },
@@ -1393,46 +1334,6 @@ app.get("/chat_history", tokenverify, async (req, res) => {
     },
     { path: "userid", populate: { path: "experiencedlevel" } },
   ];
-=======
-    var  profilepopulate =[
-      {
-        path: "workexperience",
-        populate: [
-          { path: "category", select: "-functionarea" },
-          "expertisearea",
-        ],
-      },
-      {
-        path: "education",
-        populate: [
-          {
-            path: "digree",
-            select: "-subject",
-            populate: { path: "education", select: "-digree" },
-          },
-          "subject",
-        ],
-      },
-      "skill",
-      "protfoliolink",
-      "about",
-      {
-        path: "careerPreference",
-        populate: [
-          { path: "category", select: "-functionarea" },
-          {path: "functionalarea", populate: {path: "industryid"}},
-          {
-            path: "division",
-            populate: { path: "cityid", select: "-divisionid" },
-          },
-          "jobtype",
-          { path: "salaray.min_salary", select: "-other_salary" },
-          { path: "salaray.max_salary", select: "-other_salary" },
-        ],
-      },
-      { path: "userid", populate: { path: "experiencedlevel" } },
-    ];
->>>>>>> b2068e38ab1776dc61fed61d372a0289e4b5bd21
 
   if (req.query.recruiter == "false") {
     var jobdata = await chatstore

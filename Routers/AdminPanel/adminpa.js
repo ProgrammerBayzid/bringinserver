@@ -342,6 +342,22 @@ app.get("/profile_verifys_type", async (req, res) => {
   // console.log(filter);
 });
 
+app.get("/admin_all_recruter_profile", async (req, res) => {
+  var data = await recruiters.find().populate([
+    {
+      path: "companyname",
+      select: "",
+      populate: [
+        // { path: "company", select: "" },
+        { path: "industry", select: "", populate: ["industryid"] },
+        "c_size",
+      ],
+    },
+  ]);
+  res.status(200).json(data);
+  // console.log(filter);
+});
+
 //
 app.get("/profile_verifys", async (req, res) => {
   const profile_verify_type = req.query.profile_verify_type;
@@ -411,29 +427,6 @@ app.patch("/verifyRecruterProfile/:_id", async (req, res) => {
   }
 });
 
-// app.patch("/verifyRecruterProfile/:_id", async (req, res) => {
-//   const id = req.params._id;
-//   const filter = { _id: id };
-//   const updateDoc = {
-//     $set: {
-//       "other.profile_verify_type": 1,
-//       "other.company_verify_type": 1,
-//       "other.profile_verify": true,
-//       "other.company_verify": true,
-//     },
-//   };
-//   const result = await recruiters.findByIdAndUpdate(filter, updateDoc);
-//   // Call your notification function here
-//   const functionalid = req.query.functionalid;
-//   const mapdata = req.body.mapdata;
-//   const uid = req.params._id;
-//   await notificaton_send_by_verifyAprove(
-//     functionalid, // Provide the functional ID here
-//     uid, // Use the recruiter ID from the route
-//     mapdata // Provide the map data here
-//   );
-//   res.send(result);
-// });
 app.patch("/rejectRecruterProfile/:_id", async (req, res) => {
   const id = req.params._id;
   const filter = { _id: id };
@@ -464,67 +457,6 @@ app.patch("/unverifyRecruterProfile/:_id", async (req, res) => {
   };
   const result = await recruiters.findByIdAndUpdate(filter, updateDoc);
   res.send(result);
-});
-
-// app.delete("/rejectRecruterProfiledelete/:id", async (req, res) => {
-//   try {
-//     var data = await recruiters.findOneAndDelete({
-//       _id: req.params.id,
-//     });
-//     if (data == null) {
-//       res.status(400).json({ message: "iteam not found" });
-//     } else {
-//       await ProfileVerify.findManyAndUpdate({
-//         $pull: { ProfileVerify: data._id },
-//       });
-//       await CompanyVerify.findManyAndUpdate({
-//         $pull: { CompanyVerify: data._id },
-//       });
-//       res.status(200).json({ message: "Delete Sucessfull" });
-//     }
-
-//     res.send(result);
-//   } catch (error) {
-//     res.send(error);
-//   }
-// });
-
-app.delete("/rejectRecruterProfiledelete/:id", async (req, res) => {
-  try {
-    var data = await recruiters.findOneAndDelete({
-      _id: req.params.id,
-    });
-    if (data == null) {
-      // Delete from ProfileVerify collection
-      await ProfileVerify.findOneAndDelete({ ProfileVerify: data._id });
-
-      // Delete from CompanyVerify collection
-      await CompanyVerify.findOneAndDelete({ CompanyVerify: data._id });
-
-      res.status(200).json({ message: "Delete Successful" });
-    } else {
-      res.status(400).json({ message: "item not found" });
-    }
-  } catch (error) {
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-app.delete("/seekerProfiledelete/:id", async (req, res) => {
-  try {
-    var data = await Profiledata.findOneAndDelete({
-      _id: req.params.id,
-    });
-    if (data == null) {
-      // Delete from ProfileVerify collection
-      await User.findOneAndDelete({ User: data._id });
-
-      res.status(200).json({ message: "Delete Successful" });
-    } else {
-      res.status(400).json({ message: "item not found" });
-    }
-  } catch (error) {
-    res.status(500).json({ message: "Internal Server Error" });
-  }
 });
 
 app.get("/verifyRecruterProfile", async (req, res) => {

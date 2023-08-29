@@ -176,15 +176,10 @@ var Chatreport = model("chat_report", chatreportSchema);
 var CandidateReject = model("candidate_reject", candidaterejectSchema);
 var ChatFeedBack = model("chatFeedbackSchema", chatFeedbackSchema);
 
-<<<<<<< HEAD
+var Chat = model("Chat_channel", chatSchema);
+var Message = model("messagelist", messageSchema);
+var Chatreport = model("chat_report", chatreportSchema);
+var CandidateReject = model("candidate_reject", candidaterejectSchema);
+var ChatFeedBack = model("chatFeedback", chatFeedbackSchema);
+
 module.exports = { Chat, Message, Chatreport, CandidateReject, ChatFeedBack };
-=======
-
-var Chat  = model("Chat_channel", chatSchema)
-var Message = model("messagelist", messageSchema)
-var Chatreport = model("chat_report", chatreportSchema)
-var CandidateReject = model("candidate_reject", candidaterejectSchema)
-var ChatFeedBack = model("chatFeedback",chatFeedbackSchema)
-
-module.exports = {Chat,Message, Chatreport, CandidateReject, ChatFeedBack}
->>>>>>> b2068e38ab1776dc61fed61d372a0289e4b5bd21
