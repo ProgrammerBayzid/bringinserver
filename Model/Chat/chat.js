@@ -158,10 +158,12 @@ const candidaterejectSchema = Schema(
 const chatFeedbackSchema = Schema(
   {
     userid: {
-      type: Schema.Types.Mixed,
+      type: "ObjectId",
+      ref: "User",
     },
     recruiterid: {
-      type: Schema.Types.Mixed,
+      type: "ObjectId",
+      ref: "Recruiters_profile",
     },
     text: String,
     image: String,

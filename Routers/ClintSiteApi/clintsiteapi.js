@@ -9,7 +9,6 @@ const {
 const { Profiledata } = require("../../Model/Seeker_profile_all_details.js");
 
 const { ContactUs } = require("../../Model/WebContactUs.js");
-const { HelpFeedback } = require("../../Model/Help&Feedback.js");
 const tokenverify = require("../../MiddleWare/tokenverify.js");
 const jwt = require("jsonwebtoken");
 
@@ -53,52 +52,6 @@ app.post("/web_contact", async (req, res) => {
 app.delete("/web_contact/:id", async (req, res) => {
   try {
     const result = await ContactUs.findByIdAndDelete(req.params.id);
-    if (!req.params.id) {
-      return res.status(404).send();
-    }
-    res.send(result);
-  } catch (error) {
-    res.send(error);
-  }
-});
-app.get("/help_feedback", async (req, res) => {
-  try {
-    var data = await HelpFeedback.find().populate("userid");
-    res.status(200).json(data);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
-
-app.post(
-  "/help_feedback",
-  tokenverify,
-  upload.single("image"),
-  async (req, res) => {
-    try {
-      jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
-        if (err) {
-          res.json({ message: "invalid token" });
-        } else {
-          const _id = authdata._id;
-
-          const contact = await HelpFeedback({
-            userid: _id,
-            about: req.body.about,
-            image: req.file == null ? "" : req.file.path,
-          }).save();
-          res.json({ message: "help_feedback add successfull" });
-        }
-      });
-    } catch (error) {
-      res.status(400).send(error);
-    }
-  }
-);
-
-app.delete("/help_feedback/:id", async (req, res) => {
-  try {
-    const result = await HelpFeedback.findByIdAndDelete(req.params.id);
     if (!req.params.id) {
       return res.status(404).send();
     }

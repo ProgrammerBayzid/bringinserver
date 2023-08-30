@@ -1047,6 +1047,26 @@ app.post(
     }
   }
 );
+app.get("/chatfeedback", async (req, res) => {
+  try {
+    var data = await ChatFeedBack.find().populate(["userid", "recruiterid"]);
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+app.delete("/chatfeedback/:id", async (req, res) => {
+  try {
+    const result = await ChatFeedBack.findByIdAndDelete(req.params.id);
+    if (!req.params.id) {
+      return res.status(404).send();
+    }
+    res.send(result);
+  } catch (error) {
+    res.send(error);
+  }
+});
 
 // recruiter
 
