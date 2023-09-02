@@ -308,35 +308,6 @@ app.post(
   }
 );
 
-app.post(
-  "/chat_report",
-  tokenverify,
-  upload.single("image"),
-  async (req, res) => {
-    try {
-      jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
-        if (err) {
-          res.json({ message: "invalid token" });
-        } else {
-          const _id = authdata._id;
-          await Chatreport({
-            userid: _id,
-            channel: req.body.channel,
-            seekerid: req.body.seekerid,
-            report: req.body.report,
-            recruiterid: req.body.recruiterid,
-            image: req.file == null ? "" : req.file.path,
-            discription: req.body.discription,
-          }).save();
-          res.status(200).json({ message: "Report successfully" });
-        }
-      });
-    } catch (error) {
-      res.status(400).send(error);
-    }
-  }
-);
-
 app.post("/candidate_reject", tokenverify, async (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
@@ -411,9 +382,7 @@ app.post("/candidate_unreject", tokenverify, async (req, res) => {
             { recruiterid: _id, seekerid: req.body.candidateid, type: 1 },
             { $set: { recruiter_reject: false } }
           );
-          res
-            .status(200)
-            .json({ message: "Candidate unrejected successfully" });
+          res.status(200).json({ message: "Candidate Unrejected Successfull" });
         }
       }
     });
@@ -491,8 +460,6 @@ app.get("/recruiter_msg_date", tokenverify, async (req, res) => {
           { _id: req.query.channelid },
           { $set: { recruitermsgdate: new Date() } }
         );
-
-        res.status(200).send("Date updated");
 
         res.status(200).send("date update");
       }
@@ -1223,7 +1190,7 @@ app.get("/cv_send_store", tokenverify, async (req, res) => {
             );
             res.status(200).json({ message: "CV send successfully" });
           } else {
-            res.status(200).json({ message: "CV already send" });
+            res.status(200).json({ message: "cv all ready send" });
           }
         }
       }
