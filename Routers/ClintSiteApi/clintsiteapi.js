@@ -398,8 +398,8 @@ app.post("/app_link", async (req, res) => {
   return res.status(200).json({ message: "App Link Sent Successfully" });
 });
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
-});
+// app.listen(3000, () => {
+//   console.log("Server is running on port 3000");
+// });
 
 module.exports = app;
