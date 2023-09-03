@@ -72,23 +72,31 @@ app.get("/job_functionalarea/clint", async (req, res) => {
   }
 });
 
-app.get("/job_functionalarea/:_id", async (req, res) => {
+app.get("/job_functionalarea/:industryname", async (req, res) => {
   try {
-    var industry = await Expertisearea.findById(req.params._id).populate([
-      { path: "category", populate: { path: "functionarea" } },
-    ]);
-    res.status(200).send(industry);
+    // Use the 'findOne' method with the appropriate query.
+    const industry = await Expertisearea.findOne({
+      industryname: req.params.industryname,
+    }).populate({
+      path: "category",
+      populate: { path: "functionarea" },
+    });
+
+    if (!industry) {
+      return res.status(404).json({ error: "Industry not found" });
+    }
+
+    res.status(200).json(industry);
   } catch (error) {
-    res.status(404).send(error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
-app.get("/expertisearea/:_id", async (req, res) => {
+app.get("/expertisearea/:categoryname", async (req, res) => {
   try {
-    var data = await Category.findById(req.params._id).populate([
-      "industryid",
-      "functionarea",
-    ]);
+    var data = await Category.findOne({
+      categoryname: req.params.categoryname,
+    }).populate(["industryid", "functionarea"]);
     res.status(200).json(data);
   } catch (error) {
     res.status(400).send(error);
@@ -154,6 +162,7 @@ app.get("/single_profile/:_id", async (req, res) => {
       },
       { path: "userid", populate: { path: "experiencedlevel" } },
     ];
+
     var data = await Profiledata.findById(req.params._id).populate(populate);
     res.json(data);
   } catch (error) {
@@ -163,7 +172,7 @@ app.get("/single_profile/:_id", async (req, res) => {
 
 app.get("/candidatelist_clint", async (req, res) => {
   function functionalareafilter(element) {
-    if (element.functionalarea._id == req.query.functionalareaid) {
+    if (element.functionalarea.functionalname == req.query.functionalname) {
       return true;
     } else {
       return false;

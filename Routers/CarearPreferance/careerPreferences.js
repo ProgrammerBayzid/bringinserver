@@ -7,13 +7,13 @@ const {
   Category,
   Functionarea,
   Expertisearea2,
-  Category2
+  Category2,
 } = require("../../Model/industry.js");
 const { City, Division } = require("../../Model/alllocation.js");
 const { Jobtype } = require("../../Model/jobtype");
 const { Salirietype } = require("../../Model/salarie");
 const Career_preferences = require("../../Model/career_preferences.js");
-const Seekerprofile = require("../../Model/userModel.js")
+const Seekerprofile = require("../../Model/userModel.js");
 const {
   Workexperience,
   Education,
@@ -24,16 +24,7 @@ const {
   Profiledata,
 } = require("../../Model/Seeker_profile_all_details.js");
 
-
 // industry list
-
-
-
-
-
-
-
-
 
 app.get("/industry", tokenverify, async (req, res) => {
   try {
@@ -52,8 +43,6 @@ app.get("/industry", tokenverify, async (req, res) => {
   }
 });
 
-
-
 // # gett salarietype
 app.get("/salarietype", tokenverify, async (req, res) => {
   try {
@@ -62,7 +51,10 @@ app.get("/salarietype", tokenverify, async (req, res) => {
         res.json({ message: "invalid token" });
       } else {
         const _id = authdata._id;
-        const salirieData = await Salirietype.find({},{other_salary: {$slice: 6}}).populate({path: "other_salary", select: "-other_salary"});
+        const salirieData = await Salirietype.find(
+          {},
+          { other_salary: { $slice: 6 } }
+        ).populate({ path: "other_salary", select: "-other_salary" });
         res.send(salirieData);
       }
     });
@@ -70,9 +62,6 @@ app.get("/salarietype", tokenverify, async (req, res) => {
     res.send(error);
   }
 });
-
-
-
 
 // job industry list
 
@@ -85,7 +74,7 @@ app.get("/job_industrylist", tokenverify, async (req, res) => {
         const _id = authdata._id;
         var categorydata = await Category2.find();
         var industry = await Expertisearea2.find().populate([
-          {path: "category"},
+          { path: "category" },
         ]);
         // .populate(["category"]);
         res.status(200).json({
@@ -117,10 +106,6 @@ app.get("/job_functionalarea", tokenverify, async (req, res) => {
   }
 });
 
-
-
-
-
 app.get("/location", tokenverify, async (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {
@@ -129,7 +114,7 @@ app.get("/location", tokenverify, async (req, res) => {
       } else {
         var citydata = await City.find().populate({
           path: "divisionid",
-          populate: [{path: "cityid", select: "-divisionid"}]
+          populate: [{ path: "cityid", select: "-divisionid" }],
         });
         res.status(200).send(citydata);
       }
@@ -156,9 +141,6 @@ app.get("/jobtype", tokenverify, async (req, res) => {
   }
 });
 
-
-
-
 // carear preferance add
 
 app.post("/career_preferences", tokenverify, async (req, res) => {
@@ -183,15 +165,27 @@ app.post("/career_preferences", tokenverify, async (req, res) => {
           });
           carearpre.save();
           var profiledata;
-          profiledata = await Profiledata.findOneAndUpdate({ userid: id },{ $push: { careerPreference: carearpre._id } });
+          profiledata = await Profiledata.findOneAndUpdate(
+            { userid: id },
+            { $push: { careerPreference: carearpre._id } }
+          );
           if (profiledata == null) {
             profiledata = await Profiledata({
               userid: id,
               careerPreference: carearpre._id,
             });
-            profiledata.save()
+            profiledata.save();
           }
-          await Seekerprofile.findOneAndUpdate({_id: id}, {$inc: { "other.carearpre": 1}, $set: {"other.full_profile": profiledata._id, "other.lastfunctionalarea": req.body.functionalarea} })
+          await Seekerprofile.findOneAndUpdate(
+            { _id: id },
+            {
+              $inc: { "other.carearpre": 1 },
+              $set: {
+                "other.full_profile": profiledata._id,
+                "other.lastfunctionalarea": req.body.functionalarea,
+              },
+            }
+          );
           res.status(200).json({ message: "add successfull" });
         } else {
           res.status(400).json({ message: "allready added" });
@@ -225,7 +219,10 @@ app.post("/career_preferences_update", tokenverify, async (req, res) => {
         if (data == null) {
           res.status(400).json({ message: "iteam not found" });
         } else {
-          await Seekerprofile.findOneAndUpdate({_id: id}, {$set: { "other.lastfunctionalarea": req.body.functionalarea}})
+          await Seekerprofile.findOneAndUpdate(
+            { _id: id },
+            { $set: { "other.lastfunctionalarea": req.body.functionalarea } }
+          );
           res.status(200).json({ message: "Update Sucessfull" });
         }
       }
@@ -250,8 +247,8 @@ app.get("/career_preferences", tokenverify, async (req, res) => {
             populate: { path: "cityid", select: "-divisionid" },
           },
           "jobtype",
-          {path: "salaray.min_salary", select: "-other_salary"},
-          {path: "salaray.max_salary", select: "-other_salary"},
+          { path: "salaray.min_salary", select: "-other_salary" },
+          { path: "salaray.max_salary", select: "-other_salary" },
         ]);
         res.status(200).send(data);
       }
@@ -279,7 +276,10 @@ app.delete("/career_preferences_delete", tokenverify, async (req, res) => {
             { userid: id },
             { $pull: { careerPreference: data._id } }
           );
-          await Seekerprofile.findOneAndUpdate({_id: id}, {$inc: { "other.carearpre": -1} })
+          await Seekerprofile.findOneAndUpdate(
+            { _id: id },
+            { $inc: { "other.carearpre": -1 } }
+          );
           res.status(200).json({ message: "Delete Sucessfull" });
         }
       }
