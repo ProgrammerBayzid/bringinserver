@@ -95,6 +95,10 @@ const chatSchema = Schema(
       default: null,
       ref: "seeker_profiledata",
     },
+    outbound: {
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true }
 );
@@ -172,11 +176,11 @@ const chatFeedbackSchema = Schema(
   { timestamps: true }
 );
 
-var Chat = model("Chat_channel", chatSchema);
-var Message = model("messagelist", messageSchema);
-var Chatreport = model("chat_report", chatreportSchema);
-var CandidateReject = model("candidate_reject", candidaterejectSchema);
-var ChatFeedBack = model("chatFeedbackSchema", chatFeedbackSchema);
+// var Chat = model("Chat_channel", chatSchema);
+// var Message = model("messagelist", messageSchema);
+// var Chatreport = model("chat_report", chatreportSchema);
+// var CandidateReject = model("candidate_reject", candidaterejectSchema);
+// var ChatFeedBack = model("chatFeedbackSchema", chatFeedbackSchema);
 
 var Chat = model("Chat_channel", chatSchema);
 var Message = model("messagelist", messageSchema);

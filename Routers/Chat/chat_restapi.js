@@ -482,70 +482,19 @@ app.post("/channelcreate", tokenverify, async (req, res) => {
       } else {
         const _id = authdata._id;
         var populate = [
-          { path: "expertice_area" },
-          { path: "experience" },
-          { path: "education", select: "-digree" },
-          {
-            path: "company",
-            populate: [
-              { path: "c_size" },
-              { path: "industry", select: "-category" },
-            ],
-          },
+          { path: "expertice_area" },{ path: "experience" },{ path: "education", select: "-digree" },
+          {path: "company",populate: [{ path: "c_size" },{ path: "industry", select: "-category" }]},
           { path: "salary.min_salary", select: "-other_salary" },
           { path: "salary.max_salary", select: "-other_salary" },
           { path: "skill" },
           { path: "jobtype" },
         ];
         var populate2 = [
-          { path: "userid", populate: { path: "experiencedlevel" } },
-          {
-            path: "workexperience",
-            options: {
-              limit: 1,
-            },
-            populate: [
-              { path: "category", select: "-functionarea" },
-              "expertisearea",
-            ],
-          },
-          {
-            path: "education",
-            options: {
-              limit: 1,
-            },
-            populate: [
-              {
-                path: "digree",
-                select: "-subject",
-                populate: { path: "education", select: "-digree" },
-              },
-              "subject",
-            ],
-          },
-          "skill",
-          "protfoliolink",
-          "about",
-          {
-            path: "careerPreference",
-            options: {
-              limit: 1,
-            },
-            populate: [
-              { path: "category", select: "-functionarea" },
-              {
-                path: "functionalarea",
-                populate: [{ path: "industryid", select: "-category" }],
-              },
-              {
-                path: "division",
-                populate: { path: "cityid", select: "-divisionid" },
-              },
-              "jobtype",
-              { path: "salaray.min_salary", select: "-other_salary" },
-              { path: "salaray.max_salary", select: "-other_salary" },
-            ],
-          },
+          { path: "userid", populate: {path: "experiencedlevel" }},
+          {path: "workexperience",options: {limit: 1},populate: [{ path: "category", select: "-functionarea" },"expertisearea"]},
+          {path: "education",options: {limit: 1},populate: [{path: "digree",select: "-subject",populate: { path: "education", select: "-digree" }},"subject"]},
+          "skill","protfoliolink","about",
+          {path: "careerPreference",options: {limit: 1},populate: [{ path: "category", select: "-functionarea" },{path: "functionalarea",populate: [{ path: "industryid", select: "-category" }]},{path: "division",populate: { path: "cityid", select: "-divisionid" }}, "jobtype",{ path: "salaray.min_salary", select: "-other_salary" },{ path: "salaray.max_salary", select: "-other_salary" }]},
         ];
 
         chatstoredata(_id, req.body.seekerid, req.body.recruiterid);
@@ -600,6 +549,7 @@ app.post("/channelcreate", tokenverify, async (req, res) => {
             date: new Date(),
             jobid: req.body.jobid,
             candidate_fullprofile: req.body.candidate_fullprofile,
+            outbound: req.body.outbound
           });
           await channeldata.save();
           var channelinfo = await Chat.findOne({
