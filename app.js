@@ -27,9 +27,11 @@ const emailtest = require("./Routers/Emailtest/emailtest");
 const { apps } = require("./Routers/Notification/notification");
 const admin_recriter = require("./Routers/AdminPanel/recruiter");
 const Package = require("./Routers/Recruiter/package");
+const compression = require("compression");
 
 app.use(express.json());
 app.use(cors());
+app.use(compression());
 app.use("/uploads", express.static("uploads"));
 app.use("/resumes", express.static("resumes"));
 app.use(bodyParser.json({ limit: "50mb" }));
