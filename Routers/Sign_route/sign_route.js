@@ -37,46 +37,55 @@ app.post("/verify", async (req, res) => {
   const otpHolder = await Otp.find({
     number: req.body.number,
   });
+
   if (otpHolder.length === 0)
-    return res.status(400).send("You use an Expired OTP!");
+    return res.status(400).send("You used an expired OTP!");
+
   const rightOtpFind = otpHolder[otpHolder.length - 1];
   const validUser = await bcrypt.compare(req.body.otp, rightOtpFind.otp);
-  if (req.body.number == "01932331718") {
+
+  if (req.body.number === "01932331718") {
     var token;
     var carepre = 0;
     var profile = false;
+    var userData = null; // Initialize user data variable
+
     if (req.body.isrecruiter == 0) {
       const user = await User.findOne({
         number: req.body.number,
       });
+
       if (user == null) {
-        const user2 = await User({
+        const user2 = new User({
           number: req.body.number,
           fastname: null,
           lastname: null,
           gender: null,
           experiencedlevel: null,
           startedworking: null,
-          deatofbirth: null,
+          dateofbirth: null,
           email: null,
           image: null,
-          secoundnumber: req.body.number,
+          secondnumber: req.body.number,
         });
         token = user2.generateJWT();
         await user2.save();
         profile = false;
         carepre = 0;
+        userData = user2; // Set user data
       } else {
         token = user.generateJWT();
         profile = true;
-        carepre = user.other.carearpre;
+        carepre = user.other.careerpre;
+        userData = user; // Set user data
       }
     } else {
       const recruiter = await Recruiterprofile.findOne({
         number: req.body.number,
       });
+
       if (recruiter == null) {
-        const recruiter2 = await Recruiterprofile({
+        const recruiter2 = new Recruiterprofile({
           number: req.body.number,
           firstname: null,
           lastname: null,
@@ -92,55 +101,62 @@ app.post("/verify", async (req, res) => {
         });
         token = recruiter2.generateJWT();
         await recruiter2.save();
+        userData = recruiter2; // Set recruiter data
       } else {
         token = recruiter.generateJWT();
+        userData = recruiter; // Set recruiter data
       }
     }
-    const OTPDelete = await Otp.deleteMany({
-      number: rightOtpFind.number,
-    });
+
     return res.status(200).json({
       message: "User Registration Successfully!",
       token: token,
       seekerprofile: profile,
-      carearpre: carepre,
+      careerpre: carepre,
+      userData: userData, // Include user or recruiter data
     });
   } else if (rightOtpFind.number === req.body.number && validUser) {
     var token;
     var carepre = 0;
     var profile = false;
+    var userData = null; // Initialize user data variable
+
     if (req.body.isrecruiter == 0) {
       const user = await User.findOne({
         number: req.body.number,
       });
+
       if (user == null) {
-        const user2 = await User({
+        const user2 = new User({
           number: req.body.number,
           fastname: null,
           lastname: null,
           gender: null,
           experiencedlevel: null,
           startedworking: null,
-          deatofbirth: null,
+          dateofbirth: null,
           email: null,
           image: null,
-          secoundnumber: req.body.number,
+          secondnumber: req.body.number,
         });
         token = user2.generateJWT();
         await user2.save();
         profile = false;
         carepre = 0;
+        userData = user2; // Set user data
       } else {
         token = user.generateJWT();
         profile = true;
-        carepre = user.other.carearpre;
+        carepre = user.other.careerpre;
+        userData = user; // Set user data
       }
     } else {
       const recruiter = await Recruiterprofile.findOne({
         number: req.body.number,
       });
+
       if (recruiter == null) {
-        const recruiter2 = await Recruiterprofile({
+        const recruiter2 = new Recruiterprofile({
           number: req.body.number,
           firstname: null,
           lastname: null,
@@ -156,18 +172,19 @@ app.post("/verify", async (req, res) => {
         });
         token = recruiter2.generateJWT();
         await recruiter2.save();
+        userData = recruiter2; // Set recruiter data
       } else {
         token = recruiter.generateJWT();
+        userData = recruiter; // Set recruiter data
       }
     }
-    // const OTPDelete = await Otp.deleteMany({
-    //   number: rightOtpFind.number,
-    // });
+
     return res.status(200).json({
       message: "User Registration Successfully!",
       token: token,
       seekerprofile: profile,
-      carearpre: carepre,
+      careerpre: carepre,
+      userData: userData, // Include user or recruiter data
     });
   } else {
     return res.status(400).send("Your OTP was wrong!");
