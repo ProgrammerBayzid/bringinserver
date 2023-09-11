@@ -334,6 +334,7 @@ app.get("/profile_verifys_type", async (req, res) => {
       populate: [
         // { path: "company", select: "" },
         { path: "industry", select: "", populate: ["industryid"] },
+        { path: "c_location", select: "", populate: ["divisiondata"] },
         "c_size",
       ],
     },
