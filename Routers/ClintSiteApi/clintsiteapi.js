@@ -353,6 +353,179 @@ app.get("/clint_candidate_search", async (req, res) => {
   }
 });
 
+// app.get("/candidates", async (req, res) => {
+//   try {
+//     const { functionalname, name } = req.query;
+
+//     if (!functionalname && !name) {
+//       return res.status(400).json({
+//         error:
+//           "Please provide at least one search parameter (functionalname or name).",
+//       });
+//     }
+
+//     let candidates = [];
+
+//     if (functionalname) {
+//       const candidatesByFunctionalArea = await searchCandidatesByFunctionalArea(
+//         functionalname
+//       );
+//       candidates = candidates.concat(candidatesByFunctionalArea);
+//     }
+
+//     if (name) {
+//       const candidatesByName = await searchCandidatesByName(name);
+//       candidates = candidates.concat(candidatesByName);
+//     }
+
+//     res.status(200).json(candidates);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
+app.get("/candidates", async (req, res) => {
+  try {
+    const { skill, division } = req.query;
+
+    if (!skill && !division) {
+      return res.status(400).json({
+        error:
+          "Please provide at least one search parameter (skill or division).",
+      });
+    }
+
+    let candidates = [];
+
+    if (skill) {
+      const candidatesBySkill = await searchCandidatesBySkill(skill);
+      candidates = candidates.concat(candidatesBySkill);
+    }
+
+    if (division) {
+      const candidatesByDivision = await searchCandidatesByDivision(division);
+      candidates = candidates.concat(candidatesByDivision);
+    }
+
+    res.status(200).json(candidates);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+async function searchCandidatesBySkill(skill) {
+  var populate2 = [
+    {
+      path: "workexperience",
+      populate: [
+        { path: "category", select: "-functionarea" },
+        "expertisearea",
+      ],
+    },
+    {
+      path: "education",
+      populate: [
+        {
+          path: "digree",
+          select: "-subject",
+          populate: { path: "education", select: "-digree" },
+        },
+        "subject",
+      ],
+    },
+    "skill",
+    "protfoliolink",
+    "about",
+    {
+      path: "careerPreference",
+      populate: [
+        { path: "salaray", populate: ["max_salary", "min_salary"] },
+        { path: "category", select: "-functionarea" },
+        { path: "functionalarea", populate: [{ path: "industryid" }] },
+        {
+          path: "division",
+          populate: { path: "cityid", select: "-divisionid" },
+        },
+        "jobtype",
+      ],
+    },
+    { path: "userid", populate: { path: "experiencedlevel" } },
+  ];
+
+  const candidates = await Profiledata.find()
+    .populate(populate2)
+    .then((data) => {
+      return data.filter((candidate) => {
+        const matchingFunctionalAreas = candidate.careerPreference.filter(
+          (preference) => {
+            return preference.functionalarea.functionalname === skill;
+          }
+        );
+
+        return matchingFunctionalAreas.length > 0;
+      });
+    });
+
+  return candidates;
+}
+
+async function searchCandidatesByDivision(division) {
+  var populate2 = [
+    {
+      path: "workexperience",
+      populate: [
+        { path: "category", select: "-functionarea" },
+        "expertisearea",
+      ],
+    },
+    {
+      path: "education",
+      populate: [
+        {
+          path: "digree",
+          select: "-subject",
+          populate: { path: "education", select: "-digree" },
+        },
+        "subject",
+      ],
+    },
+    "skill",
+    "protfoliolink",
+    "about",
+    {
+      path: "careerPreference",
+      populate: [
+        { path: "salaray", populate: ["max_salary", "min_salary"] },
+        { path: "category", select: "-functionarea" },
+        { path: "functionalarea", populate: [{ path: "industryid" }] },
+        {
+          path: "division",
+          populate: { path: "cityid", select: "-divisionid" },
+        },
+        "jobtype",
+      ],
+    },
+    { path: "userid", populate: { path: "experiencedlevel" } },
+  ];
+
+  const candidates = await Profiledata.find()
+    .populate(populate2)
+    .then((data) => {
+      return data.filter((candidate) => {
+        const matchingDivisions = candidate.careerPreference.filter(
+          (preference) => {
+            return preference.division.cityid.name === division;
+          }
+        );
+
+        return matchingDivisions.length > 0;
+      });
+    });
+
+  return candidates;
+}
+
 app.post("/candidate_filter", tokenverify, async (req, res) => {
   try {
     jwt.verify(req.token, process.env.ACCESS_TOKEN, async (err, authdata) => {

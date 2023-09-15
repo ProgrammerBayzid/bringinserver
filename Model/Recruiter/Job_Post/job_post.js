@@ -7,6 +7,10 @@ const jobpostSchema = Schema(
       ref: "Recruiters_profile",
     },
     job_title: String,
+    job_hidden: {
+      type: Boolean,
+      default: false,
+    },
     companyname: {
       type: String,
       default: null,
@@ -40,7 +44,7 @@ const jobpostSchema = Schema(
     },
     skill: [
       {
-        type: String
+        type: String,
       },
     ],
     jobtype: {
@@ -52,7 +56,7 @@ const jobpostSchema = Schema(
       lon: Schema.Types.Mixed,
       formet_address: String,
       city: String,
-      division: String
+      division: String,
     },
     remote: Boolean,
     job_status_type: Number,

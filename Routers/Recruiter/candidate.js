@@ -365,7 +365,9 @@ app.post(
                 },
               }
             );
-            res.status(200).json({ message: "Job report updated successfully" });
+            res
+              .status(200)
+              .json({ message: "Job report updated successfully" });
           }
         }
       });
