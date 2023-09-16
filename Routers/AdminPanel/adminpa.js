@@ -20,6 +20,7 @@ const { Salirietype } = require("../../Model/salarie.js");
 const Experince = require("../../Model/experience.js");
 const JobPost = require("../../Model/Recruiter/Job_Post/job_post.js");
 const { Profiledata } = require("../../Model/Seeker_profile_all_details.js");
+
 const {
   EducationLavel,
   Digree,
@@ -322,6 +323,38 @@ app.patch("/verifyRecruterCompny/:_id", async (req, res) => {
   };
   const result = await recruiters.findByIdAndUpdate(filter, updateDoc);
   res.send(result);
+});
+app.patch("/job_hidden_true/:_id", async (req, res) => {
+  const id = req.params._id;
+  const filter = { _id: id };
+  // const options = { upsert: true };
+  const updateDoc = {
+    $set: { job_hidden: true },
+  };
+  const result = await JobPost.findByIdAndUpdate(filter, updateDoc);
+  res.send(result);
+});
+app.patch("/job_hidden_false/:_id", async (req, res) => {
+  const id = req.params._id;
+  const filter = { _id: id };
+  // const options = { upsert: true };
+  const updateDoc = {
+    $set: { job_hidden: false },
+  };
+  const result = await JobPost.findByIdAndUpdate(filter, updateDoc);
+  res.send(result);
+});
+app.delete("/admin/job_delete/:id", async (req, res) => {
+  try {
+    const result = await JobPost.findByIdAndDelete(req.params.id);
+
+    if (!req.params.id) {
+      return res.status(404).send();
+    }
+    res.send(result);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
 app.get("/profile_verifys_type", async (req, res) => {
