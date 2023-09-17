@@ -356,6 +356,26 @@ app.delete("/admin/job_delete/:id", async (req, res) => {
     res.send(error);
   }
 });
+app.get("/admin/job_list", async (req, res) => {
+  const job_hidden = req.query.job_hidden;
+  const filter = { job_hidden: job_hidden };
+  var populate = [
+    "userid",
+    "expertice_area",
+    "experience",
+    "education",
+    { path: "salary.min_salary", select: "-other_salary" },
+    { path: "salary.max_salary", select: "-other_salary" },
+    {
+      path: "company",
+      populate: [{ path: "c_size" }, { path: "industry", select: "-category" }],
+    },
+    "jobtype",
+  ];
+  var data = await JobPost.find(filter).sort("-updatedAt").populate(populate);
+  res.status(200).json(data);
+  // console.log(filter);
+});
 
 app.get("/profile_verifys_type", async (req, res) => {
   const profile_verify_type = req.query.profile_verify_type;

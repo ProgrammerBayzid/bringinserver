@@ -384,6 +384,7 @@ app.get("/clint_candidate_search", async (req, res) => {
 //     res.status(500).json({ error: "Internal Server Error" });
 //   }
 // });
+
 app.get("/candidates", async (req, res) => {
   try {
     const { skill, division } = req.query;
@@ -520,6 +521,102 @@ async function searchCandidatesByDivision(division) {
         );
 
         return matchingDivisions.length > 0;
+      });
+    });
+
+  return candidates;
+}
+
+app.get("/candidates_s", async (req, res) => {
+  try {
+    const { skill, division } = req.query;
+    console.log("Skill:", skill);
+    console.log("Division:", division);
+    if (!skill && !division) {
+      return res.status(400).json({
+        error:
+          "Please provide at least one search parameter (skill or division).",
+      });
+    }
+
+    let candidates = [];
+
+    if (skill && division) {
+      const candidatesBySkillAndDivision =
+        await searchCandidatesBySkillAndDivision(skill, division);
+      candidates = candidates.concat(candidatesBySkillAndDivision);
+    } else if (skill) {
+      const candidatesBySkill = await searchCandidatesBySkill(skill);
+      candidates = candidates.concat(candidatesBySkill);
+    } else if (division) {
+      const candidatesByDivision = await searchCandidatesByDivision(division);
+      candidates = candidates.concat(candidatesByDivision);
+    }
+
+    res.status(200).json(candidates);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Modify searchCandidatesBySkill to accept division as well
+async function searchCandidatesBySkillAndDivision(skill, division) {
+  // ... Your existing populate2 configuration ...
+  console.log("Search skill:", skill);
+  console.log("Search division:", division);
+  var populate2 = [
+    {
+      path: "workexperience",
+      populate: [
+        { path: "category", select: "-functionarea" },
+        "expertisearea",
+      ],
+    },
+    {
+      path: "education",
+      populate: [
+        {
+          path: "digree",
+          select: "-subject",
+          populate: { path: "education", select: "-digree" },
+        },
+        "subject",
+      ],
+    },
+    "skill",
+    "protfoliolink",
+    "about",
+    {
+      path: "careerPreference",
+      populate: [
+        { path: "salaray", populate: ["max_salary", "min_salary"] },
+        { path: "category", select: "-functionarea" },
+        { path: "functionalarea", populate: [{ path: "industryid" }] },
+        {
+          path: "division",
+          populate: { path: "cityid", select: "-divisionid" },
+        },
+        "jobtype",
+      ],
+    },
+    { path: "userid", populate: { path: "experiencedlevel" } },
+  ];
+  const candidates = await Profiledata.find()
+    .populate(populate2)
+    .then((data) => {
+      return data.filter((candidate) => {
+        const matchingFunctionalAreas = candidate.careerPreference.filter(
+          (preference) => {
+            return (
+              preference.functionalarea.functionalname === skill &&
+              preference.division.cityid.name === division
+            );
+          }
+        );
+
+        return matchingFunctionalAreas.length > 0;
+        console.log(matchingFunctionalAreas);
       });
     });
 
