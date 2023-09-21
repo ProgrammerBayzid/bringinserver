@@ -174,6 +174,7 @@ app.get("/job_post", tokenverify, async (req, res) => {
           "expertice_area",
           "experience",
           "education",
+          {path: "job_location.divisiondata", populate:{path: "cityid", select: "name"}},
           { path: "salary.min_salary", select: "-other_salary" },
           { path: "salary.max_salary", select: "-other_salary" },
           {
@@ -181,6 +182,7 @@ app.get("/job_post", tokenverify, async (req, res) => {
             populate: [
               { path: "c_size" },
               { path: "industry", select: "-category" },
+              {path: "c_location.divisiondata", populate:{path: "cityid", select: "name"}},
             ],
           },
           "jobtype",
@@ -206,6 +208,12 @@ app.get("/job_post", tokenverify, async (req, res) => {
     res.send(error);
   }
 });
+
+
+app.get('/jobpost2', async (req, res)=> {
+  var data = await JobPost.find().populate({path: "job_location.divisiondata", populate:{path: "cityid", select: "name"}},);
+  res.status(200).send(data)
+})
 
 app.post("/job_post_update", tokenverify, async (req, res) => {
   try {
@@ -311,13 +319,16 @@ app.get("/single_jobdetails", tokenverify, async (req, res) => {
           "expertice_area",
           "experience",
           "education",
+          {path: "job_location.divisiondata", populate:{path: "cityid", select: "name"}},
           { path: "salary.min_salary", select: "-other_salary" },
           { path: "salary.max_salary", select: "-other_salary" },
           {
             path: "company",
+            
             populate: [
               { path: "c_size" },
               { path: "industry", select: "-category" },
+              {path: "c_location.divisiondata", populate:{path: "cityid", select: "name"}},
             ],
           },
           "jobtype",

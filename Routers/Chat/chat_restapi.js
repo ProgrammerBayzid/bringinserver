@@ -99,12 +99,13 @@ app.get("/channellist", tokenverify, async (req, res) => {
     { path: "education", select: "-digree" },
     {
       path: "company",
-      populate: [{ path: "c_size" }, { path: "industry", select: "-category" }],
+      populate: [{ path: "c_size" }, { path: "industry", select: "-category" },{path: "c_location.divisiondata", populate:{path: "cityid", select: "name"}}],
     },
     { path: "salary.min_salary", select: "-other_salary" },
     { path: "salary.max_salary", select: "-other_salary" },
     { path: "skill" },
     { path: "jobtype" },
+    {path: "job_location.divisiondata", populate:{path: "cityid", select: "name"}},
   ];
   var populate2 = [
     { path: "userid", populate: { path: "experiencedlevel" } },
@@ -199,7 +200,7 @@ app.get("/channellist", tokenverify, async (req, res) => {
             "other.offlinedate",
             "other.totaljob",
           ],
-          populate: { path: "companyname", populate: { path: "industry" } },
+          populate: { path: "companyname", populate: [{ path: "industry" },{path: "c_location.divisiondata", populate:{path: "cityid", select: "name"}}] },
         },
         { path: "lastmessage" },
         { path: "bring_assis.bringlastmessage" },
@@ -248,7 +249,7 @@ app.get("/channellist", tokenverify, async (req, res) => {
             "other.offlinedate",
             "other.totaljob",
           ],
-          populate: { path: "companyname", populate: { path: "industry" } },
+          populate: { path: "companyname", populate: [{ path: "industry" },{path: "c_location.divisiondata", populate:{path: "cityid", select: "name"}}] },
         },
         { path: "lastmessage" },
         { path: "bring_assis.bringlastmessage" },
@@ -483,11 +484,12 @@ app.post("/channelcreate", tokenverify, async (req, res) => {
         const _id = authdata._id;
         var populate = [
           { path: "expertice_area" },{ path: "experience" },{ path: "education", select: "-digree" },
-          {path: "company",populate: [{ path: "c_size" },{ path: "industry", select: "-category" }]},
+          {path: "company",populate: [{ path: "c_size" },{ path: "industry", select: "-category" },{path: "c_location.divisiondata", populate:{path: "cityid", select: "name"}}]},
           { path: "salary.min_salary", select: "-other_salary" },
           { path: "salary.max_salary", select: "-other_salary" },
           { path: "skill" },
           { path: "jobtype" },
+          {path: "job_location.divisiondata", populate:{path: "cityid", select: "name"}},
         ];
         var populate2 = [
           { path: "userid", populate: {path: "experiencedlevel" }},
@@ -538,7 +540,7 @@ app.post("/channelcreate", tokenverify, async (req, res) => {
               "email",
               "other.offlinedate",
             ],
-            populate: { path: "companyname", populate: { path: "industry" } },
+            populate: { path: "companyname", populate: [{ path: "industry" },{path: "c_location.divisiondata", populate:{path: "cityid", select: "name"}}] },
           },
           { path: "lastmessage" },
         ]);
@@ -589,7 +591,7 @@ app.post("/channelcreate", tokenverify, async (req, res) => {
                 "email",
                 "other.offlinedate",
               ],
-              populate: { path: "companyname", populate: { path: "industry" } },
+              populate: { path: "companyname", populate: [{ path: "industry" },{path: "c_location.divisiondata", populate:{path: "cityid", select: "name"}}] },
             },
             { path: "lastmessage" },
           ]);
@@ -637,12 +639,13 @@ app.get("/single_channelinfo", tokenverify, async (req, res) => {
     { path: "education", select: "-digree" },
     {
       path: "company",
-      populate: [{ path: "c_size" }, { path: "industry", select: "-category" }],
+      populate: [{ path: "c_size" }, { path: "industry", select: "-category" },{path: "c_location.divisiondata", populate:{path: "cityid", select: "name"}}],
     },
     { path: "salary.min_salary", select: "-other_salary" },
     { path: "salary.max_salary", select: "-other_salary" },
     { path: "skill" },
     { path: "jobtype" },
+    {path: "job_location.divisiondata", populate:{path: "cityid", select: "name"}},
   ];
   var populate2 = [
     { path: "userid", populate: { path: "experiencedlevel" } },
@@ -730,7 +733,7 @@ app.get("/single_channelinfo", tokenverify, async (req, res) => {
         "other.offlinedate",
         "other.totaljob",
       ],
-      populate: { path: "companyname", populate: { path: "industry" } },
+      populate: { path: "companyname", populate: [{ path: "industry" },{path: "c_location.divisiondata", populate:{path: "cityid", select: "name"}}] },
     },
     { path: "lastmessage" },
     { path: "bring_assis.bringlastmessage" },
@@ -760,12 +763,14 @@ app.get("/who_view_me", tokenverify, async (req, res) => {
               populate: [
                 { path: "c_size" },
                 { path: "industry", select: "-category" },
+                {path: "c_location.divisiondata", populate:{path: "cityid", select: "name"}}
               ],
             },
             { path: "salary.min_salary", select: "-other_salary" },
             { path: "salary.max_salary", select: "-other_salary" },
             { path: "skill" },
             { path: "jobtype" },
+            {path: "job_location.divisiondata", populate:{path: "cityid", select: "name"}},
           ];
           const job = await candidateview.find({ candidate_id: _id }).populate({
             path: "userid",
@@ -858,12 +863,14 @@ app.get("/who_save_me", tokenverify, async (req, res) => {
               populate: [
                 { path: "c_size" },
                 { path: "industry", select: "-category" },
+                {path: "c_location.divisiondata", populate:{path: "cityid", select: "name"}}
               ],
             },
             { path: "salary.min_salary", select: "-other_salary" },
             { path: "salary.max_salary", select: "-other_salary" },
             { path: "skill" },
             { path: "jobtype" },
+            {path: "job_location.divisiondata", populate:{path: "cityid", select: "name"}},
           ];
           const job = await candidatesave.find({ candidateid: _id }).populate({
             path: "userid",
@@ -1053,9 +1060,10 @@ app.get("/recruiter_profilebyid", tokenverify, async (req, res) => {
         var populate1 = [
           {
             path: "companyname",
-            populate: {
+            populate: [{
               path: "industry",
-            },
+              
+            },{path: "c_location.divisiondata", populate:{path: "cityid", select: "name"}}],
           },
           { path: "other.package", populate: { path: "packageid" } },
         ];
@@ -1065,6 +1073,7 @@ app.get("/recruiter_profilebyid", tokenverify, async (req, res) => {
           "expertice_area",
           "experience",
           "education",
+          {path: "job_location.divisiondata", populate:{path: "cityid", select: "name"}},
           { path: "salary.min_salary", select: "-other_salary" },
           { path: "salary.max_salary", select: "-other_salary" },
           {
@@ -1072,10 +1081,12 @@ app.get("/recruiter_profilebyid", tokenverify, async (req, res) => {
             populate: [
               { path: "c_size" },
               { path: "industry", select: "-category" },
+              {path: "c_location.divisiondata", populate:{path: "cityid", select: "name"}}
             ],
           },
           "skill",
           "jobtype",
+          {path: "job_location.divisiondata", populate:{path: "cityid", select: "name"}},
         ];
 
         var recruiter = await Recruiters.findOne({
@@ -1168,6 +1179,7 @@ app.get("/send_cv", tokenverify, async (req, res) => {
             populate: [
               { path: "c_size" },
               { path: "industry", select: "-category" },
+              {path: "c_location.divisiondata", populate:{path: "cityid", select: "name"}}
             ],
           },
           { path: "salary.min_salary", select: "-other_salary" },
@@ -1225,12 +1237,13 @@ app.get("/chat_history", tokenverify, async (req, res) => {
     { path: "education", select: "-digree" },
     {
       path: "company",
-      populate: [{ path: "c_size" }, { path: "industry", select: "-category" }],
+      populate: [{ path: "c_size" }, { path: "industry", select: "-category" },{path: "c_location.divisiondata", populate:{path: "cityid", select: "name"}}],
     },
     { path: "salary.min_salary", select: "-other_salary" },
     { path: "salary.max_salary", select: "-other_salary" },
     { path: "skill" },
     { path: "jobtype" },
+    {path: "job_location.divisiondata", populate:{path: "cityid", select: "name"}},
   ];
 
   var profilepopulate = [

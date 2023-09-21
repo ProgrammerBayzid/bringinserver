@@ -55,8 +55,12 @@ const jobpostSchema = Schema(
       lat: Schema.Types.Mixed,
       lon: Schema.Types.Mixed,
       formet_address: String,
-      city: String,
-      division: String,
+      locationoptional: String,
+      divisiondata: {
+        type: 'ObjectId',
+        ref: "Division",
+        default: "64aa36d31932a2e4a09a79ed"
+      }
     },
     remote: Boolean,
     job_status_type: Number,

@@ -35,6 +35,9 @@ const {
 } = require("../../Model/Recruiter/Verify/profile_verify.js");
 const {
   notificaton_send_by_verifyAprove,
+  notificaton_send_by_jobHidden,
+  notificaton_send_by_jobPublice,
+  notificaton_send_by_jobDelete,
 } = require("../../Routers/Notification/notification.js");
 const { DefaultSkill } = require("../../Model/Seeker_profile_all_details.js");
 const Package = require("../../Model/Package/package.js");
@@ -255,12 +258,6 @@ app.get("/not_premium_user", async (req, res) => {
     res.status(400).send(error);
   }
 });
-// app.get("/premium_user/:id", async (req, res) => {
-//   const id = req.params.id;
-//   const query = { _id: id };
-//   const date = await recruiters.findOne(query);
-//   res.send(date);
-// });
 
 // company and profile verify doc and verify
 
@@ -302,8 +299,6 @@ app.get("/profile_varify/:id", async (req, res) => {
   res.send(date);
 });
 
-////////
-
 // company and profile verify doc and verify
 
 app.get("/verifyRecruterCompny", async (req, res) => {
@@ -332,6 +327,12 @@ app.patch("/job_hidden_true/:_id", async (req, res) => {
     $set: { job_hidden: true },
   };
   const result = await JobPost.findByIdAndUpdate(filter, updateDoc);
+  const mapdata = {
+    verificationType: "profile", // Indicate the type of verification (profile or company)
+    userId: id, // The ID of the recruiter being verified
+  };
+  // Call the notification function
+  await notificaton_send_by_jobHidden(id, mapdata);
   res.send(result);
 });
 app.patch("/job_hidden_false/:_id", async (req, res) => {
@@ -342,6 +343,13 @@ app.patch("/job_hidden_false/:_id", async (req, res) => {
     $set: { job_hidden: false },
   };
   const result = await JobPost.findByIdAndUpdate(filter, updateDoc);
+  const mapdata = {
+    verificationType: "profile", // Indicate the type of verification (profile or company)
+    userId: id, // The ID of the recruiter being verified
+  };
+
+  // Call the notification function
+  await notificaton_send_by_jobPublice(id, mapdata);
   res.send(result);
 });
 app.delete("/admin/job_delete/:id", async (req, res) => {
@@ -351,6 +359,13 @@ app.delete("/admin/job_delete/:id", async (req, res) => {
     if (!req.params.id) {
       return res.status(404).send();
     }
+    const mapdata = {
+      verificationType: "profile", // Indicate the type of verification (profile or company)
+      userId: id, // The ID of the recruiter being verified
+    };
+
+    // Call the notification function
+    await notificaton_send_by_jobDelete(id, mapdata);
     res.send(result);
   } catch (error) {
     res.send(error);
@@ -361,11 +376,11 @@ app.get("/admin/job_list", async (req, res) => {
   const filter = { job_hidden: job_hidden };
   var populate = [
     "userid",
-    "expertice_area",
     "experience",
     "education",
     { path: "salary.min_salary", select: "-other_salary" },
     { path: "salary.max_salary", select: "-other_salary" },
+    { path: "expertice_area", populate: ["industryid"] },
     {
       path: "company",
       populate: [{ path: "c_size" }, { path: "industry", select: "-category" }],
@@ -1064,20 +1079,6 @@ app.get("/admin/functionalarea", async (req, res) => {
   }
 });
 
-// app.delete("/admin/functionalarea/:id", async (req, res) => {
-//   try {
-//     const result = await Functionarea.findByIdAndDelete(req.params.id);
-//     if (!req.params.id) {
-//       return res.status(404).send();
-//     }
-//     res.send(result);
-//   } catch (error) {
-//     res.send(error);
-//   }
-// });
-
-// location
-
 app.get("/admin/location", async (req, res) => {
   try {
     var data = await City.find().populate("divisionid");
@@ -1196,15 +1197,6 @@ app.get("/admin/salarie", async (req, res) => {
 });
 
 app.post("/salarietype", async (req, res) => {
-  // var saliry = await Salirietype.findOne(req.body);
-  // if (saliry == null) {
-  //   const salirietypeData = await Salirietype(req.body);
-  //   await salirietypeData.save();
-  //   res.status(200).json({ message: "add successfull" });
-  // } else {
-  //   res.status(400).json({ message: "allready added" });
-  // }
-
   if (req.body.type == 0) {
     var salary = await Salirietype({
       salary: "Negotiable",
@@ -1391,25 +1383,6 @@ app.patch("/degree_update/:_id", async (req, res) => {
   }
 });
 
-// app.post("/subject_add", async (req, res) => {
-//   try {
-//     var data = await Subject.findOne({ name: req.body.name });
-//     if (data == null) {
-//       var subjectdata = await Subject(req.body);
-//       subjectdata.save();
-//       await Digree.findOneAndUpdate(
-//         { _id: req.body.digree },
-//         { $push: { subject: subjectdata._id } }
-//       );
-//       res.status(200).json({ message: "add successfull" });
-//     } else {
-//       res.status(200).json({ message: "all ready added" });
-//     }
-//   } catch (error) {
-//     res.status(400).send(error);
-//   }
-// });
-
 app.post("/subject_add", async (req, res) => {
   // try {
   var data = await Subject.findOne({ name: req.body.name });
@@ -1431,21 +1404,7 @@ app.post("/subject_add", async (req, res) => {
     );
     res.status(200).json({ message: "update subject" });
   }
-  // } catch (error) {
-  //   res.status(400).send(error);
-  // }
 });
-
-// app.get("/subject", async (req, res) => {
-//   try {
-//     var data = await Subject.find({
-//       name: { $regex: req.query.name, $options: "i" },
-//     });
-//     res.status(200).send(data);
-//   } catch (error) {
-//     res.status(400).send(error);
-//   }
-// });
 
 // experience insert
 

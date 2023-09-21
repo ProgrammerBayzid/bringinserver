@@ -66,7 +66,7 @@ app.post("/verify", async (req, res) => {
           dateofbirth: null,
           email: null,
           image: null,
-          secondnumber: req.body.number,
+          secoundnumber: req.body.number,
         });
         token = user2.generateJWT();
         await user2.save();
@@ -137,7 +137,7 @@ app.post("/verify", async (req, res) => {
           dateofbirth: null,
           email: null,
           image: null,
-          secondnumber: req.body.number,
+          secoundnumber: req.body.number,
         });
         token = user2.generateJWT();
         await user2.save();

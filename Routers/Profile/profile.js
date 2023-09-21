@@ -42,9 +42,6 @@ async function profilenmberupdate(_id) {
 
     }
   })
-
-
-
 }
 
 app.get("/users", tokenverify, async (req, res) => {

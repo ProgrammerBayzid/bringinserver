@@ -57,11 +57,10 @@ app.get("/recruiters_profile", tokenverify, async (req, res) => {
           [
             {
               path: "companyname",
-              populate: {
+              populate: [{
                 path: "industry",
-                model: "industries",
-                select: "industryname",
-              },
+                select: "categoryname",
+              },{path: "c_location.divisiondata", populate:{path: "cityid", select: "name"}},],
             },
             { path: "other.package", populate: { path: "packageid" } },
           ]
@@ -138,6 +137,7 @@ app.get("/clint_recruiters_profile/:_id", async (req, res) => {
             // select: "industryname",
           },
           "c_size",
+          {path: "c_location.divisiondata", populate:{path: "cityid", select: "name"}},
         ],
       },
       { path: "other.package", populate: { path: "packageid" } },

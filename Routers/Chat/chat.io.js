@@ -95,11 +95,13 @@ async function channellistdata(isrecruiter, currentid) {
         { path: "expertice_area" },
         { path: "experience" },
         { path: "education", select: "-digree" },
-        { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" }] },
+        { path: "company", populate: [{ path: "c_size" }, { path: "industry", select: "-category" },{path: "c_location.divisiondata", populate:{path: "cityid", select: "name"}}] },
         { path: "salary.min_salary", select: "-other_salary" },
         { path: "salary.max_salary", select: "-other_salary" },
         { path: "skill" },
         { path: "jobtype" },
+         {path: "job_location.divisiondata", populate:{path: "cityid", select: "name"}},
+        
     ];
     var populate2 = [
         { path: "userid", populate: { path: "experiencedlevel" } },
@@ -130,8 +132,8 @@ async function channellistdata(isrecruiter, currentid) {
                 { path: "jobid", populate: populate, select: "-userid" },
                 { path: "candidate_fullprofile", populate: populate2 },
                 { path: "seekerid", select: ["other.online", "other.pushnotification", "other.lastfunctionalarea", "other.offlinedate", "fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"], populate: { path: "other.lastfunctionalarea" } },
-                { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email", "other.offlinedate", "other.totaljob"], populate: { path: "companyname", populate: { path: "industry" } } },
-                { path: "lastmessage" },
+                { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email", "other.offlinedate", "other.totaljob"], populate: { path: "companyname", populate: [{ path: "industry" },{path: "c_location.divisiondata", populate:{path: "cityid", select: "name"}}] } },
+                { path: "lastmessage"},
                 { path: "bring_assis.bringlastmessage" },
                 { path: "who_view_me.seekerviewid" },
                 { path: "who_view_me.recruiterview" }
@@ -141,7 +143,7 @@ async function channellistdata(isrecruiter, currentid) {
             { path: "jobid", populate: populate, select: "-userid" },
             { path: "candidate_fullprofile", populate: populate2 },
             { path: "seekerid", select: ["other.online", "other.pushnotification", "other.lastfunctionalarea", "other.offlinedate", "fastname", "number", "secoundnumber", "fastname", "lastname", "image", "email"], populate: { path: "other.lastfunctionalarea" } },
-            { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email", "other.offlinedate", "other.totaljob"], populate: { path: "companyname", populate: { path: "industry" } } },
+            { path: "recruiterid", select: ["number", "firstname", "lastname", "companyname", "designation", "image", "other.online", "other.pushnotification", "other.premium", "email", "other.offlinedate", "other.totaljob"], populate: { path: "companyname", populate: [{ path: "industry" },{path: "c_location.divisiondata", populate:{path: "cityid", select: "name"}}] } },
             { path: "lastmessage" }, { path: "bring_assis.bringlastmessage" }, { path: "who_view_me.seekerviewid" },
             { path: "who_view_me.recruiterview", select: ["fastname", "lastname"] }
 

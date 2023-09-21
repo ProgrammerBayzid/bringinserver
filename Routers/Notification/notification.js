@@ -126,6 +126,120 @@ async function notificaton_send_by_verifyAprove(recruiterid, mapdata) {
     console.log("e", error);
   }
 }
+async function notificaton_send_by_jobHidden(recruiterid, mapdata) {
+  try {
+    var recruiterinfo = await Recruiter.findOne({ _id: recruiterid });
+
+    if (!recruiterinfo) {
+      console.log("Recruiter not found.");
+      return;
+    }
+
+    let notificationid = [];
+    if (recruiterinfo.other.notification.push_notification === true) {
+      notificationid.push(recruiterinfo.other.pushnotification);
+    } else {
+      console.log("Push notification disabled for this recruiter.");
+      return;
+    }
+
+    if (notificationid.length === 0) {
+      console.log("No valid notification recipient.");
+      return;
+    }
+
+    var message = {
+      app_id: "74463dd2-b8de-4624-a679-0221b4b0af85",
+      data: mapdata,
+      contents: {
+        en: `Hi ${recruiterinfo.firstname} ${recruiterinfo.lastname}, Your Bringin Job Hidden.`,
+      },
+      headings: { en: "" },
+      include_player_ids: notificationid, // Ensure notificationid is a valid player ID
+      android_channel_id: "39d13464-1a8e-4fa7-88ea-e42d8af163f0",
+    };
+    console.log("notificationid", notificationid);
+    sendNotification(message); // Assuming you have a function named sendNotification
+  } catch (error) {
+    console.log("e", error);
+  }
+}
+async function notificaton_send_by_jobPublice(recruiterid, mapdata) {
+  try {
+    var recruiterinfo = await Recruiter.findOne({ _id: recruiterid });
+
+    if (!recruiterinfo) {
+      console.log("Recruiter not found.");
+      return;
+    }
+
+    let notificationid = [];
+    if (recruiterinfo.other.notification.push_notification === true) {
+      notificationid.push(recruiterinfo.other.pushnotification);
+    } else {
+      console.log("Push notification disabled for this recruiter.");
+      return;
+    }
+
+    if (notificationid.length === 0) {
+      console.log("No valid notification recipient.");
+      return;
+    }
+
+    var message = {
+      app_id: "74463dd2-b8de-4624-a679-0221b4b0af85",
+      data: mapdata,
+      contents: {
+        en: `Hi ${recruiterinfo.firstname} ${recruiterinfo.lastname}, Your Bringin Job Publice.`,
+      },
+      headings: { en: "" },
+      include_player_ids: notificationid, // Ensure notificationid is a valid player ID
+      android_channel_id: "39d13464-1a8e-4fa7-88ea-e42d8af163f0",
+    };
+    console.log("notificationid", notificationid);
+    sendNotification(message); // Assuming you have a function named sendNotification
+  } catch (error) {
+    console.log("e", error);
+  }
+}
+async function notificaton_send_by_jobDelete(recruiterid, mapdata) {
+  try {
+    var recruiterinfo = await Recruiter.findOne({ _id: recruiterid });
+
+    if (!recruiterinfo) {
+      console.log("Recruiter not found.");
+      return;
+    }
+
+    let notificationid = [];
+    if (recruiterinfo.other.notification.push_notification === true) {
+      notificationid.push(recruiterinfo.other.pushnotification);
+    } else {
+      console.log("Push notification disabled for this recruiter.");
+      return;
+    }
+
+    if (notificationid.length === 0) {
+      console.log("No valid notification recipient.");
+      return;
+    }
+
+    var message = {
+      app_id: "74463dd2-b8de-4624-a679-0221b4b0af85",
+      data: mapdata,
+      contents: {
+        en: `Hi ${recruiterinfo.firstname} ${recruiterinfo.lastname}, Your Bringin Job Delete.`,
+      },
+      headings: { en: "" },
+      include_player_ids: notificationid, // Ensure notificationid is a valid player ID
+      android_channel_id: "39d13464-1a8e-4fa7-88ea-e42d8af163f0",
+    };
+    console.log("notificationid", notificationid);
+    sendNotification(message); // Assuming you have a function named sendNotification
+  } catch (error) {
+    console.log("e", error);
+  }
+}
 
 async function single_msg_notifiation(channelid, recruiter) {
   var chatdata = await Chat.findOne({ _id: channelid })
@@ -170,26 +284,23 @@ async function single_msg_notifiation(channelid, recruiter) {
   }
 }
 
-
-
 async function bring_assistent_notify_send(id, isrecruiter) {
-  
   let fullname;
   let include_player_ids;
 
-  if(isrecruiter == true){
-    var rec = await Recruiter.findOne({_id: id})
+  if (isrecruiter == true) {
+    var rec = await Recruiter.findOne({ _id: id });
     fullname = `${rec.firstname} ${rec.lastname}`;
-    include_player_ids = rec.other.pushnotification
-  }else{
-     var seek =  await User.findOne({_id: id})
-     fullname = `${seek.fastname} ${seek.lastname}`;
-     include_player_ids = seek.other.pushnotification
+    include_player_ids = rec.other.pushnotification;
+  } else {
+    var seek = await User.findOne({ _id: id });
+    fullname = `${seek.fastname} ${seek.lastname}`;
+    include_player_ids = seek.other.pushnotification;
   }
 
   var message = {
     app_id: "74463dd2-b8de-4624-a679-0221b4b0af85",
-    
+
     contents: { en: `You are now approve to reach more.` },
     headings: {
       en: `Hi, ${fullname}! welcome to bringin!`,
@@ -206,5 +317,8 @@ module.exports = {
   notificaton_send_by_job,
   single_msg_notifiation,
   notificaton_send_by_verifyAprove,
-  bring_assistent_notify_send
+  bring_assistent_notify_send,
+  notificaton_send_by_jobDelete,
+  notificaton_send_by_jobPublice,
+  notificaton_send_by_jobHidden,
 };

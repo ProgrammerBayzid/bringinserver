@@ -657,4 +657,75 @@ app.post("/candidate_view", tokenverify, async (req, res) => {
   }
 });
 
+
+app.get('/functionarea_candidatefilter',tokenverify, async (req, res) =>{
+  var candidatelist;
+  var term = new RegExp(req.query.division, 'i');
+  var populate = [
+    {path: "workexperience",populate: [{ path: "category", select: "-functionarea" },"expertisearea"]},
+    {path: "education",populate: [{path: "digree",select: "-subject",populate: { path: "education", select: "-digree" }},"subject"]},
+    "protfoliolink","about",
+    {path: "careerPreference",populate: [{ path: "category", select: "-functionarea" },{path: "functionalarea",match: {$and: [{_id: req.query.functionalarea}]} ,populate: [{ path: "industryid", select: "-category" }]},{ path: "salaray.min_salary", select: "-other_salary" },{ path: "salaray.max_salary", select: "-other_salary" },{path: "jobtype"}, {path: "division", populate: {path: "cityid", select: "name", match: {$and: [{name: { $regex: term }}]}}}]},
+    { path: "userid", populate: { path: "experiencedlevel" } },
+  ];
+
+  var populate2 = [
+    {path: "workexperience",populate: [{ path: "category", select: "-functionarea" },"expertisearea"]},
+    {path: "education",populate: [{path: "digree",select: "-subject",populate: { path: "education", select: "-digree" }},"subject"]},
+    "protfoliolink","about",
+    {path: "careerPreference",populate: [{ path: "category", select: "-functionarea" },{path: "functionalarea",match: {$and: [{_id: req.query.functionalarea}]},populate: [{ path: "industryid", select: "-category" }]},{ path: "salaray.min_salary", select: "-other_salary" },{ path: "salaray.max_salary", select: "-other_salary" },{path: "jobtype"}, {path: "division", populate: {path: "cityid", select: "name", match:  {$and: [{_id: req.query.divisionid}]}}}]},
+    { path: "userid", populate: { path: "experiencedlevel" } },
+  ];
+
+  var populate3 = [
+    {path: "workexperience",populate: [{ path: "category", select: "-functionarea" },"expertisearea"]},
+    {path: "education",populate: [{path: "digree",select: "-subject",populate: { path: "education", select: "-digree" }},"subject"]},
+    "protfoliolink","about",
+    {path: "careerPreference",populate: [{ path: "category", select: "-functionarea" },{path: "functionalarea",match: {$and: [{_id: req.query.functionalarea}]},populate: [{ path: "industryid", select: "-category" }]},{ path: "salaray.min_salary", select: "-other_salary" },{ path: "salaray.max_salary", select: "-other_salary" },{path: "jobtype"}, {path: "division", populate: {path: "cityid", select: "name"}}]},
+    { path: "userid", populate: { path: "experiencedlevel" } },
+  ];
+  // match: {_id: {$ne: req.query.divisionid}}
+// match: {_id: {$ne: req.query.functionalarea}} 
+ 
+  
+  if(req.query.type == "0"){
+    candidatelist = await Profiledata.find().populate(populate).then((e)=> {
+       return e.filter(data=> {
+        var locfilter = data.careerPreference.filter(divisionfilter)
+        if (locfilter.length > 0) {
+          return true;
+        }else{
+          return false;
+        }
+       })
+    })
+  }else if(req.query.type == "1"){
+    candidatelist = await Profiledata.find().sort({"_id": -1}).limit(10).populate(populate3)
+  }else if(req.query.type == "2") {
+    candidatelist = await Profiledata.find().populate(populate2).then((e)=> {
+      return e.filter(data=> {
+       var locfilter = data.careerPreference.filter(divisionfilter)
+       if (locfilter.length > 0) {
+         return true;
+       }else{
+         return false;
+       }
+      })
+   })
+  }
+  res.status(200).send(candidatelist)
+})
+
+function divisionfilter(data) {
+ 
+   if (data.division.cityid == null) {
+    return false;
+   }else{
+    return true;
+   }
+}
+
+
+
+
 module.exports = app;
